@@ -58,6 +58,11 @@ export default {
     currentPointsGroup: "carbon-data-points-group",
     dataPointSelection: "carbon-selected-data-point",
     dataPointDisplayEnable: "carbon-data-pair--selected",
+
+    /**
+     * Bubble
+     */
+    bubbleGraphContent: "carbon-bubble-graph-content",
     /**
      * Paired Result
      */
