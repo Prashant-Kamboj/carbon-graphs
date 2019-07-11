@@ -82,10 +82,6 @@ const translateSlices = (config, contentSVG, layout, arc) => {
             const i = d3.interpolate(d.startAngle, d.endAngle);
             return (t) => {
                 d.endAngle = i(t);
-                d.data.percentage = getSlicePercentage(
-                    d.startAngle,
-                    d.endAngle
-                );
                 return arc(d);
             };
         });
