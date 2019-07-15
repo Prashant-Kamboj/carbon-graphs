@@ -41,7 +41,8 @@ const processDataPoints = (graphConfig, dataTarget) =>
  * @param {Object} input - Newly added graph tasks
  * @throws {module:errors.THROW_MSG_NO_DATA_LOADED}
  * @throws {module:errors.THROW_MSG_NO_DATA_POINTS}
- * @throws {module:errors.THROW_MSG_INVALID_DATA_PROPERTY}
+ * @throws {module:errors.THROW_MSG_UNIQUE_KEY_NOT_PROVIDED}
+ * @throws {module:errors.THROW_MSG_UNIQUE_LABEL_NOT_PROVIDED}
  * @returns {undefined} - returns nothing
  */
 export const validateContent = (input) => {
