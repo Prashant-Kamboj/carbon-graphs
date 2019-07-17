@@ -68,7 +68,7 @@ const loadLegendItem = (legendSVG, t, shownTargets, eventHandlers) => {
     itemPath
         .append("button")
         .classed(styles.legendItemBtn, true)
-        .attr("tabindex", 0)
+        .attr("tabindex", t.label.isDisabled ? -1 : 0)
         .append(() =>
             new Shape(getShapeForTarget(t)).getShapeElement(
                 getDefaultSVGProps({
