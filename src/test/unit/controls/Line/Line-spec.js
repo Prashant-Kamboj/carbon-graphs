@@ -2203,6 +2203,60 @@ describe("Line", () => {
                 });
             });
         });
+        describe("Show region face-up when there are multiple regions with multiline with same data", () => {
+            let inputPrimary = null;
+            let linePrimary = null;
+            let lineSecondary = null;
+            beforeEach(() => {
+                inputPrimary = getInput(valuesDefault, false, false);
+                inputPrimary.regions = [
+                    {
+                        start: 1,
+                        end: 5
+                    }
+                ];
+                inputSecondary.regions = [
+                    {
+                        start: 1,
+                        end: 5
+                    }
+                ];
+                linePrimary = new Line(inputPrimary);
+                lineSecondary = new Line(inputSecondary);
+                graphDefault.loadContent(linePrimary);
+                graphDefault.loadContent(lineSecondary);
+            });
+            it("Correctly renders", () => {
+                const regionGroupElement = fetchElementByClass(
+                    lineGraphContainer,
+                    styles.regionGroup
+                );
+                const regionElement = fetchElementByClass(
+                    regionGroupElement,
+                    styles.region
+                );
+                expect(regionGroupElement.childNodes.length).toBe(2);
+                expect(regionElement.nodeName).toBe("rect");
+            });
+            it("shows multiple regions with same data face-up", () => {
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(2);
+                expect(regionsElement[0].getAttribute("aria-hidden")).toBe(
+                    "false"
+                );
+                expect(regionsElement[1].getAttribute("aria-hidden")).toBe(
+                    "false"
+                );
+                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}`
+                );
+                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}`
+                );
+            });
+        });
         describe("On legend item click", () => {
             let inputPrimary = null;
             let linePrimary = null;

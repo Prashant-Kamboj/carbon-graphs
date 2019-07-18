@@ -34,9 +34,11 @@ import {
     getInput,
     inputSecondary,
     multiRegion,
+    multiRegionNotSame,
     simpleRegion,
     valuesDefault,
-    valuesTimeSeries
+    valuesTimeSeries,
+    multiRegionSameData
 } from "./helpers";
 
 describe("PairedResult", () => {
@@ -3110,6 +3112,124 @@ describe("PairedResult", () => {
                         });
                     });
                 });
+            });
+        });
+        describe("When multi-paired result with multi-regions with same data", () => {
+            let inputPrimary = null;
+            let pairedResultPrimaryContent = null;
+            let pairedResultSecondaryContent = null;
+            beforeEach(() => {
+                inputPrimary = getInput(valuesDefault, false, false);
+                inputPrimary.regions = multiRegionSameData;
+                pairedResultPrimaryContent = new PairedResult(inputPrimary);
+                inputSecondary.regions = multiRegionSameData;
+                pairedResultSecondaryContent = new PairedResult(inputSecondary);
+                graphDefault.loadContent(pairedResultPrimaryContent);
+                graphDefault.loadContent(pairedResultSecondaryContent);
+            });
+            it("Show all region face-up with same data always", () => {
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(6);
+                expect(regionsElement[0].getAttribute("aria-hidden")).toBe(
+                    "false"
+                );
+                expect(regionsElement[1].getAttribute("aria-hidden")).toBe(
+                    "false"
+                );
+                expect(regionsElement[2].getAttribute("aria-hidden")).toBe(
+                    "false"
+                );
+                expect(regionsElement[3].getAttribute("aria-hidden")).toBe(
+                    "false"
+                );
+                expect(regionsElement[4].getAttribute("aria-hidden")).toBe(
+                    "false"
+                );
+                expect(regionsElement[5].getAttribute("aria-hidden")).toBe(
+                    "false"
+                );
+                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}_high`
+                );
+                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}_mid`
+                );
+                expect(regionsElement[2].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}_low`
+                );
+                expect(regionsElement[3].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}_high`
+                );
+                expect(regionsElement[4].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}_mid`
+                );
+                expect(regionsElement[5].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}_low`
+                );
+            });
+        });
+        describe("When multi-paired result with multi-regions not same", () => {
+            let inputPrimary = null;
+            let pairedResultPrimaryContent = null;
+            let pairedResultSecondaryContent = null;
+            beforeEach(() => {
+                inputPrimary = getInput(valuesDefault, false, false);
+                inputPrimary.regions = multiRegionNotSame;
+                pairedResultPrimaryContent = new PairedResult(inputPrimary);
+                inputSecondary.regions = multiRegionSameData;
+                pairedResultSecondaryContent = new PairedResult(inputSecondary);
+                graphDefault.loadContent(pairedResultPrimaryContent);
+                graphDefault.loadContent(pairedResultSecondaryContent);
+            });
+            it("Not show region face-up", () => {
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(7);
+                expect(regionsElement[0].getAttribute("aria-hidden")).toBe(
+                    "true"
+                );
+                expect(regionsElement[1].getAttribute("aria-hidden")).toBe(
+                    "true"
+                );
+                expect(regionsElement[2].getAttribute("aria-hidden")).toBe(
+                    "true"
+                );
+                expect(regionsElement[3].getAttribute("aria-hidden")).toBe(
+                    "true"
+                );
+                expect(regionsElement[4].getAttribute("aria-hidden")).toBe(
+                    "true"
+                );
+                expect(regionsElement[5].getAttribute("aria-hidden")).toBe(
+                    "true"
+                );
+                expect(regionsElement[6].getAttribute("aria-hidden")).toBe(
+                    "true"
+                );
+                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}_high`
+                );
+                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}_high`
+                );
+                expect(regionsElement[2].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}_mid`
+                );
+                expect(regionsElement[3].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}_low`
+                );
+                expect(regionsElement[4].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}_high`
+                );
+                expect(regionsElement[5].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}_mid`
+                );
+                expect(regionsElement[6].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}_low`
+                );
             });
         });
         describe("On legend item click", () => {

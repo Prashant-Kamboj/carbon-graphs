@@ -123,6 +123,8 @@ export const processInput = (input, config, type) => {
     }
     config.shownTargets = [];
     config.hasCriticality = false;
+    config.isRegionSame = false;
+    config.isPairedDataProper = true;
     // axisPadding is needed for case by case basis. Example: for bar graphs, we toggle padding using this variable
     config.axisPadding = {
         y: getDefaultValue(_axis.y.padDomain, true),

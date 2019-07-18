@@ -17,6 +17,70 @@ import utils from "./utils";
  * @alias module:region
  */
 
+/*
+ * global array to store the region if same
+ */
+const globalregionData = [];
+
+/**
+ * Compares the region to check is region is same for Line graph
+ * @private
+ * @param {Object} region - Region to be shown within graph
+ * @returns {Boolean} - returns true or false
+ */
+const compareRegionDataLine = (region) => {
+    if (globalregionData.length > 0) {
+        if (
+            globalregionData[0].start === region.start &&
+            globalregionData[0].end === region.end &&
+            globalregionData[0].axis === region.axis
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+};
+
+/**
+ * Compares the region to check is region is same for PairedResult graph
+ * @private
+ * @param {Object} region - Region to be shown within graph
+ * @param { Object } graphConfig - graph propertiy needed to check the isRegionSame property
+ * @returns {Boolean} - returns true or false
+ */
+const compareRegionDataPaired = (region, graphConfig) => {
+    if (
+        globalregionData.length > 0 &&
+        graphConfig.isPairedDataProper === true
+    ) {
+        if (
+            globalregionData[0].start === region.start &&
+            globalregionData[0].end === region.end &&
+            globalregionData[0].axis === region.axis
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+};
+
+/**
+ * Checks region for legend iteam click
+ * @private
+ * @param { Object } graphConfig - graph propertiy needed to check the isRegionSame property
+ * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @returns { callback } - hiderAllegions or showAllRegions
+ */
+const checkRegion = (graphConfig, canvasSVG) => {
+    graphConfig.shownTargets.length > 1 && graphConfig.isRegionSame
+        ? showAllRegions(canvasSVG)
+        : hideAllRegions(canvasSVG);
+};
+
 /**
  * Validates the input object provided for the rendering
  * regions in graph
@@ -214,8 +278,20 @@ const isSingleTargetDisplayed = (graphTargets) => graphTargets.length === 1;
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @returns {Object} d3 svg path
  */
-const hideAllRegions = (canvasSVG) =>
+const hideAllRegions = (canvasSVG) => {
     canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", true);
+};
+
+/**
+ * Show all the regions within a graph
+ * @private
+ * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @returns {Object} d3 svg path
+ */
+const showAllRegions = (canvasSVG) => {
+    canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", false);
+};
+
 /**
  * Hides/shows the region given the region path and unique identifier of the region
  * @private
@@ -246,14 +322,14 @@ const toggleRegion = (canvasSVG, key) =>
  * * If more than 1 target is displayed -> Hide regions
  * * If only 1 target is displayed -> show the region using unique data set key
  * @private
- * @param {Array} shownTargets - Targets/data sets that are currently displayed in graph
+ * @param {Object} graphConfig - Targets/data sets that are currently displayed in graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @returns {Object} d3 svg path
  */
-const processRegions = (shownTargets, canvasSVG) =>
-    isSingleTargetDisplayed(shownTargets)
-        ? toggleRegion(canvasSVG, ...shownTargets)
-        : hideAllRegions(canvasSVG);
+const processRegions = (graphConfig, canvasSVG) =>
+    isSingleTargetDisplayed(graphConfig.shownTargets)
+        ? toggleRegion(canvasSVG, ...graphConfig.shownTargets)
+        : checkRegion(graphConfig, canvasSVG);
 /**
  * Handler for show/hide region(s) when hovered over a legend item
  * @private
@@ -279,6 +355,7 @@ export {
     createRegionContainer,
     createRegion,
     hideAllRegions,
+    showAllRegions,
     isSingleTargetDisplayed,
     showHideRegion,
     processRegions,
@@ -286,5 +363,8 @@ export {
     regionLegendHoverHandler,
     shouldHideAllRegions,
     translateRegion,
-    validateRegion
+    validateRegion,
+    globalregionData,
+    compareRegionDataPaired,
+    compareRegionDataLine
 };

@@ -12,7 +12,10 @@ import {
     hideAllRegions,
     removeRegion,
     shouldHideAllRegions,
-    translateRegion
+    translateRegion,
+    globalregionData,
+    showAllRegions,
+    compareRegionDataLine
 } from "../../helpers/region";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
@@ -158,13 +161,33 @@ class Line extends GraphContent {
      * @inheritDoc
      */
     resize(graph) {
+        if (graph.config.shownTargets.length <= 1) {
+            globalregionData.pop();
+            if (utils.notEmpty(this.dataTarget.regions)) {
+                globalregionData.push(this.dataTarget.regions[0]);
+            }
+        }
         if (
             shouldHideAllRegions(
                 this.dataTarget.regions,
                 graph.config.shownTargets
             )
         ) {
-            hideAllRegions(graph.svg);
+            let regionResult;
+            for (const element in this.dataTarget.regions) {
+                regionResult = compareRegionDataLine(
+                    this.dataTarget.regions[element]
+                );
+                if (regionResult === false) {
+                    break;
+                }
+            }
+            graph.config.isRegionSame = regionResult;
+            if (graph.config.isRegionSame === true) {
+                showAllRegions(graph.svg);
+            } else {
+                hideAllRegions(graph.svg);
+            }
         }
         translateRegion(
             graph.scale,

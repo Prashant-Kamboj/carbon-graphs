@@ -20,7 +20,8 @@ import { renderColorsExample } from "./examples/controls/colors";
 import {
     renderCombinationBar,
     renderCombinationRegion,
-    renderCombinationSimple
+    renderCombinationSimple,
+    renderCombinationSameRegion
 } from "./examples/controls/combination";
 import {
     renderCriticalityLineSimple,
@@ -68,7 +69,8 @@ import {
     renderLineY2Axis,
     renderLineYHidden,
     renderMultiLine,
-    renderMultiLineRegion
+    renderMultiLineRegion,
+    renderMultiLineSameRegion
 } from "./examples/controls/line";
 import {
     renderMultiPairedResultRegion,
@@ -533,6 +535,16 @@ renderSiteApp(
                     ]
                 },
                 {
+                    pathname: "/regions/multi-line",
+                    children: [
+                        {
+                            pathname: "/regions/multi-line/identical",
+                            content: renderMultiLineSameRegion,
+                            title: "Same Region ShowUp"
+                        }
+                    ]
+                },
+                {
                     pathname: "/regions/paired-result",
                     children: [
                         {
@@ -575,6 +587,11 @@ renderSiteApp(
                             pathname: "/regions/combination/simple",
                             content: renderCombinationRegion,
                             title: "Simple"
+                        },
+                        {
+                            pathname: "/regions/combination/identical",
+                            content: renderCombinationSameRegion,
+                            title: "Same Region ShowUp"
                         }
                     ]
                 }

@@ -20,7 +20,8 @@ import {
     hideAllRegions,
     isSingleTargetDisplayed,
     regionLegendHoverHandler,
-    showHideRegion
+    showHideRegion,
+    showAllRegions
 } from "../../../helpers/region";
 import { getSVGObject } from "../../../helpers/shapeSVG";
 import styles from "../../../helpers/styles";
@@ -431,7 +432,9 @@ const processRegions = (graphContext, config, canvasSVG, { key }) => {
             config.shownTargets.indexOf(key) > -1
         );
     } else {
-        hideAllRegions(canvasSVG);
+        config.isRegionSame && config.shownTargets.length > 0
+            ? showAllRegions(canvasSVG)
+            : hideAllRegions(canvasSVG);
     }
 };
 /**

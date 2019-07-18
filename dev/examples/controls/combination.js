@@ -68,3 +68,44 @@ export const renderCombinationBar = (id) => {
     );
     return barTest;
 };
+
+export const renderCombinationSameRegion = (id) => {
+    const lineData = getDemoData(`#${id}`, "LINE_PAIR_COMB_DEFAULT").data[0];
+    lineData.regions = [
+        {
+            axis: "y",
+            start: 6,
+            end: 100
+        }
+    ];
+    const pairedData = getDemoData(`#${id}`, "LINE_PAIR_COMB_DEFAULT").data[2];
+    pairedData.regions = {
+        high: [
+            {
+                axis: "y",
+                start: 6,
+                end: 100
+            }
+        ],
+        low: [
+            {
+                axis: "y",
+                start: 6,
+                end: 100
+            }
+        ],
+        mid: [
+            {
+                axis: "y",
+                start: 6,
+                end: 100
+            }
+        ]
+    };
+    const combGraph = Carbon.api.graph(
+        getDemoData(`#${id}`, "LINE_PAIR_COMB_DEFAULT")
+    );
+    combGraph.loadContent(Carbon.api.line(lineData));
+    combGraph.loadContent(Carbon.api.pairedResult(pairedData));
+    return combGraph;
+};
