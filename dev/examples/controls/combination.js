@@ -69,7 +69,25 @@ export const renderCombinationBar = (id) => {
     return barTest;
 };
 
-export const renderCombinationSameRegion = (id) => {
+export const combinationRegionInput = (id) => ({
+    bindTo: id,
+    axis: {
+        x: {
+            show: true,
+            label: "Data",
+            lowerLimit: 0,
+            upperLimit: 300
+        },
+        y: {
+            show: true,
+            label: "Line Paired Combo",
+            lowerLimit: 0,
+            upperLimit: 20
+        }
+    }
+});
+
+export const renderCombinationIdenticalDatasetRegion = (id) => {
     const lineData = getDemoData(`#${id}`, "LINE_PAIR_COMB_DEFAULT").data[0];
     lineData.regions = [
         {
@@ -102,9 +120,7 @@ export const renderCombinationSameRegion = (id) => {
             }
         ]
     };
-    const combGraph = Carbon.api.graph(
-        getDemoData(`#${id}`, "LINE_PAIR_COMB_DEFAULT")
-    );
+    const combGraph = Carbon.api.graph(combinationRegionInput(`#${id}`));
     combGraph.loadContent(Carbon.api.line(lineData));
     combGraph.loadContent(Carbon.api.pairedResult(pairedData));
     return combGraph;

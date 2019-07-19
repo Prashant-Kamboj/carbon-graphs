@@ -323,7 +323,7 @@ export const renderMultiLineRegion = (id) => {
     );
     return lineDefault;
 };
-export const renderMultiLineSameRegion = (id) => {
+export const renderMultiLineIdenticalDatasetRegion = (id) => {
     const lineDefault = Carbon.api.graph(getDemoData(`#${id}`, "LINE_DEFAULT"));
     const data = utils.deepClone(getDemoData(`#${id}`, "LINE_DEFAULT").data[0]);
     const dataAlt = utils.deepClone(

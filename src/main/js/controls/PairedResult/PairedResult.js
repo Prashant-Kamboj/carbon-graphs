@@ -30,6 +30,7 @@ import {
     translatePairedResultGraph
 } from "./helpers/helpers";
 import PairedResultConfig from "./PairedResultConfig";
+import equal from "deep-equal";
 
 /**
  * @typedef {Object} PairedResult
@@ -229,11 +230,7 @@ class PairedResult extends GraphContent {
                         // eslint-disable-next-line max-depth
                         if (regionItm.length > 0) {
                             // eslint-disable-next-line max-depth
-                            if (
-                                regionItm[0].start === region[i].start &&
-                                regionItm[0].end === region[i].end &&
-                                regionItm[0].axis === region[i].axis
-                            ) {
+                            if (equal(regionItm[0], region[i])) {
                                 localRegionSameFlag = true;
                             } else {
                                 localRegionSameFlag = false;
@@ -263,7 +260,7 @@ class PairedResult extends GraphContent {
                 globalregionData.pop();
                 globalregionData.push(regionItm[0]);
             }
-            //Globale rgion comparision
+            //Globale region comparision
             if (
                 graph.content.length > 1 &&
                 graph.config.isPairedDataProper === true &&

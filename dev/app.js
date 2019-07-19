@@ -21,7 +21,7 @@ import {
     renderCombinationBar,
     renderCombinationRegion,
     renderCombinationSimple,
-    renderCombinationSameRegion
+    renderCombinationIdenticalDatasetRegion
 } from "./examples/controls/combination";
 import {
     renderCriticalityLineSimple,
@@ -70,7 +70,7 @@ import {
     renderLineYHidden,
     renderMultiLine,
     renderMultiLineRegion,
-    renderMultiLineSameRegion
+    renderMultiLineIdenticalDatasetRegion
 } from "./examples/controls/line";
 import {
     renderMultiPairedResultRegion,
@@ -539,8 +539,8 @@ renderSiteApp(
                     children: [
                         {
                             pathname: "/regions/multi-line/identical",
-                            content: renderMultiLineSameRegion,
-                            title: "Same Region ShowUp"
+                            content: renderMultiLineIdenticalDatasetRegion,
+                            title: "Dataset Region Identical"
                         }
                     ]
                 },
@@ -590,8 +590,8 @@ renderSiteApp(
                         },
                         {
                             pathname: "/regions/combination/identical",
-                            content: renderCombinationSameRegion,
-                            title: "Same Region ShowUp"
+                            content: renderCombinationIdenticalDatasetRegion,
+                            title: "Dataset Region Identical"
                         }
                     ]
                 }

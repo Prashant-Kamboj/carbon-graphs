@@ -46,7 +46,8 @@
   },
   "dependencies": {
     "c3": "^0.4.23",
-    "d3": "^3.5.17"
+    "d3": "^3.5.17",
+    "deep-equal": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

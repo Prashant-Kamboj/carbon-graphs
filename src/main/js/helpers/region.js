@@ -11,6 +11,7 @@ import errors from "./errors";
 import styles from "./styles";
 import { round2Decimals } from "./transformUtils";
 import utils from "./utils";
+import equal from "deep-equal";
 
 /**
  * @module region
@@ -30,15 +31,10 @@ const globalregionData = [];
  */
 const compareRegionDataLine = (region) => {
     if (globalregionData.length > 0) {
-        if (
-            globalregionData[0].start === region.start &&
-            globalregionData[0].end === region.end &&
-            globalregionData[0].axis === region.axis
-        ) {
+        if (equal(globalregionData[0], region)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 };
 
@@ -54,15 +50,10 @@ const compareRegionDataPaired = (region, graphConfig) => {
         globalregionData.length > 0 &&
         graphConfig.isPairedDataProper === true
     ) {
-        if (
-            globalregionData[0].start === region.start &&
-            globalregionData[0].end === region.end &&
-            globalregionData[0].axis === region.axis
-        ) {
+        if (equal(globalregionData[0], region)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     } else {
         return false;
     }
