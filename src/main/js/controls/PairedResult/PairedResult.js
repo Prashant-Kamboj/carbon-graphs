@@ -11,9 +11,7 @@ import {
     hideAllRegions,
     removeRegion,
     translateRegion,
-    globalregionData,
-    compareRegionDataPaired,
-    showAllRegions
+    checkRegionSame
 } from "../../helpers/region";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
@@ -30,7 +28,6 @@ import {
     translatePairedResultGraph
 } from "./helpers/helpers";
 import PairedResultConfig from "./PairedResultConfig";
-import equal from "deep-equal";
 
 /**
  * @typedef {Object} PairedResult
@@ -192,98 +189,39 @@ class PairedResult extends GraphContent {
      * @inheritDoc
      */
     resize(graph) {
-        const regionItm = [];
-        let localRegionSameFlag = false;
-
+        let isPairedDataProper = true;
         if (utils.notEmpty(this.dataTarget.regions)) {
             const regionList = this.dataTarget.regions;
             const values = this.dataTarget.values;
 
             //check if all region are there with respect to value
-            if (graph.config.isPairedDataProper === true) {
+            if (graph.content.length > 1) {
                 for (let i = 0; i < values.length; i++) {
                     // eslint-disable-next-line max-depth
                     for (const key in values[i]) {
                         // eslint-disable-next-line max-depth
                         if (!regionList.hasOwnProperty(key)) {
-                            graph.config.isPairedDataProper = false;
+                            isPairedDataProper = false;
                             break;
                         }
                     }
                     // eslint-disable-next-line max-depth
-                    if (graph.config.isPairedDataProper === false) {
+                    if (isPairedDataProper === false) {
                         break;
                     }
+                }
+                if (
+                    isPairedDataProper === true &&
+                    graph.config.isHideAllRegion === false
+                ) {
+                    checkRegionSame(graph.svg);
+                    graph.config.isHideAllRegion = false;
+                } else {
+                    hideAllRegions(graph.svg);
+                    graph.config.isHideAllRegion = true;
                 }
             }
 
-            // Internal region comparision to check if the internal region is same
-            if (graph.config.isPairedDataProper === true) {
-                for (const key in regionList) {
-                    const region = regionList[key];
-                    // eslint-disable-next-line max-depth
-                    for (let i = 0; i < region.length; i++) {
-                        // eslint-disable-next-line max-depth
-                        if (regionItm.length === 0) {
-                            regionItm.push(region[i]);
-                        }
-                        // eslint-disable-next-line max-depth
-                        if (regionItm.length > 0) {
-                            // eslint-disable-next-line max-depth
-                            if (equal(regionItm[0], region[i])) {
-                                localRegionSameFlag = true;
-                            } else {
-                                localRegionSameFlag = false;
-                                globalregionData.pop();
-                                globalregionData.push({
-                                    start: 0,
-                                    end: 0,
-                                    axis: region[i].axis
-                                });
-                                regionItm.pop();
-                                regionItm.push(region[i]);
-                                break;
-                            }
-                        }
-                    }
-                    // eslint-disable-next-line max-depth
-                    if (localRegionSameFlag === false) {
-                        break;
-                    }
-                }
-            }
-            if (
-                localRegionSameFlag === true &&
-                graph.content.length <= 1 &&
-                graph.config.isPairedDataProper === true
-            ) {
-                globalregionData.pop();
-                globalregionData.push(regionItm[0]);
-            }
-            //Globale region comparision
-            if (
-                graph.content.length > 1 &&
-                graph.config.isPairedDataProper === true &&
-                localRegionSameFlag === true
-            ) {
-                const regionResult = compareRegionDataPaired(
-                    regionItm[0],
-                    graph.config
-                );
-                graph.config.isRegionSame = regionResult;
-            }
-            if (graph.content.length > 1) {
-                if (
-                    graph.config.isRegionSame === true &&
-                    graph.config.isPairedDataProper === true &&
-                    localRegionSameFlag === true
-                ) {
-                    showAllRegions(graph.svg);
-                } else {
-                    hideAllRegions(graph.svg);
-                    graph.config.isRegionSame = false;
-                }
-            }
             translateRegion(
                 graph.scale,
                 graph.config,
@@ -291,6 +229,9 @@ class PairedResult extends GraphContent {
                     `g[aria-describedby="region_${this.dataTarget.key}"]`
                 )
             );
+        } else {
+            hideAllRegions(graph.svg);
+            graph.config.isHideAllRegion = true;
         }
 
         translatePairedResultGraph(graph.scale, graph.config, graph.svg);

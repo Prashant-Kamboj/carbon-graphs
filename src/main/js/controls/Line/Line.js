@@ -11,11 +11,8 @@ import {
     createRegion,
     hideAllRegions,
     removeRegion,
-    shouldHideAllRegions,
     translateRegion,
-    globalregionData,
-    showAllRegions,
-    compareRegionDataLine
+    checkRegionSame
 } from "../../helpers/region";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
@@ -161,33 +158,18 @@ class Line extends GraphContent {
      * @inheritDoc
      */
     resize(graph) {
-        if (graph.config.shownTargets.length <= 1) {
-            globalregionData.pop();
-            if (utils.notEmpty(this.dataTarget.regions)) {
-                globalregionData.push(this.dataTarget.regions[0]);
+        if (utils.notEmpty(this.dataTarget.regions)) {
+            if (
+                graph.content.length > 1 &&
+                graph.config.isHideAllRegion === false
+            ) {
+                checkRegionSame(graph.svg);
+                graph.config.isHideAllRegion = false;
             }
         }
-        if (
-            shouldHideAllRegions(
-                this.dataTarget.regions,
-                graph.config.shownTargets
-            )
-        ) {
-            let regionResult;
-            for (const element in this.dataTarget.regions) {
-                regionResult = compareRegionDataLine(
-                    this.dataTarget.regions[element]
-                );
-                if (regionResult === false) {
-                    break;
-                }
-            }
-            graph.config.isRegionSame = regionResult;
-            if (graph.config.isRegionSame === true) {
-                showAllRegions(graph.svg);
-            } else {
-                hideAllRegions(graph.svg);
-            }
+        if (utils.isEmpty(this.dataTarget.regions)) {
+            hideAllRegions(graph.svg);
+            graph.config.isHideAllRegion = true;
         }
         translateRegion(
             graph.scale,

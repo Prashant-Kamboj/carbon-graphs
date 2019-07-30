@@ -11,66 +11,11 @@ import errors from "./errors";
 import styles from "./styles";
 import { round2Decimals } from "./transformUtils";
 import utils from "./utils";
-import equal from "deep-equal";
 
 /**
  * @module region
  * @alias module:region
  */
-
-/*
- * global array to store the region if same
- */
-const globalregionData = [];
-
-/**
- * Compares the region to check is region is same for Line graph
- * @private
- * @param {Object} region - Region to be shown within graph
- * @returns {Boolean} - returns true or false
- */
-const compareRegionDataLine = (region) => {
-    if (globalregionData.length > 0) {
-        if (equal(globalregionData[0], region)) {
-            return true;
-        }
-        return false;
-    }
-};
-
-/**
- * Compares the region to check is region is same for PairedResult graph
- * @private
- * @param {Object} region - Region to be shown within graph
- * @param { Object } graphConfig - graph propertiy needed to check the isRegionSame property
- * @returns {Boolean} - returns true or false
- */
-const compareRegionDataPaired = (region, graphConfig) => {
-    if (
-        globalregionData.length > 0 &&
-        graphConfig.isPairedDataProper === true
-    ) {
-        if (equal(globalregionData[0], region)) {
-            return true;
-        }
-        return false;
-    } else {
-        return false;
-    }
-};
-
-/**
- * Checks region for legend iteam click
- * @private
- * @param { Object } graphConfig - graph propertiy needed to check the isRegionSame property
- * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @returns { callback } - hiderAllegions or showAllRegions
- */
-const checkRegion = (graphConfig, canvasSVG) => {
-    graphConfig.shownTargets.length > 1 && graphConfig.isRegionSame
-        ? showAllRegions(canvasSVG)
-        : hideAllRegions(canvasSVG);
-};
 
 /**
  * Validates the input object provided for the rendering
@@ -264,6 +209,42 @@ const shouldHideAllRegions = (regionList, graphTargets) =>
  */
 const isSingleTargetDisplayed = (graphTargets) => graphTargets.length === 1;
 /**
+ * Check all the regions within a graph is same or not
+ * @private
+ * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @returns {Object} d3 svg path
+ */
+const checkRegionSame = (canvasSVG) => {
+    const regionData = [];
+    const regions = canvasSVG.selectAll(`.${styles.region}`);
+    regions[0] !== undefined
+        ? regions[0].forEach((element) => {
+              regionData.push(element.__data__);
+          })
+        : regionData.push();
+
+    if (regionData.length === 1 || regionData.length === 0) {
+        canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", true);
+    } else {
+        for (let i = 0; i < regionData.length - 1; i++) {
+            if (
+                regionData[i].start === regionData[i + 1].start &&
+                regionData[i].end === regionData[i + 1].end &&
+                regionData[i].axis === regionData[i + 1].axis
+            ) {
+                canvasSVG
+                    .selectAll(`.${styles.region}`)
+                    .attr("aria-hidden", false);
+            } else {
+                canvasSVG
+                    .selectAll(`.${styles.region}`)
+                    .attr("aria-hidden", true);
+                break;
+            }
+        }
+    }
+};
+/**
  * Hides all the regions within a graph
  * @private
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
@@ -272,17 +253,6 @@ const isSingleTargetDisplayed = (graphTargets) => graphTargets.length === 1;
 const hideAllRegions = (canvasSVG) => {
     canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", true);
 };
-
-/**
- * Show all the regions within a graph
- * @private
- * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @returns {Object} d3 svg path
- */
-const showAllRegions = (canvasSVG) => {
-    canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", false);
-};
-
 /**
  * Hides/shows the region given the region path and unique identifier of the region
  * @private
@@ -322,6 +292,18 @@ const processRegions = (graphConfig, canvasSVG) =>
         ? toggleRegion(canvasSVG, ...graphConfig.shownTargets)
         : checkRegion(graphConfig, canvasSVG);
 /**
+ * Checks region for legend iteam click
+ * @private
+ * @param { Object } graphConfig - graph propertiy needed to check the isRegionSame property
+ * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @returns { callback } - hiderAllegions or showAllRegions
+ */
+const checkRegion = (graphConfig, canvasSVG) => {
+    graphConfig.shownTargets.length > 1 && graphConfig.isHideAllRegion === false
+        ? checkRegionSame(canvasSVG)
+        : hideAllRegions(canvasSVG);
+};
+/**
  * Handler for show/hide region(s) when hovered over a legend item
  * @private
  * @param {Array} shownTargets - Targets/data sets that are currently displayed in graph
@@ -345,8 +327,8 @@ const regionLegendHoverHandler = (shownTargets, canvasSVG, key, hoverState) => {
 export {
     createRegionContainer,
     createRegion,
+    checkRegionSame,
     hideAllRegions,
-    showAllRegions,
     isSingleTargetDisplayed,
     showHideRegion,
     processRegions,
@@ -354,8 +336,5 @@ export {
     regionLegendHoverHandler,
     shouldHideAllRegions,
     translateRegion,
-    validateRegion,
-    globalregionData,
-    compareRegionDataPaired,
-    compareRegionDataLine
+    validateRegion
 };
