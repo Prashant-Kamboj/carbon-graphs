@@ -254,6 +254,22 @@ export const multiRegionSameData = {
         }
     ]
 };
+export const regionMissing = {
+    high: [
+        {
+            axis: "y",
+            start: 40,
+            end: 120
+        }
+    ],
+    low: [
+        {
+            axis: "y",
+            start: 140,
+            end: 220
+        }
+    ]
+};
 export const inputSecondary = {
     key: `uid_2`,
     label: {

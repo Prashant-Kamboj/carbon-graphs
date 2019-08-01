@@ -11,7 +11,7 @@ import {
     hideAllRegions,
     removeRegion,
     translateRegion,
-    checkRegionSame
+    areRegionSame
 } from "../../helpers/region";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
@@ -189,36 +189,31 @@ class PairedResult extends GraphContent {
      * @inheritDoc
      */
     resize(graph) {
-        let isPairedDataProper = true;
         if (utils.notEmpty(this.dataTarget.regions)) {
+            // If graph has more than 1 content, we compare the regions if they are identical and hide if even atleast one of them is not.
             const regionList = this.dataTarget.regions;
             const values = this.dataTarget.values;
-
-            //check if all region are there with respect to value
+            //check if all region are there with respect to value (high, mid and low)
             if (graph.content.length > 1) {
-                for (let i = 0; i < values.length; i++) {
-                    // eslint-disable-next-line max-depth
-                    for (const key in values[i]) {
-                        // eslint-disable-next-line max-depth
+                const isRegionThere = (value) => {
+                    for (const key in value) {
                         if (!regionList.hasOwnProperty(key)) {
-                            isPairedDataProper = false;
-                            break;
+                            return false;
                         }
                     }
-                    // eslint-disable-next-line max-depth
-                    if (isPairedDataProper === false) {
-                        break;
-                    }
-                }
+                    return true;
+                };
+                const isPairedDataProper = values.every(isRegionThere);
+
                 if (
                     isPairedDataProper === true &&
-                    graph.config.isHideAllRegion === false
+                    graph.config.shouldHideAllRegion === false &&
+                    areRegionSame(graph.svg)
                 ) {
-                    checkRegionSame(graph.svg);
-                    graph.config.isHideAllRegion = false;
+                    graph.config.shouldHideAllRegion = false;
                 } else {
                     hideAllRegions(graph.svg);
-                    graph.config.isHideAllRegion = true;
+                    graph.config.shouldHideAllRegion = true;
                 }
             }
 
@@ -231,7 +226,7 @@ class PairedResult extends GraphContent {
             );
         } else {
             hideAllRegions(graph.svg);
-            graph.config.isHideAllRegion = true;
+            graph.config.shouldHideAllRegion = true;
         }
 
         translatePairedResultGraph(graph.scale, graph.config, graph.svg);

@@ -12,7 +12,7 @@ import {
     hideAllRegions,
     removeRegion,
     translateRegion,
-    checkRegionSame
+    areRegionSame
 } from "../../helpers/region";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
@@ -159,17 +159,17 @@ class Line extends GraphContent {
      */
     resize(graph) {
         if (utils.notEmpty(this.dataTarget.regions)) {
-            if (
-                graph.content.length > 1 &&
-                graph.config.isHideAllRegion === false
-            ) {
-                checkRegionSame(graph.svg);
-                graph.config.isHideAllRegion = false;
+            if (graph.content.length > 1 && !graph.config.shouldHideAllRegion) {
+                if (areRegionSame(graph.svg)) {
+                    graph.config.shouldHideAllRegion = false;
+                } else {
+                    hideAllRegions(graph.svg);
+                    graph.config.shouldHideAllRegion = true;
+                }
             }
-        }
-        if (utils.isEmpty(this.dataTarget.regions)) {
+        } else {
             hideAllRegions(graph.svg);
-            graph.config.isHideAllRegion = true;
+            graph.config.shouldHideAllRegion = true;
         }
         translateRegion(
             graph.scale,

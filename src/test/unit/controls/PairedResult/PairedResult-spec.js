@@ -38,7 +38,8 @@ import {
     simpleRegion,
     valuesDefault,
     valuesTimeSeries,
-    multiRegionSameData
+    multiRegionSameData,
+    regionMissing
 } from "./helpers";
 
 describe("PairedResult", () => {
@@ -2719,7 +2720,7 @@ describe("PairedResult", () => {
                     regionGroupElement.childNodes[1].getAttribute("aria-hidden")
                 ).toBe("false");
             });
-            it("Hides all the regions if graph has more than 1 data-set", () => {
+            it("Hides all the regions if region is not same for any value has more than 1 data-set", () => {
                 const inputSecondary = {
                     key: `uid_2`,
                     label: {
@@ -3132,24 +3133,9 @@ describe("PairedResult", () => {
                     `.${styles.region}`
                 );
                 expect(regionsElement.length).toBe(6);
-                expect(regionsElement[0].getAttribute("aria-hidden")).toBe(
-                    "false"
-                );
-                expect(regionsElement[1].getAttribute("aria-hidden")).toBe(
-                    "false"
-                );
-                expect(regionsElement[2].getAttribute("aria-hidden")).toBe(
-                    "false"
-                );
-                expect(regionsElement[3].getAttribute("aria-hidden")).toBe(
-                    "false"
-                );
-                expect(regionsElement[4].getAttribute("aria-hidden")).toBe(
-                    "false"
-                );
-                expect(regionsElement[5].getAttribute("aria-hidden")).toBe(
-                    "false"
-                );
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("false");
+                });
                 expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
                     `region_${inputPrimary.key}_high`
                 );
@@ -3172,8 +3158,10 @@ describe("PairedResult", () => {
         });
         describe("When multi-paired result with multi-regions not same", () => {
             let inputPrimary = null;
+            let inputThird = null;
             let pairedResultPrimaryContent = null;
             let pairedResultSecondaryContent = null;
+            let pairedResultThirdContent = null;
             beforeEach(() => {
                 inputPrimary = getInput(valuesDefault, false, false);
                 inputPrimary.regions = multiRegionNotSame;
@@ -3188,27 +3176,9 @@ describe("PairedResult", () => {
                     `.${styles.region}`
                 );
                 expect(regionsElement.length).toBe(7);
-                expect(regionsElement[0].getAttribute("aria-hidden")).toBe(
-                    "true"
-                );
-                expect(regionsElement[1].getAttribute("aria-hidden")).toBe(
-                    "true"
-                );
-                expect(regionsElement[2].getAttribute("aria-hidden")).toBe(
-                    "true"
-                );
-                expect(regionsElement[3].getAttribute("aria-hidden")).toBe(
-                    "true"
-                );
-                expect(regionsElement[4].getAttribute("aria-hidden")).toBe(
-                    "true"
-                );
-                expect(regionsElement[5].getAttribute("aria-hidden")).toBe(
-                    "true"
-                );
-                expect(regionsElement[6].getAttribute("aria-hidden")).toBe(
-                    "true"
-                );
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("true");
+                });
                 expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
                     `region_${inputPrimary.key}_high`
                 );
@@ -3230,6 +3200,34 @@ describe("PairedResult", () => {
                 expect(regionsElement[6].getAttribute("aria-describedby")).toBe(
                     `region_${inputSecondary.key}_low`
                 );
+            });
+            it("Hide region if region is missing for any value(high, mid, low)", () => {
+                inputThird = {
+                    key: `uid_3`,
+                    regions: simpleRegion,
+                    label: {
+                        high: {
+                            display: "Data Label 3 High"
+                        },
+                        mid: {
+                            display: "Data Label 3 Median"
+                        },
+                        low: {
+                            display: "Data Label 3 Low"
+                        }
+                    },
+                    values: valuesDefault
+                };
+                inputThird.regions = regionMissing;
+                pairedResultThirdContent = new PairedResult(inputThird);
+                graphDefault.loadContent(pairedResultThirdContent);
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(9);
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("true");
+                });
             });
         });
         describe("On legend item click", () => {

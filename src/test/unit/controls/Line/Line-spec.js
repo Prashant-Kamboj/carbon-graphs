@@ -32,7 +32,8 @@ import {
     getInput,
     inputSecondary,
     valuesDefault,
-    valuesTimeSeries
+    valuesTimeSeries,
+    inputThird
 } from "./helpers";
 
 describe("Line", () => {
@@ -2203,10 +2204,11 @@ describe("Line", () => {
                 });
             });
         });
-        describe("Show region face-up when there are multiple regions with multiline with same data", () => {
+        describe("Check if region same for multiline with same dataset", () => {
             let inputPrimary = null;
             let linePrimary = null;
             let lineSecondary = null;
+            let lineThird = null;
             beforeEach(() => {
                 inputPrimary = getInput(valuesDefault, false, false);
                 inputPrimary.regions = [
@@ -2238,17 +2240,57 @@ describe("Line", () => {
                 expect(regionGroupElement.childNodes.length).toBe(2);
                 expect(regionElement.nodeName).toBe("rect");
             });
-            it("shows multiple regions with same data face-up", () => {
+            it("If region are same show face-up", () => {
                 const regionsElement = document.querySelectorAll(
                     `.${styles.region}`
                 );
                 expect(regionsElement.length).toBe(2);
-                expect(regionsElement[0].getAttribute("aria-hidden")).toBe(
-                    "false"
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("false");
+                });
+                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}`
                 );
-                expect(regionsElement[1].getAttribute("aria-hidden")).toBe(
-                    "false"
+                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}`
                 );
+            });
+            it("If region is not same hide the region", () => {
+                inputThird.regions = [
+                    {
+                        start: 1,
+                        end: 10
+                    }
+                ];
+                lineThird = new Line(inputThird);
+                graphDefault.loadContent(lineThird);
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(3);
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("true");
+                });
+                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}`
+                );
+                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}`
+                );
+                expect(regionsElement[2].getAttribute("aria-describedby")).toBe(
+                    `region_${inputThird.key}`
+                );
+            });
+            it("If any region is missing hide regions", () => {
+                lineThird = new Line(inputThird);
+                graphDefault.loadContent(lineThird);
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(2);
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("true");
+                });
                 expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
                     `region_${inputPrimary.key}`
                 );
