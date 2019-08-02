@@ -20,7 +20,8 @@ import {
     hideAllRegions,
     isSingleTargetDisplayed,
     regionLegendHoverHandler,
-    showHideRegion
+    showHideRegion,
+    areRegionSame
 } from "../../../helpers/region";
 import { getSVGObject } from "../../../helpers/shapeSVG";
 import styles from "../../../helpers/styles";
@@ -449,7 +450,15 @@ const processRegions = (graphContext, config, canvasSVG, { key }) => {
             config.shownTargets.indexOf(key) > -1
         );
     } else {
-        hideAllRegions(canvasSVG);
+        if (
+            config.shouldHideAllRegion === false &&
+            config.shownTargets.length > 0 &&
+            areRegionSame(canvasSVG)
+        ) {
+            canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", false);
+        } else {
+            hideAllRegions(canvasSVG);
+        }
     }
 };
 /**

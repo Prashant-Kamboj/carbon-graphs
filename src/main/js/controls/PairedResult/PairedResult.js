@@ -10,7 +10,8 @@ import { removeLegendItem } from "../../helpers/legend";
 import {
     hideAllRegions,
     removeRegion,
-    translateRegion
+    translateRegion,
+    areRegionSame
 } from "../../helpers/region";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
@@ -191,10 +192,33 @@ class PairedResult extends GraphContent {
      */
     resize(graph) {
         if (utils.notEmpty(this.dataTarget.regions)) {
-            // If graph has more than 1 content then we dont load the regions
+            // If graph has more than 1 content, we compare the regions if they are identical and hide if even atleast one of them is not.
+            const regionList = this.dataTarget.regions;
+            const values = this.dataTarget.values;
+            //check if all region are there with respect to value (high, mid and low)
             if (graph.content.length > 1) {
-                hideAllRegions(graph.svg);
+                const isRegionThere = (value) => {
+                    for (const key in value) {
+                        if (!regionList.hasOwnProperty(key)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                const isPairedDataProper = values.every(isRegionThere);
+
+                if (
+                    isPairedDataProper === true &&
+                    graph.config.shouldHideAllRegion === false &&
+                    areRegionSame(graph.svg)
+                ) {
+                    graph.config.shouldHideAllRegion = false;
+                } else {
+                    hideAllRegions(graph.svg);
+                    graph.config.shouldHideAllRegion = true;
+                }
             }
+
             translateRegion(
                 graph.scale,
                 graph.config,
@@ -202,6 +226,9 @@ class PairedResult extends GraphContent {
                     `g[aria-describedby="region_${this.dataTarget.key}"]`
                 )
             );
+        } else {
+            hideAllRegions(graph.svg);
+            graph.config.shouldHideAllRegion = true;
         }
 
         translatePairedResultGraph(graph.scale, graph.config, graph.svg);
