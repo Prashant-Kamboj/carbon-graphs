@@ -7,6 +7,10 @@ import errors from "../../helpers/errors";
 import { createLegend } from "../../helpers/legend";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
+import {
+    contentLoadHandler,
+    contentUnloadHandler
+} from "../../helpers/constructUtils";
 import GanttConfig, { processInput } from "./GanttConfig";
 import {
     prepareLegendEventHandlers,
@@ -32,16 +36,17 @@ import {
 import { translateGraph, translateLabelText } from "./helpers/translateHelpers";
 
 /**
- * @typedef {Object} Gantt
- * @typedef {Object} GanttConfig
+ * @typedef {object} Gantt
+ * @typedef {object} GanttConfig
  */
 
 const BASE_CANVAS_WIDTH_PADDING = constants.BASE_CANVAS_WIDTH_PADDING;
 /**
  * Sets the canvas width
+ *
  * @private
  * @param {HTMLElement} container - d3 HTML element object which forms the chart container
- * @param {Object} config - config object derived from input JSON
+ * @param {object} config - config object derived from input JSON
  * @returns {undefined} - returns nothing
  */
 const setCanvasWidth = (container, config) => {
@@ -50,8 +55,9 @@ const setCanvasWidth = (container, config) => {
 /**
  * Sets the canvas width. Canvas rests within a container.
  * On resize, the canvas is subjected to resizing but its sibling: Legend isnt.
+ *
  * @private
- * @param {Object} config - config object derived from input JSON
+ * @param {object} config - config object derived from input JSON
  * @returns {undefined} - returns nothing
  */
 const setCanvasHeight = (config) =>
@@ -61,10 +67,11 @@ const setCanvasHeight = (config) =>
 /**
  * Data point sets can be loaded using this function.
  * Load function validates, clones and stores the input onto a config object.
+ *
  * @private
  * @throws {module:errors.THROW_MSG_NO_AXES_DATA_LOADED}
- * @param {Object} inputJSON - Input JSON provided by the consumer
- * @returns {Object} config object containing consumer data
+ * @param {object} inputJSON - Input JSON provided by the consumer
+ * @returns {object} config object containing consumer data
  */
 const loadInput = (inputJSON) =>
     new GanttConfig()
@@ -75,6 +82,7 @@ const loadInput = (inputJSON) =>
 /**
  * Executes the before init process checklist, needs to be called by parent control.
  *  Binds the chart id provided in the input JSON to graph container.
+ *
  * @private
  * @param {Gantt} control - Gantt instance
  * @returns {Gantt} Gantt instance
@@ -87,6 +95,7 @@ const beforeInit = (control) => {
 };
 /**
  * Initializes the necessary Gantt constructor objects
+ *
  * @private
  * @param {Gantt} control - Gantt instance
  * @returns {Gantt} Gantt instance
@@ -119,6 +128,7 @@ const initConfig = (control) => {
  *  Calculates Axes width and height
  *  Calculates Axes label width and height, positioning
  *  Creates and sets the d3 scale for the Graph
+ *
  * @private
  * @param {Gantt} control - Gantt instance
  * @returns {Gantt} Gantt instance
@@ -143,12 +153,13 @@ const init = (control) => {
  *  * Init
  *  * Render
  *  * AfterInit
+ *
  * @module Gantt
  * @class Gantt
  */
 class Gantt extends Construct {
     /**
-     * @constructor
+     * @class
      * @param {GanttConfig} input - Input JSON instance created using GanttConfig
      */
     constructor(input) {
@@ -160,6 +171,7 @@ class Gantt extends Construct {
     /**
      * Draw function that is called by the parent control. This draws the x-axis, grid, legend and
      * trackLabels for the chart construct.
+     *
      * @description Since we dont have the concept of z-index in visualization,
      * the order of rendering should be following:
      *  * SVG container
@@ -169,7 +181,7 @@ class Gantt extends Construct {
      *  * Track Labels
      *  * Legend
      *  * Data [In our case we have load and unload]
-     * @param {Object} input - Input JSON
+     * @param {object} input - Input JSON
      * @returns {HTMLElement} d3 selection node of svg.
      */
     generate(input) {
@@ -233,6 +245,7 @@ class Gantt extends Construct {
      *  X-Axis
      *  Grid
      *  Track Labels
+     *
      *  @returns {Gantt} - Gantt instance
      */
     resize() {
@@ -250,20 +263,23 @@ class Gantt extends Construct {
      * Loads the content onto the graph.
      * The content serves as a 1to1 relationship. For rendering
      * multiple data sets respective number of content needs to be provided.
-     * @param {Object} content - Gantt content
+     *
+     * @param {object|Array} content - Gantt content to be loaded
      * @returns {Gantt} - Gantt instance
      */
     loadContent(content) {
-        const index = prepareLoadAtIndex(
-            this.scale,
-            this.config,
-            content,
-            this.tracks.length
-        );
-        const track = createTrack(content);
-        this.trackConfig.splice(index, 0, track);
-        track.load(this);
-        this.tracks.splice(index, 0, content.key);
+        contentLoadHandler(content, (i) => {
+            const index = prepareLoadAtIndex(
+                this.scale,
+                this.config,
+                i,
+                this.tracks.length
+            );
+            const track = createTrack(i);
+            this.trackConfig.splice(index, 0, track);
+            track.load(this);
+            this.tracks.splice(index, 0, i.key);
+        });
         updateAxesDomain(this.config);
         this.config.height = determineHeight(this.config);
         setCanvasHeight(this.config);
@@ -276,26 +292,30 @@ class Gantt extends Construct {
      * Unloads the content from the graph.
      * The content serves as a 1to1 relationship. For rendering
      * multiple data sets respective number of content needs to be provided.
-     * @param {Object} content - Gantt content to be removed
+     *
+     * @param {object|Array} content - Gantt content to be removed
      * @returns {Gantt} - Gantt instance
      */
     unloadContent(content) {
-        const index = this.tracks.indexOf(content.key);
-        if (index < 0) {
-            throw new Error(errors.THROW_MSG_INVALID_OBJECT_PROVIDED);
-        }
-        this.trackConfig[index].unload(this);
+        contentUnloadHandler(content, (i) => {
+            const index = this.tracks.indexOf(i.key);
+            if (index < 0) {
+                throw new Error(errors.THROW_MSG_INVALID_OBJECT_PROVIDED);
+            }
+            this.trackConfig[index].unload(this);
+            this.tracks.splice(index, 1);
+            this.trackConfig.splice(index, 1);
+        });
         updateAxesDomain(this.config);
         this.config.height = determineHeight(this.config);
         setCanvasHeight(this.config);
-        this.tracks.splice(index, 1);
-        this.trackConfig.splice(index, 1);
         this.resize();
         return this;
     }
 
     /**
      * Destroys the graph: Container and canvas.
+     *
      * @returns {Gantt} - Gantt instance
      */
     destroy() {

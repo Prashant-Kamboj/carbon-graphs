@@ -1,5 +1,5 @@
 /**
- * @fileOverview
+ * @file
  * Axes Label helper functions.
  * @module label
  * @alias module:label
@@ -27,6 +27,7 @@ import utils from "./utils";
 
 /**
  * Informs if a label needs truncation or otherwise
+ *
  * @private
  * @param {string} labelStr - A label
  * @param {number} [charLimit] - Maximum character length before truncation
@@ -39,6 +40,7 @@ const shouldTruncateLabel = (
 /**
  * Truncates the label string to the character limit provided, by default its
  * constants.DEFAULT_LABEL_CHARACTER_LIMIT
+ *
  * @private
  * @param {string} labelStr - A label
  * @param {number} charLimit - Maximum character length before truncation
@@ -50,6 +52,7 @@ const truncateLabel = (
 ) => labelStr.substring(0, charLimit).concat("...");
 /**
  * Loads a shape within a label container to be shown below Y and Y2 axes.
+ *
  * @private
  * @param {Selection} shapeContainerPath - d3 path for label shape container
  * @param {Array} dataTarget - Data points
@@ -68,10 +71,20 @@ const loadLabelShape = (shapeContainerPath, dataTarget) =>
         )
     );
 /**
+ * Returns the amount of shapes within a shape container
+ *
+ * @private
+ * @param {Selection} shapeContainerPath - d3 path for label shape container
+ * @returns {number} Amount of svg's in the shape container
+ */
+const getShapeContainerSize = (shapeContainerPath) =>
+    shapeContainerPath.selectAll("svg").size();
+/**
  * Translates Y Axis label shape container to correct position. Typically this is
  * to the middle of the axis.
+ *
  * @private
- * @param {Object} config - config object derived from input JSON
+ * @param {object} config - config object derived from input JSON
  * @param {Selection} shapeContainerPath - d3 path for label shape container
  * @returns {Selection} d3 path for label shape container
  */
@@ -85,15 +98,16 @@ const translateYAxisLabelShapeContainer = (config, shapeContainerPath) =>
                 config
             )}, ${getYAxisLabelShapeYPosition(
                 config,
-                shapeContainerPath
+                getShapeContainerSize(shapeContainerPath)
             )}) rotate(${getRotationForAxis(constants.Y_AXIS)})`
         );
 /**
  * Translates Y2 Axis label shape container to correct position. Typically this is
  * to the middle of the axis. The values are shown in reverse direction
  * Rotate is -90 deg
+ *
  * @private
- * @param {Object} config - config object derived from input JSON
+ * @param {object} config - config object derived from input JSON
  * @param {Selection} shapeContainerPath - d3 path for label shape container
  * @returns {Selection} d3 path for label shape container
  */
@@ -107,42 +121,44 @@ const translateY2AxisLabelShapeContainer = (config, shapeContainerPath) =>
                 config
             )}, ${getY2AxisLabelShapeYPosition(
                 config,
-                shapeContainerPath
+                getShapeContainerSize(shapeContainerPath)
             )}) rotate(${getRotationForAxis(constants.Y2_AXIS)})`
         );
 /**
  * Returns the d3 html element after appending axis label shape group for Y Axis
+ *
  * @private
- * @param {Object} config - config object derived from input JSON
- * @param {Selection} shapeContainerPath - d3 html element
+ * @param {object} config - config object derived from input JSON
+ * @param {Selection} canvasPath - d3 html element
  * @returns {Selection} d3 html element
  */
-const buildYAxisLabelShapeContainer = (config, shapeContainerPath) =>
-    shapeContainerPath
+const buildYAxisLabelShapeContainer = (config, canvasPath) => {
+    const path = canvasPath
         .append("g")
-        .classed(styles.axisLabelYShapeContainer, true)
-        .attr(
-            "transform",
-            `translate(0,0) rotate(${getRotationForAxis(constants.Y_AXIS)})`
-        );
+        .classed(styles.axisLabelYShapeContainer, true);
+    translateYAxisLabelShapeContainer(config, path);
+    return path;
+};
 /**
  * Returns the d3 html element after appending axis label shape group for Y2 axis
+ *
  * @private
- * @param {Object} config - config object derived from input JSON
- * @param {Selection} shapeContainerPath - d3 html element
+ * @param {object} config - config object derived from input JSON
+ * @param {Selection} canvasPath - d3 html element
  * @returns {Selection} d3 html element
  */
-const buildY2AxisLabelShapeContainer = (config, shapeContainerPath) =>
-    shapeContainerPath
+const buildY2AxisLabelShapeContainer = (config, canvasPath) => {
+    const path = canvasPath
         .append("g")
-        .classed(styles.axisLabelY2ShapeContainer, true)
-        .attr(
-            "transform",
-            `translate(0,0) rotate(${getRotationForAxis(constants.Y2_AXIS)})`
-        );
+        .classed(styles.axisLabelY2ShapeContainer, true);
+    translateY2AxisLabelShapeContainer(config, path);
+    return path;
+};
+
 /**
  * Translates all the shapes within the container to space correct beside each other
  * The amount of spacing is determined by constants.BASE_LABEL_ICON_SPACING
+ *
  * @private
  * @param {Selection} shapeContainerPath - d3 html element
  * @returns {Selection} d3 html element containing the label shape container with
@@ -162,8 +178,9 @@ const translateAllLabelShapeItem = (shapeContainerPath) =>
 /**
  * Creates a shape and adds it to the label container - Y or Y2 axes.
  * This only places the shapes, we need to call translate separately
+ *
  * @private
- * @param {Object} config - config object derived from input JSON
+ * @param {object} config - config object derived from input JSON
  * @param {Array} dataTarget - Data points
  * @param {Selection} shapeContainerPath - d3 html element of label item
  * @returns {undefined} - returns nothing
@@ -176,9 +193,10 @@ const prepareLabelShapeItem = (config, dataTarget, shapeContainerPath) => {
 };
 /**
  * Removes the label item shape from label shapes container in the graph
+ *
  * @private
  * @param {Selection} shapeContainerPath - d3 svg object for label shape container
- * @param {Object} dataTarget - Data points object
+ * @param {object} dataTarget - Data points object
  * @returns {undefined} - returns nothing
  */
 const removeLabelShapeItem = (shapeContainerPath, dataTarget) => {
@@ -194,9 +212,10 @@ const removeLabelShapeItem = (shapeContainerPath, dataTarget) => {
  * Translates the shape container after the shape items are loaded. This positions
  * it correctly to the center of the graph.
  * This is only for the container and not for the positioning the shapes within.
+ *
  * @private
- * @param {Object} config - config object derived from input JSON
- * @param {Object} shapeContainerPath - d3 svg object for label shape container
+ * @param {object} config - config object derived from input JSON
+ * @param {object} shapeContainerPath - d3 svg object for label shape container
  * @returns {undefined} - returns nothing
  */
 const translateLabelShapeContainer = (config, shapeContainerPath) => {

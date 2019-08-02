@@ -8,6 +8,7 @@ import * as DEFAULT_SHAPES from "../core/Shape/shapeDefinitions";
 
 /**
  * Consumers can pick a color from this default list
+ *
  * @public
  * @property {string} BLACK "#1c1f21"
  * @property {string} BLUE "#007cc3"
@@ -22,7 +23,7 @@ import * as DEFAULT_SHAPES from "../core/Shape/shapeDefinitions";
  * @property {string} LIGHT_ORANGE "#ff7d00"
  * @property {string} LIGHT_YELLOW "#ffda6c"
  * @property {string} WHITE "#ffffff"
- * @enum {{Object: String}}
+ * @enum {{Object: string}}
  */
 export const COLORS = {
     BLACK: "#1c1f21",
@@ -41,6 +42,7 @@ export const COLORS = {
 };
 /**
  * Consumers can pick a shape from this default list
+ *
  * @public
  * @property {string} CIRCLE "CIRCLE"
  * @property {string} TRIANGLE "TRIANGLE"
@@ -53,7 +55,7 @@ export const COLORS = {
  * @property {string} TEAR_DROP "TEAR_DROP"
  * @property {string} TEAR_ALT "TEAR_ALT"
  * @property {string} TRIANGLE_DOWN "TRIANGLE_DOWN"
- * @enum {{Object: String}}
+ * @enum {{Object: string}}
  */
 export const SHAPES = {
     CIRCLE: DEFAULT_SHAPES.CIRCLE,
@@ -72,6 +74,7 @@ export const SHAPES = {
  * Consumers can pick axes tick type from default list
  * DEFAULT is enabled by default. This represents number based axes
  * TIMESERIES is time based axes. For now it only reflects on x-Axis
+ *
  * @public
  * @property {string} DEFAULT "default"
  * @property {string} TIME_SERIES "timeseries"
@@ -84,6 +87,7 @@ export const AXIS_TYPE = {
 /**
  * Consumers can pick line type from default list
  * Linear is default
+ *
  * @public
  * @property {string} LINEAR "linear"
  * @property {string} SPLINE "cardinal"
@@ -95,7 +99,7 @@ export const LINE_TYPE = {
 };
 
 /**
- * @enum {Object}
+ * @enum {object}
  * Enum for different types of Axes orientations along X and Y Axes.
  */
 export const AXES_ORIENTATION = {
@@ -110,7 +114,7 @@ export const AXES_ORIENTATION = {
 };
 
 /**
- * @enum {Object}
+ * @enum {object}
  */
 export default {
     PADDING: {
@@ -134,6 +138,7 @@ export default {
         bottom: 20
     },
     TIMELINE_HEIGHT: 40,
+    PIE_CHART_DEFAULT_HEIGHT: 250,
     DEFAULT_HEIGHT: 250,
     DEFAULT_PLOT_SCALE: 0.275,
     DEFAULT_PLOT_SELECTION_SCALE: { posX: 1.95, posY: 1.95, scale: 2 },
@@ -189,6 +194,8 @@ export default {
     },
     VIEW_BOX_SIZE: "0 0 48 48",
     DEFAULT_COLOR: COLORS.BLACK,
+    DEFAULT_PIE_COLOR: COLORS.BLUE,
+    DEFAULT_PIE_LEGEND_SHAPE: SHAPES.SQUARE,
     X_AXIS: "x",
     Y_AXIS: "y",
     Y2_AXIS: "y2",

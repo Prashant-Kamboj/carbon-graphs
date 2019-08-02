@@ -15,19 +15,18 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 Carbon is a graphing library built using d3 visualization library. It provides an API for generating native graphs such as Line and Paired Result graphs based on design standards.
-Carbon provides an abstraction for c3 and d3.
 
--   [Dependencies](#Dependencies)
--   [Features](#Features)
-    -   [Graph types](#Graph-types)
-    -   [Graph Settings/Toggles](#Graph-SettingsToggles)
-    -   [Other highlights](#Other-highlights)
--   [Potential features](#Potential-features)
--   [Resources](#Resources)
--   [Usage](#Usage)
--   [Install](#Install)
--   [Browser support](#Browser-support)
--   [LICENSE](#LICENSE)
+- [Dependencies](#dependencies)
+- [Features](#features)
+  - [Graph types](#graph-types)
+  - [Graph Settings/Toggles](#graph-settingstoggles)
+  - [Other highlights](#other-highlights)
+- [Potential features](#potential-features)
+- [Resources](#resources)
+- [Usage](#usage)
+- [Install](#install)
+- [Browser support](#browser-support)
+- [LICENSE](#license)
 
 ## Dependencies
 
@@ -50,6 +49,7 @@ Carbon provides an abstraction for c3 and d3.
 -   Paired Result
 -   Spline line
 -   Timeline
+-   Pie
 -   Bar
 -   Gantt
 
@@ -57,9 +57,9 @@ Carbon provides an abstraction for c3 and d3.
 
 -   Legend
 -   Labels
--   Grid `Vertical & Horizontal`
--   Axes `x, y or y2`
--   Regions `Horizontal`
+-   Grid `vertical & horizontal`
+-   Axes `x and y or y2`
+-   Regions `horizontal`
 
 ### Other highlights
 

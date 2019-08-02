@@ -30,16 +30,17 @@ import {
 import PairedResultConfig from "./PairedResultConfig";
 
 /**
- * @typedef {Object} PairedResult
- * @typedef {Object} GraphContent
- * @typedef {Object} PairedResultConfig
+ * @typedef {object} PairedResult
+ * @typedef {object} GraphContent
+ * @typedef {object} PairedResultConfig
  */
 /**
  * Calculates the min and max values for Y Axis or Y2 Axis
+ *
  * @private
  * @param {Array} values - Datapoint values
  * @param {string} axis - y or y2
- * @returns {Object} - Contains min and max values for the data points
+ * @returns {object} - Contains min and max values for the data points
  */
 const calculateValuesRange = (values, axis = constants.Y_AXIS) => ({
     [axis]: {
@@ -55,9 +56,10 @@ const calculateValuesRange = (values, axis = constants.Y_AXIS) => ({
 /**
  * Data point sets can be loaded using this function.
  * Load function validates, clones and stores the input onto a config object.
+ *
  * @private
- * @param {Object} inputJSON - Input JSON provided by the consumer
- * @returns {Object} PairedResultConfig config object containing consumer data
+ * @param {object} inputJSON - Input JSON provided by the consumer
+ * @returns {object} PairedResultConfig config object containing consumer data
  */
 const loadInput = (inputJSON) =>
     new PairedResultConfig()
@@ -105,7 +107,7 @@ const loadInput = (inputJSON) =>
  */
 class PairedResult extends GraphContent {
     /**
-     * @constructor
+     * @class
      * @param {PairedResultConfig} input - Input JSON instance created using GraphConfig
      */
     constructor(input) {
@@ -123,7 +125,7 @@ class PairedResult extends GraphContent {
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     load(graph) {
         this.dataTarget = processDataPoints(graph.config, this.config);
@@ -163,7 +165,7 @@ class PairedResult extends GraphContent {
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     unload(graph) {
         clear(graph.svg, this.dataTarget);
@@ -186,7 +188,7 @@ class PairedResult extends GraphContent {
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     resize(graph) {
         if (utils.notEmpty(this.dataTarget.regions)) {
@@ -234,7 +236,7 @@ class PairedResult extends GraphContent {
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     redraw(graph) {
         clear(graph.svg, this.dataTarget);

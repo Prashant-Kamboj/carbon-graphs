@@ -23,10 +23,11 @@ const initialAxisInfo = {
 
 /**
  * Helper function to set the right padding values based on input JSON.
+ *
  * @private
- * @param {Object} config - config which needs to be updated
- * @param {Object} inputPadding - input padding provided via input JSON.
- * @returns {Object} - padding for Graph
+ * @param {object} config - config which needs to be updated
+ * @param {object} inputPadding - input padding provided via input JSON.
+ * @returns {object} - padding for Graph
  */
 const getPadding = (config, inputPadding) => {
     if (utils.isDefined(config.padding)) {
@@ -53,11 +54,12 @@ const getPadding = (config, inputPadding) => {
 /**
  * Processes the input from the JSON and updates the config object.
  * d3 domain and ranges are stored based on the upper and lower x, y and y2 limits.
+ *
  * @private
- * @param {Object} input - Input JSON provided by the consumer
- * @param {Object} config - config object used by the graph
+ * @param {object} input - Input JSON provided by the consumer
+ * @param {object} config - config object used by the graph
  * @param {string} type - input type
- * @returns {Object} - returns configuration object constructed using Input JSON
+ * @returns {object} - returns configuration object constructed using Input JSON
  */
 export const processInput = (input, config, type) => {
     const _axis = utils.deepClone(input.axis);
@@ -135,6 +137,7 @@ export const processInput = (input, config, type) => {
 
 /**
  * Checks if the keys for data points sets are unique
+ *
  * @private
  * @param {Array} dictionary - Collections of graph content
  * @param {string} key - unique key for the newly added content
@@ -145,9 +148,10 @@ export const isUniqueKey = (dictionary, key) =>
 
 /**
  * Validates the newly added content into the graph before rendering
+ *
  * @private
  * @param {Array} content - Current set of graph contents, already rendered
- * @param {Object} input - Newly added graph content
+ * @param {object} input - Newly added graph content
  * @returns {undefined} - returns nothing
  */
 export const validateContent = (content, input) => {
@@ -161,11 +165,12 @@ export const validateContent = (content, input) => {
 
 /**
  * API to parse consumer input for Graph
+ *
  * @class GraphConfig
  */
 class GraphConfig extends BaseConfig {
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     constructor() {
         super();
@@ -174,14 +179,14 @@ class GraphConfig extends BaseConfig {
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     getConfig() {
         return this.config;
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     setInput(inputJSON) {
         this.input = inputJSON;
@@ -197,6 +202,7 @@ class GraphConfig extends BaseConfig {
      *      If axis.x.type is provided then it should be either default or timeseries
      *      axis.y
      *      Y axis label is mandatory and X axis is optional
+     *
      * @throws {module:errors.THROW_MSG_NO_BIND}
      * @throws {module:errors.THROW_MSG_INVALID_TYPE}
      * @throws {module:errors.THROW_MSG_NO_AXIS_INFO}
@@ -265,6 +271,7 @@ class GraphConfig extends BaseConfig {
 
     /**
      * Clones the input JSON into the config object
+     *
      * @returns {GraphConfig} instance object
      */
     clone() {
