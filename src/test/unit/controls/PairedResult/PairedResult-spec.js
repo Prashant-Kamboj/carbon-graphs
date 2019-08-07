@@ -3117,8 +3117,10 @@ describe("PairedResult", () => {
         });
         describe("When multi-paired result with multi-regions with same data", () => {
             let inputPrimary = null;
+            let inputThird = null;
             let pairedResultPrimaryContent = null;
             let pairedResultSecondaryContent = null;
+            let pairedResultThirdContent = null;
             beforeEach(() => {
                 inputPrimary = getInput(valuesDefault, false, false);
                 inputPrimary.regions = multiRegionSameData;
@@ -3155,13 +3157,38 @@ describe("PairedResult", () => {
                     `region_${inputSecondary.key}_low`
                 );
             });
+            it("Hide region if region is missing for any value(high, mid, low) even if regions are same", () => {
+                inputThird = {
+                    key: `uid_3`,
+                    label: {
+                        high: {
+                            display: "Data Label 3 High"
+                        },
+                        mid: {
+                            display: "Data Label 3 Median"
+                        },
+                        low: {
+                            display: "Data Label 3 Low"
+                        }
+                    },
+                    values: valuesDefault
+                };
+                inputThird.regions = regionMissing;
+                pairedResultThirdContent = new PairedResult(inputThird);
+                graphDefault.loadContent(pairedResultThirdContent);
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(8);
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("true");
+                });
+            });
         });
         describe("When multi-paired result with multi-regions not same", () => {
             let inputPrimary = null;
-            let inputThird = null;
             let pairedResultPrimaryContent = null;
             let pairedResultSecondaryContent = null;
-            let pairedResultThirdContent = null;
             beforeEach(() => {
                 inputPrimary = getInput(valuesDefault, false, false);
                 inputPrimary.regions = multiRegionNotSame;
@@ -3200,34 +3227,6 @@ describe("PairedResult", () => {
                 expect(regionsElement[6].getAttribute("aria-describedby")).toBe(
                     `region_${inputSecondary.key}_low`
                 );
-            });
-            it("Hide region if region is missing for any value(high, mid, low)", () => {
-                inputThird = {
-                    key: `uid_3`,
-                    regions: simpleRegion,
-                    label: {
-                        high: {
-                            display: "Data Label 3 High"
-                        },
-                        mid: {
-                            display: "Data Label 3 Median"
-                        },
-                        low: {
-                            display: "Data Label 3 Low"
-                        }
-                    },
-                    values: valuesDefault
-                };
-                inputThird.regions = regionMissing;
-                pairedResultThirdContent = new PairedResult(inputThird);
-                graphDefault.loadContent(pairedResultThirdContent);
-                const regionsElement = document.querySelectorAll(
-                    `.${styles.region}`
-                );
-                expect(regionsElement.length).toBe(9);
-                regionsElement.forEach((element) => {
-                    expect(element.getAttribute("aria-hidden")).toBe("true");
-                });
             });
         });
         describe("On legend item click", () => {
@@ -4126,6 +4125,36 @@ describe("PairedResult", () => {
                             done();
                         });
                     });
+                });
+            });
+        });
+    });
+    describe("On legend item click", () => {
+        let inputPrimary = null;
+        let pairedResultPrimaryContent = null;
+        let pairedResultSecondaryContent = null;
+        beforeEach(() => {
+            inputPrimary = getInput(valuesDefault, false, false);
+            inputPrimary.regions = multiRegionSameData;
+            pairedResultPrimaryContent = new PairedResult(inputPrimary);
+            inputSecondary.regions = multiRegionSameData;
+            pairedResultSecondaryContent = new PairedResult(inputSecondary);
+            graphDefault.loadContent(pairedResultPrimaryContent);
+            graphDefault.loadContent(pairedResultSecondaryContent);
+        });
+        describe("When Multiple-paired result", () => {
+            it("Show region on legend click if regions are same", (done) => {
+                const legendItem = pairedResultGraphContainer.querySelector(
+                    `.${styles.legendItem}[aria-describedby="${inputPrimary.key}_low"]`
+                );
+                triggerEvent(legendItem, "click", () => {
+                    const regionElement = document.querySelector(
+                        `rect[aria-describedby="region_${inputPrimary.key}_low"]`
+                    );
+                    expect(regionElement.getAttribute("aria-hidden")).toBe(
+                        "false"
+                    );
+                    done();
                 });
             });
         });

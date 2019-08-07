@@ -108,7 +108,7 @@ export const inputSecondary = {
     },
     values: valuesDefault
 };
-export const inputThird = {
+export const inputTertiary = {
     key: `uid_3`,
     label: {
         display: "Data Label B"

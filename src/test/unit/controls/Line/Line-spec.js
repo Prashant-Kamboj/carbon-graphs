@@ -33,7 +33,7 @@ import {
     inputSecondary,
     valuesDefault,
     valuesTimeSeries,
-    inputThird
+    inputTertiary
 } from "./helpers";
 
 describe("Line", () => {
@@ -2252,7 +2252,7 @@ describe("Line", () => {
                 expect(regionGroupElement.childNodes.length).toBe(2);
                 expect(regionElement.nodeName).toBe("rect");
             });
-            it("If region are same show face-up", () => {
+            it("Shows region if one or more are identical", () => {
                 const regionsElement = document.querySelectorAll(
                     `.${styles.region}`
                 );
@@ -2267,14 +2267,14 @@ describe("Line", () => {
                     `region_${inputSecondary.key}`
                 );
             });
-            it("If region is not same hide the region", () => {
-                inputThird.regions = [
+            it("Hides region if one or more are not identical", () => {
+                inputTertiary.regions = [
                     {
                         start: 1,
                         end: 10
                     }
                 ];
-                lineThird = new Line(inputThird);
+                lineThird = new Line(inputTertiary);
                 graphDefault.loadContent(lineThird);
                 const regionsElement = document.querySelectorAll(
                     `.${styles.region}`
@@ -2290,11 +2290,11 @@ describe("Line", () => {
                     `region_${inputSecondary.key}`
                 );
                 expect(regionsElement[2].getAttribute("aria-describedby")).toBe(
-                    `region_${inputThird.key}`
+                    `region_${inputTertiary.key}`
                 );
             });
-            it("If any region is missing hide regions", () => {
-                lineThird = new Line(inputThird);
+            it("Hides region if one or more is missing", () => {
+                lineThird = new Line(inputTertiary);
                 graphDefault.loadContent(lineThird);
                 const regionsElement = document.querySelectorAll(
                     `.${styles.region}`

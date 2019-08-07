@@ -260,8 +260,8 @@ export const regionMissing = {
     high: [
         {
             axis: "y",
-            start: 40,
-            end: 120
+            start: 140,
+            end: 220
         }
     ],
     low: [

@@ -21,7 +21,7 @@ import {
     isSingleTargetDisplayed,
     regionLegendHoverHandler,
     showHideRegion,
-    areRegionSame
+    areRegionsIdentical
 } from "../../../helpers/region";
 import { getSVGObject } from "../../../helpers/shapeSVG";
 import styles from "../../../helpers/styles";
@@ -432,7 +432,7 @@ const translatePairedResultGraph = (scale, config, canvasSVG) => {
 };
 /**
  * Show/hide regions based on the following criteria:
- * * If more than 1 target is displayed -> Hide regions
+ * * Regions would be checked if they are identical before hiding them.
  * * If only 1 target is displayed -> show the region using unique data set key
  *
  * @private
@@ -449,16 +449,14 @@ const processRegions = (graphContext, config, canvasSVG, { key }) => {
             `region_${key}`,
             config.shownTargets.indexOf(key) > -1
         );
+    } else if (
+        config.shouldHideAllRegion === false &&
+        config.shownTargets.length > 0 &&
+        areRegionsIdentical(canvasSVG)
+    ) {
+        canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", false);
     } else {
-        if (
-            config.shouldHideAllRegion === false &&
-            config.shownTargets.length > 0 &&
-            areRegionSame(canvasSVG)
-        ) {
-            canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", false);
-        } else {
-            hideAllRegions(canvasSVG);
-        }
+        hideAllRegions(canvasSVG);
     }
 };
 /**

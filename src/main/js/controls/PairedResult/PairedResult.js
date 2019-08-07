@@ -11,7 +11,7 @@ import {
     hideAllRegions,
     removeRegion,
     translateRegion,
-    areRegionSame
+    areRegionsIdentical
 } from "../../helpers/region";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
@@ -210,7 +210,7 @@ class PairedResult extends GraphContent {
                 if (
                     isPairedDataProper === true &&
                     graph.config.shouldHideAllRegion === false &&
-                    areRegionSame(graph.svg)
+                    areRegionsIdentical(graph.svg)
                 ) {
                     graph.config.shouldHideAllRegion = false;
                 } else {
