@@ -2252,6 +2252,24 @@ describe("Line", () => {
                 expect(regionGroupElement.childNodes.length).toBe(2);
                 expect(regionElement.nodeName).toBe("rect");
             });
+            it("Hides region if one or more is missing", () => {
+                inputTertiary.regions = null;
+                lineThird = new Line(inputTertiary);
+                graphDefault.loadContent(lineThird);
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(2);
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("true");
+                });
+                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}`
+                );
+                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}`
+                );
+            });
             it("Shows region if one or more are identical", () => {
                 const regionsElement = document.querySelectorAll(
                     `.${styles.region}`
@@ -2291,23 +2309,6 @@ describe("Line", () => {
                 );
                 expect(regionsElement[2].getAttribute("aria-describedby")).toBe(
                     `region_${inputTertiary.key}`
-                );
-            });
-            it("Hides region if one or more is missing", () => {
-                lineThird = new Line(inputTertiary);
-                graphDefault.loadContent(lineThird);
-                const regionsElement = document.querySelectorAll(
-                    `.${styles.region}`
-                );
-                expect(regionsElement.length).toBe(2);
-                regionsElement.forEach((element) => {
-                    expect(element.getAttribute("aria-hidden")).toBe("true");
-                });
-                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
-                    `region_${inputPrimary.key}`
-                );
-                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
-                    `region_${inputSecondary.key}`
                 );
             });
         });

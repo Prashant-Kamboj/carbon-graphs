@@ -111,7 +111,7 @@ export const inputSecondary = {
 export const inputTertiary = {
     key: `uid_3`,
     label: {
-        display: "Data Label B"
+        display: "Data Label C"
     },
     values: valuesDefault
 };
