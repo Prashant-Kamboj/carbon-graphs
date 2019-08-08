@@ -460,6 +460,21 @@ const processRegions = (graphContext, config, canvasSVG, { key }) => {
     }
 };
 /**
+ * Checks if region is missing for any key in the value (high, mid or low)
+ *
+ * @param {object} value - pairedResult values
+ * @param {object} regionList - List of all the regions provided
+ * @returns { boolean } returns true if regions are not missing for the value keys( high, mid or low) else false
+ */
+const isRegionThere = (value, regionList) => {
+    for (const key in value) {
+        if (!regionList.hasOwnProperty(key)) {
+            return false;
+        }
+    }
+    return true;
+};
+/**
  * Handler for Request animation frame, executes on resize.
  *  * Order of execution
  *      * Redraws the content
@@ -672,5 +687,6 @@ export {
     translatePairedResultGraph,
     prepareLegendItems,
     renderRegion,
+    isRegionThere,
     clear
 };

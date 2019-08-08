@@ -25,6 +25,7 @@ import {
     prepareLegendItems,
     processDataPoints,
     renderRegion,
+    isRegionThere,
     translatePairedResultGraph
 } from "./helpers/helpers";
 import PairedResultConfig from "./PairedResultConfig";
@@ -193,19 +194,13 @@ class PairedResult extends GraphContent {
     resize(graph) {
         if (utils.notEmpty(this.dataTarget.regions)) {
             // If graph has more than 1 content, we compare the regions if they are identical and hide if even atleast one of them is not.
-            const regionList = this.dataTarget.regions;
             const values = this.dataTarget.values;
-            //check if all region are there with respect to value (high, mid and low)
+
             if (graph.content.length > 1) {
-                const isRegionThere = (value) => {
-                    for (const key in value) {
-                        if (!regionList.hasOwnProperty(key)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                };
-                const isPairedDataProper = values.every(isRegionThere);
+                //check if paired Data is proper i.e - region for each key(high, mid and low) in value should be there
+                const isPairedDataProper = values.every((value) =>
+                    isRegionThere(value, this.dataTarget.regions)
+                );
 
                 if (
                     isPairedDataProper === true &&
