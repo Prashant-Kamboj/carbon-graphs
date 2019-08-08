@@ -450,7 +450,7 @@ const processRegions = (graphContext, config, canvasSVG, { key }) => {
             config.shownTargets.indexOf(key) > -1
         );
     } else if (
-        config.shouldHideAllRegion === false &&
+        !config.shouldHideAllRegion &&
         config.shownTargets.length > 0 &&
         areRegionsIdentical(canvasSVG)
     ) {
@@ -466,14 +466,8 @@ const processRegions = (graphContext, config, canvasSVG, { key }) => {
  * @param {object} regionList - List of all the regions provided
  * @returns { boolean } returns true if regions are not missing for the value keys( high, mid or low) else false
  */
-const isRegionThere = (value, regionList) => {
-    for (const key in value) {
-        if (!regionList.hasOwnProperty(key)) {
-            return false;
-        }
-    }
-    return true;
-};
+const isRegionMappedToAllValues = (value, regionList) =>
+    Object.keys(value).every((v) => regionList.hasOwnProperty(v));
 /**
  * Handler for Request animation frame, executes on resize.
  *  * Order of execution
@@ -687,6 +681,6 @@ export {
     translatePairedResultGraph,
     prepareLegendItems,
     renderRegion,
-    isRegionThere,
+    isRegionMappedToAllValues,
     clear
 };
