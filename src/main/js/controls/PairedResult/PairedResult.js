@@ -202,7 +202,7 @@ class PairedResult extends GraphContent {
                 );
 
                 if (
-                    isPairedDataProper === true &&
+                    isPairedDataProper &&
                     !graph.config.shouldHideAllRegion &&
                     areRegionsIdentical(graph.svg)
                 ) {

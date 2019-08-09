@@ -460,7 +460,10 @@ const processRegions = (graphContext, config, canvasSVG, { key }) => {
     }
 };
 /**
- * Checks if region is missing for any key in the value (high, mid or low)
+ * Checks the region data of Paired Result so that if one of regions for Paired Result data pairs are not provided,
+ * i.e. if regions for "high" and "low" are provided and the values contain data for "high", "mid" and "low",
+ * all regions would be hidden(returns false) and if region for all "high", "mid" and "low" is there as well as value contains
+ * data for "high", "mid" and "low" then it returns true.
  *
  * @param {object} value - pairedResult values
  * @param {object} regionList - List of all the regions provided
