@@ -213,14 +213,8 @@ const isSingleTargetDisplayed = (graphTargets) => graphTargets.length === 1;
  * @returns {boolean} - returns true is regions are same else false
  */
 const areRegionsIdentical = (canvasSVG) => {
-    const regionData = [];
     const regions = canvasSVG.selectAll(`.${styles.region}`).data();
-    regions !== undefined
-        ? regions.forEach((element) => {
-              regionData.push(element);
-          })
-        : regionData.push();
-    const compare = regionData[0];
+    const compare = regions[0];
     return !regions.some(
         (element) =>
             compare.start !== element.start ||
