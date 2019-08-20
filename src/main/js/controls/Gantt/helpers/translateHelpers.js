@@ -122,7 +122,7 @@ const getTrackLabelTransformProperty = (scale, config) => (trackName) =>
  * @private
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @returns {object} d3 svg path
+ * @returns {undefined} d3 svg path
  */
 const translateDefs = (config, canvasSVG) => {
     if (
