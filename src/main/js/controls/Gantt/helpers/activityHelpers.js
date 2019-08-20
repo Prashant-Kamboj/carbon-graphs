@@ -15,6 +15,7 @@ import {
     getStartDuration,
     isAChunk
 } from "./durationHelpers";
+import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * Processes the input for a activity and converts to an object needed to render a bar
@@ -165,7 +166,7 @@ const drawActivities = (
     activityPath
         .exit()
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .remove();
 };
 

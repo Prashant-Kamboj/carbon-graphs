@@ -7,8 +7,8 @@ import { Shape } from "../core";
 import { getDefaultSVGProps } from "../core/Shape";
 import { getShapeForTarget } from "../controls/Graph/helpers/helpers";
 import { getTransformScale } from "./transformUtils";
-import constants from "./constants";
 import { getXAxisXPosition, getYAxisHeight, getYAxisYPosition } from "./axis";
+import { translatePan } from "./translateUtil";
 
 /**
  * Translates the dateline, based on each content loaded.
@@ -30,7 +30,7 @@ const translateDateline = (scale, config, canvasSVG, yAxisPositionHandler) => {
     const datelineGroup = canvasSVG
         .selectAll(`.${styles.datelineGroup}`)
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .attr(
             "transform",
             `translate(${getXAxisXPosition(config)},${yAxisPositionHandler(
@@ -103,9 +103,21 @@ const datelineClickHandler = (value, target) => {
  * @returns {undefined} - returns nothing
  */
 const createDateline = (scale, config, canvasSVG) => {
-    const datelineContent = canvasSVG
-        .append("g")
-        .classed(styles.datelineContent, true);
+    let datelineContent;
+    if (
+        config.pan !== undefined &&
+        utils.isBoolean(config.pan.enabled) &&
+        config.pan.enabled
+    ) {
+        datelineContent = canvasSVG
+            .append("g")
+            .classed(styles.datelineContent, true)
+            .attr("clip-path", `url(#${config.clipPathId})`);
+    } else {
+        datelineContent = canvasSVG
+            .append("g")
+            .classed(styles.datelineContent, true);
+    }
     config.dateline.forEach((dateline) => {
         const datelineGroup = datelineContent
             .append("g")

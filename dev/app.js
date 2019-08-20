@@ -39,7 +39,8 @@ import {
     renderGanttPercentage,
     renderGanttStyle,
     renderGanttTrackSelection,
-    renderGanttTruncate
+    renderGanttTruncate,
+    renderGanttPanning
 } from "./examples/controls/gantt";
 import {
     renderGoalLine,
@@ -68,7 +69,8 @@ import {
     renderLineY2Axis,
     renderLineYHidden,
     renderMultiLine,
-    renderMultiLineRegion
+    renderMultiLineRegion,
+    renderLineWithPanning
 } from "./examples/controls/line";
 import {
     renderMultiPairedResultRegion,
@@ -152,6 +154,11 @@ renderSiteApp(
                     pathname: "/line/shapes-hidden",
                     content: renderLineShapesHidden,
                     title: "Shapes Hidden"
+                },
+                {
+                    pathname: "/line/Panning",
+                    content: renderLineWithPanning,
+                    title: "Panning Mode"
                 }
             ]
         },
@@ -327,6 +334,11 @@ renderSiteApp(
                     pathname: "/gantt/label-truncation",
                     content: renderGanttTruncate,
                     title: "Label Truncation"
+                },
+                {
+                    pathname: "/gantt/Panning Mode",
+                    content: renderGanttPanning,
+                    title: "Panning Mode"
                 }
             ]
         },

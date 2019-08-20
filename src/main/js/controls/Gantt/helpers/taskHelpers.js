@@ -22,6 +22,7 @@ import {
     getTaskStyle,
     isAChunk
 } from "./durationHelpers";
+import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * Toggles the selection of a task, executes on click of a data point.
@@ -309,7 +310,7 @@ const drawTasks = (
     taskPath
         .exit()
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .remove();
 };
 

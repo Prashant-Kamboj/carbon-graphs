@@ -8,6 +8,7 @@ import { validateRegion } from "../../../helpers/region";
 import styles from "../../../helpers/styles";
 import { round2Decimals } from "../../../helpers/transformUtils";
 import utils from "../../../helpers/utils";
+import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * Calculates x-axis range for given region
@@ -128,7 +129,7 @@ const createRegion = (scale, config, regionGroupSVG, regionList, uniqueKey) => {
     regionPath
         .exit()
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .remove();
 };
 /**
@@ -144,7 +145,7 @@ const createRegion = (scale, config, regionGroupSVG, regionList, uniqueKey) => {
 const translateRegion = (scale, config, regionGroupSVG) => {
     regionGroupSVG
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .attr(constants.X_AXIS, (d) => d.xRange | 0)
         .attr(constants.Y_AXIS, getYAxisRangePosition(scale, config))
         .attr("width", (d) => d.width | 0)

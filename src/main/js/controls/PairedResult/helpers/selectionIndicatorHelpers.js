@@ -5,6 +5,7 @@ import styles from "../../../helpers/styles";
 import { getTransformScale } from "../../../helpers/transformUtils";
 import utils from "../../../helpers/utils";
 import { getSVGObject } from "./helpers";
+import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * Returns the pair value that's present, to be used when
@@ -225,21 +226,22 @@ const transformPartialPoint = (scale) => (value) => (scaleFactor) => {
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} graphConfig - graph config neede for panning feature
  * @returns {object} - d3 select object
  */
-export const translateSelectionBox = (scale, canvasSVG) =>
+export const translateSelectionBox = (scale, canvasSVG, graphConfig) =>
     canvasSVG
         .selectAll(
             `.${styles.pairedBoxGroup} rect.${styles.dataPointSelection}`
         )
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(graphConfig))
         .each(function(value) {
             return updateSelectionIndicatorAttributes(
                 d3
                     .select(this)
                     .transition()
-                    .call(constants.d3Transition),
+                    .call(translatePan(graphConfig)),
                 scale,
                 value
             );
@@ -252,9 +254,10 @@ export const translateSelectionBox = (scale, canvasSVG) =>
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} graphConfig - graph config neede for panning feature
  * @returns {object} - d3 select object
  */
-export const translateSelectionItem = (scale, canvasSVG) =>
+export const translateSelectionItem = (scale, canvasSVG, graphConfig) =>
     canvasSVG
         .selectAll(`.${styles.pairedBoxGroup} .${styles.dataPointSelection}`)
         .each(function(value) {
@@ -262,7 +265,7 @@ export const translateSelectionItem = (scale, canvasSVG) =>
                 .select(this)
                 .select("g")
                 .transition()
-                .call(constants.d3Transition)
+                .call(translatePan(graphConfig))
                 .attr("transform", function() {
                     return transformPartialPoint(
                         scale

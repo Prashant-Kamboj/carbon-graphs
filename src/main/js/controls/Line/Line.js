@@ -174,7 +174,7 @@ class Line extends GraphContent {
             graph.config,
             graph.svg.select(`.${styles.regionGroup}`)
         );
-        translateLineGraph(graph.scale, graph.svg);
+        translateLineGraph(graph.scale, graph.svg, graph.config);
         return this;
     }
 

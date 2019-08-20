@@ -1,6 +1,5 @@
 "use strict";
 
-import constants from "../../../helpers/constants";
 import styles from "../../../helpers/styles";
 import {
     getTextLabelsXPosition,
@@ -8,6 +7,7 @@ import {
 } from "./axisInfoRowHelpers";
 import { barAttributesHelper } from "./creationHelpers";
 import { translateSelectBars } from "./selectionHelpers";
+import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * @typedef d3
@@ -36,7 +36,7 @@ const translateBarGraph = (
     return canvasSVG
         .selectAll(`rect[aria-describedby=${dataTarget.key}]`)
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .attr("x", (d) => attributeHelper.x(d))
         .attr("y", (d) => attributeHelper.y(d))
         .attr("width", attributeHelper.width)
@@ -68,7 +68,7 @@ const translateTextLabel = (
     return axisInfoPath
         .selectAll(`g[aria-describedby="text_label_${dataTarget.key}"]`)
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .attr(
             "transform",
             (d, index) =>

@@ -291,11 +291,22 @@ const getYAxisRange = (trackList) =>
  * @returns {undefined} - returns nothing
  */
 const scaleGraph = (scale, config) => {
-    scale.x = d3.time
-        .scale()
-        .domain(config.axis.x.domain)
-        .range([0, getXAxisWidth(config)])
-        .clamp(true);
+    if (
+        config.pan !== undefined &&
+        utils.isBoolean(config.pan.enabled) &&
+        config.pan.enabled === true
+    ) {
+        scale.x = d3.time
+            .scale()
+            .domain(config.axis.x.domain)
+            .range([0, getXAxisWidth(config)]);
+    } else {
+        scale.x = d3.time
+            .scale()
+            .domain(config.axis.x.domain)
+            .range([0, getXAxisWidth(config)])
+            .clamp(true);
+    }
     scale.y = d3.scale
         .ordinal()
         .domain(getYAxisDomain(config.axis.y.trackList))
@@ -310,18 +321,47 @@ const scaleGraph = (scale, config) => {
  * @private
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @returns {object} d3 svg path
+ * @returns {undefined} d3 svg path
  */
-const createDefs = (config, canvasSVG) =>
-    canvasSVG
-        .append("defs")
-        .append("clipPath")
-        .attr("id", config.clipPathId)
-        .append("rect")
-        .attr(constants.X_AXIS, getXAxisXPosition(config))
-        .attr(constants.Y_AXIS, getYAxisYPosition(config))
-        .attr("width", getXAxisWidth(config))
-        .attr("height", getYAxisHeight(config));
+const createDefs = (config, canvasSVG) => {
+    if (
+        config.pan !== undefined &&
+        utils.isBoolean(config.pan.enabled) &&
+        config.pan.enabled &&
+        config.dateline.length > 0
+    ) {
+        const shapeHeightArr = [];
+        const shape = d3.selectAll(".carbon-dateline-point");
+        shape[0].forEach((element) => {
+            const shapeHeight = element.getBBox().height;
+            shapeHeightArr.push(shapeHeight);
+        });
+        const datelineIndicatorHeight = Math.max(...shapeHeightArr) / 2;
+
+        canvasSVG
+            .append("defs")
+            .append("clipPath")
+            .attr("id", config.clipPathId)
+            .append("rect")
+            .attr(constants.X_AXIS, getXAxisXPosition(config))
+            .attr(
+                constants.Y_AXIS,
+                getYAxisYPosition(config) - datelineIndicatorHeight
+            )
+            .attr("width", getXAxisWidth(config))
+            .attr("height", getYAxisHeight(config) + datelineIndicatorHeight);
+    } else {
+        canvasSVG
+            .append("defs")
+            .append("clipPath")
+            .attr("id", config.clipPathId)
+            .append("rect")
+            .attr(constants.X_AXIS, getXAxisXPosition(config))
+            .attr(constants.Y_AXIS, getYAxisYPosition(config))
+            .attr("width", getXAxisWidth(config))
+            .attr("height", getYAxisHeight(config));
+    }
+};
 /**
  * Create the d3 grid - horizontal and vertical and append into the canvas.
  * Only performed if the flags for showHGrid and showVGrid are enabled

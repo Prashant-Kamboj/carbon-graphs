@@ -125,7 +125,8 @@ const initConfig = (control) => {
             y2: {}
         },
         shownTargets: {},
-        dateline: []
+        dateline: [],
+        pan: {}
     };
     control.axis = {
         axisInfoRow: {
@@ -233,7 +234,6 @@ class Graph extends Construct {
                     ? this.config.canvasWidth
                     : this.config.canvasWidth - BASE_CANVAS_WIDTH_PADDING
             );
-        createDefs(this.config, this.svg);
         createRegionContainer(this.config, this.svg);
         createGrid(this.axis, this.scale, this.config, this.svg);
         createContentContainer(this.config, this.svg);
@@ -247,6 +247,7 @@ class Graph extends Construct {
         ) {
             createDateline(this.scale, this.config, this.svg);
         }
+        createDefs(this.config, this.svg);
         if (this.config.showLegend) {
             /*
             If the consumer doesn't wish to show legend item then they can pass blank.

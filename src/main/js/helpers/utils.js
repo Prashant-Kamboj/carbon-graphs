@@ -178,6 +178,14 @@ const getNumber = (n) => (n ? Number(n) : 0);
  */
 const isNumber = (n) => typeof n === "number" && !isNaN(n);
 /**
+ * Checks if input is a boolean or not
+ *
+ * @private
+ * @param {*} n - input to be determined a number
+ * @returns {boolean} if not undefined or null return Number, 0 otherwise
+ */
+const isBoolean = (n) => typeof n === "boolean" && !isNaN(n);
+/**
  * Checks if provided dates are equal
  *
  * @private
@@ -218,5 +226,6 @@ export default {
     parseDateTime,
     getTime,
     isDateInstance,
-    isEqual
+    isEqual,
+    isBoolean
 };

@@ -397,3 +397,19 @@ export const renderLineXOrientationTop = (id) => {
     );
     return lineDefault;
 };
+
+export const renderLineWithPanning = (id) => {
+    const axisData = utils.deepClone(
+        getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE")
+    );
+    axisData.pan = {
+        enabled: true
+    };
+    const lineDefault = Carbon.api.graph(axisData);
+    lineDefault.loadContent(
+        Carbon.api.line(
+            getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE").data[0]
+        )
+    );
+    return lineDefault;
+};

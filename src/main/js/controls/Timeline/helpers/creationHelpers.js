@@ -164,11 +164,22 @@ const getAxesScale = (axis, scale, config) => {
  * @returns {undefined} - returns nothing
  */
 const scaleGraph = (scale, config) => {
-    scale.x = d3.time
-        .scale()
-        .domain(config.axis.x.domain)
-        .range([0, getXAxisWidth(config)])
-        .clamp(true);
+    if (
+        config.pan !== undefined &&
+        utils.isBoolean(config.pan.enabled) &&
+        config.pan.enabled === true
+    ) {
+        scale.x = d3.time
+            .scale()
+            .domain(config.axis.x.domain)
+            .range([0, getXAxisWidth(config)]);
+    } else {
+        scale.x = d3.time
+            .scale()
+            .domain(config.axis.x.domain)
+            .range([0, getXAxisWidth(config)])
+            .clamp(true);
+    }
     if (config.axis.x.rangeRounding) {
         scale.x.nice();
     }

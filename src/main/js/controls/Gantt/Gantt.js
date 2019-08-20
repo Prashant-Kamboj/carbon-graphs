@@ -109,7 +109,8 @@ const initConfig = (control) => {
         },
         shownTargets: {},
         actionLegend: [],
-        dateline: []
+        dateline: [],
+        pan: {}
     };
     control.axis = {};
     control.scale = {};
@@ -204,7 +205,6 @@ class Gantt extends Construct {
                     ? this.config.canvasWidth
                     : this.config.canvasWidth - BASE_CANVAS_WIDTH_PADDING
             );
-        createDefs(this.config, this.svg);
         createGrid(this.axis, this.scale, this.config, this.svg);
         createContentContainer(this.config, this.svg);
         createAxes(this.axis, this.scale, this.config, this.svg);
@@ -212,6 +212,7 @@ class Gantt extends Construct {
         if (utils.notEmpty(this.config.dateline)) {
             createDateline(this.scale, this.config, this.svg);
         }
+        createDefs(this.config, this.svg);
         if (this.config.showActionLegend) {
             this.legendSVG = createLegend(
                 this.config.bindLegendTo

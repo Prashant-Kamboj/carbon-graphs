@@ -351,6 +351,16 @@ export const renderGanttTruncate = (id) => {
     });
     return ganttDefault;
 };
+export const renderGanttPanning = (id) => {
+    const data = utils.deepClone(getDemoData(`#${id}`, "GANTT"));
+    data.showActionLegend = false;
+    data.pan = {
+        enabled: true
+    };
+    const ganttDefault = Carbon.api.gantt(data);
+    loadTracks(ganttDefault, tasks, [], [], [], 4);
+    return ganttDefault;
+};
 export const renderGanttStyle = (id) => {
     const data = utils.deepClone(getDemoData(`#${id}`, "GANTT"));
     data.showActionLegend = false;

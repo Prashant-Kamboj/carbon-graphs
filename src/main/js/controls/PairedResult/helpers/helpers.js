@@ -37,6 +37,7 @@ import {
     translateSelectionBox,
     translateSelectionItem
 } from "./selectionIndicatorHelpers";
+import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * @typedef PairedResult
@@ -112,17 +113,18 @@ const translateLines = (scale, config, canvasSVG) =>
     canvasSVG
         .selectAll(`.${styles.pairedBoxGroup} .${styles.pairedLine}`)
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .attr("d", (d) => (d.high && d.low ? createLine(scale, d) : ""));
 /**
  * Transforms points for a data point set (high, low and mid) in the Paired Result graph on resize
  *
  * @private
  * @param {object} scale - d3 scale for Graph
+ * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @returns {object} - d3 select object
  */
-const translatePoints = (scale, canvasSVG) =>
+const translatePoints = (scale, config, canvasSVG) =>
     iterateOnPairType((type) => {
         canvasSVG
             .selectAll(
@@ -136,7 +138,7 @@ const translatePoints = (scale, canvasSVG) =>
                 pairedPointSVG
                     .select("g")
                     .transition()
-                    .call(constants.d3Transition)
+                    .call(translatePan(config))
                     .attr("transform", function() {
                         return transformPoint(
                             scale,
@@ -186,7 +188,7 @@ const draw = (scale, config, canvasSVG, dataTarget) => {
     pairedBoxPath
         .exit()
         .transition()
-        .call(constants.d3Transition)
+        .call(translatePan(config))
         .remove();
 };
 /**
@@ -424,10 +426,10 @@ const drawCriticalityPoints = (
  * @returns {undefined} - returns nothing
  */
 const translatePairedResultGraph = (scale, config, canvasSVG) => {
-    translateSelectionBox(scale, canvasSVG);
-    translateSelectionItem(scale, canvasSVG);
+    translateSelectionBox(scale, canvasSVG, config);
+    translateSelectionItem(scale, canvasSVG, config);
     translateLines(scale, config, canvasSVG);
-    translatePoints(scale, canvasSVG);
+    translatePoints(scale, canvasSVG, config);
 };
 /**
  * Show/hide regions based on the following criteria:
