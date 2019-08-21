@@ -1069,25 +1069,25 @@ describe("Graph", () => {
             expect(legend.getAttribute("role")).toBe("list");
         });
         it("Creates canvas elements in order", () => {
-            const defsElement = fetchElementByClass(styles.canvas)
-                .childNodes[0];
             const regionElement = fetchElementByClass(styles.canvas)
-                .childNodes[1];
+                .childNodes[0];
             const gridElement = fetchElementByClass(styles.canvas)
-                .childNodes[2];
+                .childNodes[1];
             const contentContainer = fetchElementByClass(styles.canvas)
-                .childNodes[3];
+                .childNodes[2];
             const axisXElement = fetchElementByClass(styles.canvas)
-                .childNodes[4];
+                .childNodes[3];
             const axisYElement = fetchElementByClass(styles.canvas)
-                .childNodes[5];
+                .childNodes[4];
             const axisInfoRowElement = fetchElementByClass(styles.canvas)
-                .childNodes[6];
+                .childNodes[5];
             const axisXLabelElement = fetchElementByClass(styles.canvas)
-                .childNodes[7];
+                .childNodes[6];
             const axisYLabelElement = fetchElementByClass(styles.canvas)
-                .childNodes[8];
+                .childNodes[7];
             const axisReferenceLintElement = fetchElementByClass(styles.canvas)
+                .childNodes[8];
+            const defsElement = fetchElementByClass(styles.canvas)
                 .childNodes[9];
             expect(defsElement).not.toBeNull();
             expect(regionElement).not.toBeNull();
@@ -1156,7 +1156,7 @@ describe("Graph", () => {
                 graph.config.axisSizes.y2 +
                 graph.config.axisLabelWidths.y +
                 graph.config.axisLabelWidths.y2;
-            const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            const defsElement = fetchElementByClass(styles.canvas).lastChild;
             expect(defsElement.nodeName).toBe("defs");
             expect(defsElement.firstChild.nodeName).toBe("clipPath");
             expect(defsElement.firstChild.firstChild.nodeName).toBe("rect");
@@ -1171,7 +1171,7 @@ describe("Graph", () => {
         });
         it("Creates region container", () => {
             const regionElement = fetchElementByClass(styles.canvas)
-                .childNodes[1];
+                .childNodes[0];
             expect(regionElement.nodeName).toBe("g");
             expect(regionElement.getAttribute("class")).toBe(
                 styles.regionGroup
@@ -2372,7 +2372,7 @@ describe("Graph", () => {
         it("Sets the defs clipPath width and height correctly", () => {
             graphContainer.setAttribute("style", "width: 800px; height: 200px");
             graph.resize();
-            const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            const defsElement = fetchElementByClass(styles.canvas).lastChild;
             const clipPathRect = defsElement.firstChild.firstChild;
             expect(toNumber(clipPathRect.getAttribute("height"))).toBe(
                 graph.config.height
@@ -2819,7 +2819,8 @@ describe("Graph", () => {
                     y2: Object({})
                 }),
                 shownTargets: Object({}),
-                dateline: []
+                dateline: [],
+                pan: {}
             });
             expect(graph.axis).toEqual({
                 axisInfoRow: Object({

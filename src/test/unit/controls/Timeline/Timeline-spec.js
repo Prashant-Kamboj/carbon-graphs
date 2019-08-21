@@ -1737,7 +1737,8 @@ describe("Timeline", () => {
                 axis: Object({
                     x: Object({})
                 }),
-                shownTargets: Object({})
+                shownTargets: Object({}),
+                pan: {}
             });
             expect(timeline.axis).toEqual({});
             expect(timeline.scale).toEqual({});

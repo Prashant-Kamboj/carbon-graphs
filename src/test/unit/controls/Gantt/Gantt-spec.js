@@ -591,16 +591,16 @@ describe("Gantt", () => {
             expect(legend).toBeUndefined();
         });
         it("Creates canvas elements in order", () => {
-            const defsElement = fetchElementByClass(styles.canvas)
-                .childNodes[0];
             const gridElement = fetchElementByClass(styles.canvas)
-                .childNodes[1];
+                .childNodes[0];
             const contentContainer = fetchElementByClass(styles.canvas)
-                .childNodes[2];
+                .childNodes[1];
             const axisXElement = fetchElementByClass(styles.canvas)
-                .childNodes[3];
+                .childNodes[2];
             const axisYElement = fetchElementByClass(styles.canvas)
-                .childNodes[4];
+                .childNodes[3];
+            const defsElement = fetchElementByClass(styles.canvas)
+                .childNodes[5];
             expect(defsElement).not.toBeNull();
             expect(gridElement).not.toBeNull();
             expect(axisXElement).not.toBeNull();
@@ -638,7 +638,7 @@ describe("Gantt", () => {
                 gantt.config.axisSizes.y +
                 gantt.config.axisLabelWidths.y +
                 (constants.PADDING.top + constants.PADDING.bottom) * 2;
-            const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            const defsElement = fetchElementByClass(styles.canvas).lastChild;
             expect(defsElement.nodeName).toBe("defs");
             expect(defsElement.firstChild.nodeName).toBe("clipPath");
             expect(defsElement.firstChild.firstChild.nodeName).toBe("rect");
@@ -2089,8 +2089,8 @@ describe("Gantt", () => {
             );
             triggerEvent(window, "resize", () => {
                 const defsElement = fetchElementByClass(styles.canvas)
-                    .firstChild;
-                const clipPathRect = defsElement.firstChild.firstChild;
+                    .lastChild;
+                const clipPathRect = defsElement.lastChild.firstChild;
                 expect(+clipPathRect.getAttribute("height")).toBe(
                     gantt.config.height
                 );
@@ -2479,7 +2479,8 @@ describe("Gantt", () => {
                 }),
                 shownTargets: Object({}),
                 actionLegend: [],
-                dateline: []
+                dateline: [],
+                pan: {}
             });
             expect(gantt.axis).toEqual({});
             expect(gantt.scale).toEqual({});

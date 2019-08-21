@@ -120,11 +120,11 @@ const translateLines = (scale, config, canvasSVG) =>
  *
  * @private
  * @param {object} scale - d3 scale for Graph
- * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} config - config object derived from input JSON
  * @returns {object} - d3 select object
  */
-const translatePoints = (scale, config, canvasSVG) =>
+const translatePoints = (scale, canvasSVG, config) =>
     iterateOnPairType((type) => {
         canvasSVG
             .selectAll(
