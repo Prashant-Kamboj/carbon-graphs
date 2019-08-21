@@ -20,7 +20,8 @@ import { renderColorsExample } from "./examples/controls/colors";
 import {
     renderCombinationBar,
     renderCombinationRegion,
-    renderCombinationSimple
+    renderCombinationSimple,
+    renderCombinationIdenticalDatasetRegion
 } from "./examples/controls/combination";
 import {
     renderCriticalityLineSimple,
@@ -68,7 +69,8 @@ import {
     renderLineY2Axis,
     renderLineYHidden,
     renderMultiLine,
-    renderMultiLineRegion
+    renderMultiLineRegion,
+    renderMultiLineIdenticalDatasetRegion
 } from "./examples/controls/line";
 import {
     renderMultiPairedResultRegion,
@@ -94,7 +96,9 @@ import { renderPieLegendTo, renderPieSimple } from "./examples/controls/pie";
 import {
     renderCriticalityShapes,
     renderFillTypes,
-    renderShapesSimple
+    renderShapesSimple,
+    renderShapesSimpleLight,
+    renderCriticalityShapesLight
 } from "./examples/controls/shapes";
 import { renderSplineLine } from "./examples/controls/spline";
 import { renderTimeline } from "./examples/controls/timeline";
@@ -552,6 +556,16 @@ renderSiteApp(
                     ]
                 },
                 {
+                    pathname: "/regions/multi-line",
+                    children: [
+                        {
+                            pathname: "/regions/multi-line/identical",
+                            content: renderMultiLineIdenticalDatasetRegion,
+                            title: "Dataset Region Identical"
+                        }
+                    ]
+                },
+                {
                     pathname: "/regions/paired-result",
                     children: [
                         {
@@ -594,6 +608,11 @@ renderSiteApp(
                             pathname: "/regions/combination/simple",
                             content: renderCombinationRegion,
                             title: "Simple"
+                        },
+                        {
+                            pathname: "/regions/combination/identical",
+                            content: renderCombinationIdenticalDatasetRegion,
+                            title: "Dataset Region Identical"
                         }
                     ]
                 }
@@ -644,6 +663,16 @@ renderSiteApp(
                             pathname: "/styles/shapes/critical",
                             content: renderCriticalityShapes,
                             title: "Criticality"
+                        },
+                        {
+                            pathname: "/styles/shapes/standard-light",
+                            content: renderShapesSimpleLight,
+                            title: "Standard - Light"
+                        },
+                        {
+                            pathname: "/styles/shapes/critical-light",
+                            content: renderCriticalityShapesLight,
+                            title: "Criticality - Light"
                         },
                         {
                             pathname: "/styles/shapes/fills",
