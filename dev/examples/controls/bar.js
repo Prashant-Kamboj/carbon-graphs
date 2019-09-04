@@ -392,7 +392,7 @@ export const renderBarPanning = (id) => {
         d3.select(".carbon-graph-container").remove();
         //   numberedTicks.values.unshift(axisData.axis.x.lowerLimit);
         //   numberedTicks.values.pop()
-        console.log(numberedTicks.values);
+        //console.log(numberedTicks.values);
         axisData.axis.x.lowerLimit = axisData.axis.x.lowerLimit - 1;
         axisData.axis.x.upperLimit = axisData.axis.x.upperLimit - 1;
         createGraph();
