@@ -6,7 +6,7 @@ import { getRect } from "../../../helpers/barType";
 import constants, { COLORS } from "../../../helpers/constants";
 import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
-import { validateActivity } from "../GanttConfig";
+import { validateActivity, settingsDictionary } from "../GanttConfig";
 import { getXAxisYPosition, isHashed } from "./creationHelpers";
 import {
     getActivityDuration,
@@ -165,7 +165,7 @@ const drawActivities = (
     activityPath
         .exit()
         .transition()
-        .call(constants.d3Transition)
+        .call(constants.d3Transition(settingsDictionary(config).transition))
         .remove();
 };
 

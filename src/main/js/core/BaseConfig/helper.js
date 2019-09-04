@@ -29,7 +29,7 @@ export const validateBaseInput = (input) => {
     if (utils.isEmpty(input.key)) {
         throw new Error(errors.THROW_MSG_UNIQUE_KEY_NOT_PROVIDED);
     }
-    if (utils.isEmpty(input.values)) {
+    if (!utils.isArray(input.values)) {
         throw new Error(errors.THROW_MSG_NO_DATA_POINTS);
     }
 };
@@ -58,6 +58,15 @@ export const getType = (type) => getDefaultValue(type, AXIS_TYPE.DEFAULT);
  * @returns {string} Clip path ID
  */
 export const generateClipPathId = () => `carbon-${+new Date()}-clip`;
+
+/**
+ * Generates a clip path ID for Dateline based on current date
+ *
+ * @private
+ * @returns {string} Clip path Dateline ID
+ */
+export const generateClipPathDatelineId = () =>
+    `carbon-${+new Date()}-dateline-clip`;
 /**
  * Interpolation type can be:
  * * Linear (default)

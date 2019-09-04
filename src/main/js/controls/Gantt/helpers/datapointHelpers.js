@@ -8,6 +8,7 @@ import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
 import { getXAxisYPosition } from "./creationHelpers";
 import { transformPoint } from "./translateHelpers";
+import { settingsDictionary } from "../GanttConfig";
 
 /**
  * Renders the action items for a track. The data points provided are of ISO8601 datetime format
@@ -45,7 +46,7 @@ export const drawDataPoints = (
     pointPath
         .exit()
         .transition()
-        .call(constants.d3Transition)
+        .call(constants.d3Transition(settingsDictionary(config).transition))
         .remove();
 };
 

@@ -29,6 +29,7 @@ import {
     translateBarGraph,
     translateTextLabel
 } from "./helpers/translateHelpers";
+import { settingsDictionary } from "../Graph/GraphConfig";
 
 /**
  * Calculates the min and max values for Y Axis or Y2 Axis
@@ -163,7 +164,8 @@ class Bar extends GraphContent {
         removeLegendItem(graph.legendSVG, this.dataTarget);
         removeLabelShapeItem(
             graph.axesLabelShapeGroup[this.config.yAxis],
-            this.dataTarget
+            this.dataTarget,
+            graph.config
         );
         removeAxisInfoRowLabels(
             graph.svg.select(`.${styles.axisInfoRow}`),
@@ -191,7 +193,8 @@ class Bar extends GraphContent {
             this.ordinalScale,
             graph.svg,
             this.dataTarget,
-            graph.config
+            graph.config,
+            settingsDictionary(graph.config).transition
         );
         if (utils.notEmpty(this.dataTarget.axisInfoRow)) {
             translateTextLabel(
@@ -200,7 +203,8 @@ class Bar extends GraphContent {
                 graph.config,
                 graph.svg,
                 this.dataTarget.axisInfoRow,
-                this.dataTarget
+                this.dataTarget,
+                settingsDictionary(graph.config).transition
             );
         }
         if (utils.notEmpty(this.dataTarget.regions)) {
@@ -216,7 +220,8 @@ class Bar extends GraphContent {
                 graph.config,
                 graph.svg.selectAll(
                     `rect[aria-describedby=region_${this.dataTarget.key}]`
-                )
+                ),
+                settingsDictionary(graph.config).transition
             );
         }
         return this;

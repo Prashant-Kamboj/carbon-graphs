@@ -1,7 +1,10 @@
 "use strict";
 import d3 from "d3";
 import BaseConfig, { getDefaultValue, getDomain } from "../../core/BaseConfig";
-import { generateClipPathId } from "../../core/BaseConfig/helper";
+import {
+    generateClipPathId,
+    generateClipPathDatelineId
+} from "../../core/BaseConfig/helper";
 import { hasY2Axis } from "../../helpers/axis";
 import constants, {
     AXES_ORIENTATION,
@@ -80,12 +83,15 @@ export const processInput = (input, config, type) => {
         return config;
     };
     config.clipPathId = generateClipPathId();
+    config.clipPathDatelineId = generateClipPathDatelineId();
     config.bindTo = input.bindTo;
     config.bindLegendTo = input.bindLegendTo;
     config.axis = _axis;
     config.dateline = getDefaultValue(utils.deepClone(input.dateline), []);
     config.padding = getPadding(config, input.padding);
-    config.locale = d3.locale(getDefaultValue(input.locale, DEFAULT_LOCALE));
+    config.locale = getDefaultValue(input.locale, DEFAULT_LOCALE);
+    config.showNoDataText = getDefaultValue(input.showNoDataText, true);
+    config.d3Locale = d3.locale(getDefaultValue(input.locale, DEFAULT_LOCALE));
     config.throttle = getDefaultValue(
         input.throttle,
         constants.RESIZE_THROTTLE
@@ -162,7 +168,42 @@ export const validateContent = (content, input) => {
         throw new Error(errors.THROW_MSG_NON_UNIQUE_PROPERTY);
     }
 };
-
+/**
+ * Checks if panning is enabled or not
+ *
+ * @private
+ * @param {object} config - config object used by the graph.
+ * @returns {boolean} returns true of panning enabled else false.
+ */
+export const isPanningModeEnabled = (config) => {
+    if (config.pan !== undefined && config.pan.enabled) {
+        return true;
+    }
+    return false;
+};
+/**
+ * Used to set the clamp and transition when panning is enabled or not.
+ *
+ * @private
+ * @param {object} config - config object used by the graph.
+ * @returns {undefined} returns nothing
+ */
+export const settingsDictionary = (config) =>
+    isPanningModeEnabled(config)
+        ? {
+              shouldClamp: false,
+              transition: {
+                  duration: 0,
+                  ease: "linear"
+              }
+          }
+        : {
+              shouldClamp: true,
+              transition: {
+                  duration: 250,
+                  ease: "linear"
+              }
+          };
 /**
  * API to parse consumer input for Graph
  *

@@ -14,7 +14,8 @@ import {
     renderBarTimeSeriesWithDateline,
     renderBarTimeSeriesXOrientationTop,
     renderSimpleBarAxisInfoTextLabels,
-    renderStackedBarAxisInfoTextLabels
+    renderStackedBarAxisInfoTextLabels,
+    renderBarPanning
 } from "./examples/controls/bar";
 import { renderColorsExample } from "./examples/controls/colors";
 import {
@@ -40,7 +41,8 @@ import {
     renderGanttPercentage,
     renderGanttStyle,
     renderGanttTrackSelection,
-    renderGanttTruncate
+    renderGanttTruncate,
+    renderGanttPanning
 } from "./examples/controls/gantt";
 import {
     renderGoalLine,
@@ -70,7 +72,9 @@ import {
     renderLineYHidden,
     renderMultiLine,
     renderMultiLineRegion,
-    renderMultiLineIdenticalDatasetRegion
+    renderMultiLineIdenticalDatasetRegion,
+    renderNoDataView,
+    renderLineWithPanning
 } from "./examples/controls/line";
 import {
     renderMultiPairedResultRegion,
@@ -90,16 +94,22 @@ import {
     renderPairedResultXOrientationTop,
     renderPairedResultXStaticTicks,
     renderPairedResultY2Axis,
-    renderPairedResultYHidden
+    renderPairedResultYHidden,
+    renderPairedResultPanning
 } from "./examples/controls/pairedResult";
 import { renderPieLegendTo, renderPieSimple } from "./examples/controls/pie";
 import {
     renderCriticalityShapes,
     renderFillTypes,
-    renderShapesSimple
+    renderShapesSimple,
+    renderShapesSimpleLight,
+    renderCriticalityShapesLight
 } from "./examples/controls/shapes";
 import { renderSplineLine } from "./examples/controls/spline";
-import { renderTimeline } from "./examples/controls/timeline";
+import {
+    renderTimeline,
+    renderTimelinePanning
+} from "./examples/controls/timeline";
 import { createElementLegendBindTo } from "./examples/helpers";
 
 renderSiteApp(
@@ -154,6 +164,16 @@ renderSiteApp(
                     pathname: "/line/shapes-hidden",
                     content: renderLineShapesHidden,
                     title: "Shapes Hidden"
+                },
+                {
+                    pathname: "/line/no-data",
+                    content: renderNoDataView,
+                    title: "No Data"
+                },
+                {
+                    pathname: "/line/panning-mode",
+                    content: renderLineWithPanning,
+                    title: "Panning Mode"
                 }
             ]
         },
@@ -224,6 +244,11 @@ renderSiteApp(
                     pathname: "/paired-result/legend-item-disabled",
                     content: renderPairedResultLegendItemDisabled,
                     title: "Legend Item Disabled"
+                },
+                {
+                    pathname: "/paired-result/panning-mode",
+                    content: renderPairedResultPanning,
+                    title: "Panning Mode"
                 }
             ]
         },
@@ -269,6 +294,11 @@ renderSiteApp(
                     pathname: "/bar/stacked-axis-info-text-labels",
                     content: renderStackedBarAxisInfoTextLabels,
                     title: "Stacked - Axis Info Text Labels"
+                },
+                {
+                    pathname: "/bar/panning-mode",
+                    content: renderBarPanning,
+                    title: "Panning Mode"
                 }
             ]
         },
@@ -329,6 +359,11 @@ renderSiteApp(
                     pathname: "/gantt/label-truncation",
                     content: renderGanttTruncate,
                     title: "Label Truncation"
+                },
+                {
+                    pathname: "/gantt/panning-mode",
+                    content: renderGanttPanning,
+                    title: "Panning Mode"
                 }
             ]
         },
@@ -339,6 +374,11 @@ renderSiteApp(
                     pathname: "/timeline/simple",
                     content: renderTimeline,
                     title: "Simple"
+                },
+                {
+                    pathname: "/timeline/panning-mode",
+                    content: renderTimelinePanning,
+                    title: "Panning Mode"
                 }
             ]
         },
@@ -663,6 +703,16 @@ renderSiteApp(
                             title: "Criticality"
                         },
                         {
+                            pathname: "/styles/shapes/standard-light",
+                            content: renderShapesSimpleLight,
+                            title: "Standard - Light"
+                        },
+                        {
+                            pathname: "/styles/shapes/critical-light",
+                            content: renderCriticalityShapesLight,
+                            title: "Criticality - Light"
+                        },
+                        {
                             pathname: "/styles/shapes/fills",
                             content: renderFillTypes,
                             title: "Rectangle Fill"
@@ -677,5 +727,8 @@ renderSiteApp(
             ]
         }
     ],
-    "#/line/simple"
+    {
+        gettingStartedLink: "#/line/simple",
+        gitHubRepo: "https://github.com/cerner/carbon-graphs"
+    }
 );

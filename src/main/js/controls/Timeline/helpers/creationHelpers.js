@@ -28,6 +28,7 @@ import {
     getShapeForTarget
 } from "../../Graph/helpers/helpers";
 import { transformPoint } from "./translateHelpers";
+import { settingsDictionary } from "../TimelineConfig";
 
 /**
  * @typedef TimelineContent
@@ -137,7 +138,7 @@ const getAxesScale = (axis, scale, config) => {
         config.axis.x.ticks.values,
         getXAxisWidth(config),
         getAxisTickFormat(
-            config.locale,
+            config.d3Locale,
             config.axis.x.ticks.format,
             config.axis.x.type
         )
@@ -168,7 +169,7 @@ const scaleGraph = (scale, config) => {
         .scale()
         .domain(config.axis.x.domain)
         .range([0, getXAxisWidth(config)])
-        .clamp(true);
+        .clamp(settingsDictionary(config).shouldClamp);
     if (config.axis.x.rangeRounding) {
         scale.x.nice();
     }

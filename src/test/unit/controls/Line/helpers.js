@@ -17,7 +17,7 @@ export const dataPointClickHandlerSpy = sinon.spy();
  * @returns {object} input JSON
  */
 export const getInput = (
-    values = [],
+    values,
     isDefaultColor = true,
     isDefaultShape = true,
     isY2Axis = false
@@ -108,10 +108,10 @@ export const inputSecondary = {
     },
     values: valuesDefault
 };
-export const inputThird = {
+export const inputTertiary = {
     key: `uid_3`,
     label: {
-        display: "Data Label B"
+        display: "Data Label C"
     },
     values: valuesDefault
 };

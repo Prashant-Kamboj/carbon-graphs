@@ -78,9 +78,34 @@ describe("PairedResult", () => {
         it("throws error when no values are provided", () => {
             expect(() => {
                 graphDefault.loadContent(
-                    new PairedResult(getInput([], false, false))
+                    new PairedResult(getInput(undefined, false, false))
                 );
             }).toThrowError(errors.THROW_MSG_NO_DATA_POINTS);
+        });
+        it("does not throw error when empty array is provided", () => {
+            const input = utils.deepClone(getInput(valuesDefault));
+            input.values = [];
+            expect(() => {
+                graphDefault.loadContent(new PairedResult(input));
+            }).not.toThrow();
+        });
+        it("display the legend when empty array is provided as input", () => {
+            const input = utils.deepClone(getInput(valuesDefault));
+            input.values = [];
+            graphDefault.loadContent(new PairedResult(input));
+            const legendContainer = fetchElementByClass(
+                pairedResultGraphContainer,
+                styles.legend
+            );
+            const legendItems = legendContainer.children;
+            expect(legendContainer).not.toBeNull();
+            expect(legendContainer.tagName).toBe("UL");
+            expect(legendItems.length).toBe(3);
+            const legendItem = document.body.querySelector(
+                `.${styles.legendItem}`
+            );
+            expect(legendItem.getAttribute("aria-disabled")).toBe("true");
+            expect(legendItem.getAttribute("aria-selected")).toBe("true");
         });
         it("does not throw error when datetime values have milliseconds", () => {
             expect(() => {
@@ -780,7 +805,9 @@ describe("PairedResult", () => {
                         `.${styles.pairedPoint}.${styles.high}`
                     );
                     expect(
-                        points.firstChild.attributes.getNamedItem("d").value
+                        points.firstChild.firstChild.attributes.getNamedItem(
+                            "d"
+                        ).value
                     ).toBe(SHAPES.TEAR_ALT.path.d);
                 });
                 it("mid", () => {
@@ -792,7 +819,9 @@ describe("PairedResult", () => {
                         `.${styles.pairedPoint}.${styles.mid}`
                     );
                     expect(
-                        points.firstChild.attributes.getNamedItem("d").value
+                        points.firstChild.firstChild.attributes.getNamedItem(
+                            "d"
+                        ).value
                     ).toBe(SHAPES.RHOMBUS.path.d);
                 });
                 it("low", () => {
@@ -804,7 +833,9 @@ describe("PairedResult", () => {
                         `.${styles.pairedPoint}.${styles.low}`
                     );
                     expect(
-                        points.firstChild.attributes.getNamedItem("d").value
+                        points.firstChild.firstChild.attributes.getNamedItem(
+                            "d"
+                        ).value
                     ).toBe(SHAPES.TEAR_DROP.path.d);
                 });
             });
@@ -849,11 +880,14 @@ describe("PairedResult", () => {
                         pairedResultGraphContainer,
                         styles.dataPointSelection
                     );
+                    const selectionElementGroup = selectionElement.firstChild;
                     expect(selectionElement.tagName).toBe("svg");
-                    expect(selectionElement.firstChild.nodeName).toBe("path");
-                    expect(selectionElement.firstChild.getAttribute("id")).toBe(
-                        "circle"
+                    expect(selectionElementGroup.firstChild.nodeName).toBe(
+                        "path"
                     );
+                    expect(
+                        selectionElementGroup.firstChild.getAttribute("d")
+                    ).toBe(SHAPES.CIRCLE.path.d);
                     expect(selectionElement.classList).toContain(
                         styles.dataPointSelection
                     );
@@ -887,11 +921,14 @@ describe("PairedResult", () => {
                         pairedResultGraphContainer,
                         styles.dataPointSelection
                     );
+                    const selectionElementGroup = selectionElement.firstChild;
                     expect(selectionElement.tagName).toBe("svg");
-                    expect(selectionElement.firstChild.nodeName).toBe("path");
-                    expect(selectionElement.firstChild.getAttribute("id")).toBe(
-                        "circle"
+                    expect(selectionElementGroup.firstChild.nodeName).toBe(
+                        "path"
                     );
+                    expect(
+                        selectionElementGroup.firstChild.getAttribute("d")
+                    ).toBe(SHAPES.CIRCLE.path.d);
                     expect(selectionElement.classList).toContain(
                         styles.dataPointSelection
                     );
@@ -925,11 +962,14 @@ describe("PairedResult", () => {
                         pairedResultGraphContainer,
                         styles.dataPointSelection
                     );
+                    const selectionElementGroup = selectionElement.firstChild;
                     expect(selectionElement.tagName).toBe("svg");
-                    expect(selectionElement.firstChild.nodeName).toBe("path");
-                    expect(selectionElement.firstChild.getAttribute("id")).toBe(
-                        "circle"
+                    expect(selectionElementGroup.firstChild.nodeName).toBe(
+                        "path"
                     );
+                    expect(
+                        selectionElementGroup.firstChild.getAttribute("d")
+                    ).toBe(SHAPES.CIRCLE.path.d);
                     expect(selectionElement.classList).toContain(
                         styles.dataPointSelection
                     );
@@ -3117,8 +3157,10 @@ describe("PairedResult", () => {
         });
         describe("When multi-paired result with multi-regions with same data", () => {
             let inputPrimary = null;
+            let inputThird = null;
             let pairedResultPrimaryContent = null;
             let pairedResultSecondaryContent = null;
+            let pairedResultThirdContent = null;
             beforeEach(() => {
                 inputPrimary = getInput(valuesDefault, false, false);
                 inputPrimary.regions = multiRegionSameData;
@@ -3155,13 +3197,38 @@ describe("PairedResult", () => {
                     `region_${inputSecondary.key}_low`
                 );
             });
+            it("Hide region if region is missing for any value(high, mid, low) even if regions are same", () => {
+                inputThird = {
+                    key: `uid_3`,
+                    label: {
+                        high: {
+                            display: "Data Label 3 High"
+                        },
+                        mid: {
+                            display: "Data Label 3 Median"
+                        },
+                        low: {
+                            display: "Data Label 3 Low"
+                        }
+                    },
+                    values: valuesDefault
+                };
+                inputThird.regions = regionMissing;
+                pairedResultThirdContent = new PairedResult(inputThird);
+                graphDefault.loadContent(pairedResultThirdContent);
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(8);
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("true");
+                });
+            });
         });
         describe("When multi-paired result with multi-regions not same", () => {
             let inputPrimary = null;
-            let inputThird = null;
             let pairedResultPrimaryContent = null;
             let pairedResultSecondaryContent = null;
-            let pairedResultThirdContent = null;
             beforeEach(() => {
                 inputPrimary = getInput(valuesDefault, false, false);
                 inputPrimary.regions = multiRegionNotSame;
@@ -3200,34 +3267,6 @@ describe("PairedResult", () => {
                 expect(regionsElement[6].getAttribute("aria-describedby")).toBe(
                     `region_${inputSecondary.key}_low`
                 );
-            });
-            it("Hide region if region is missing for any value(high, mid, low)", () => {
-                inputThird = {
-                    key: `uid_3`,
-                    regions: simpleRegion,
-                    label: {
-                        high: {
-                            display: "Data Label 3 High"
-                        },
-                        mid: {
-                            display: "Data Label 3 Median"
-                        },
-                        low: {
-                            display: "Data Label 3 Low"
-                        }
-                    },
-                    values: valuesDefault
-                };
-                inputThird.regions = regionMissing;
-                pairedResultThirdContent = new PairedResult(inputThird);
-                graphDefault.loadContent(pairedResultThirdContent);
-                const regionsElement = document.querySelectorAll(
-                    `.${styles.region}`
-                );
-                expect(regionsElement.length).toBe(9);
-                regionsElement.forEach((element) => {
-                    expect(element.getAttribute("aria-hidden")).toBe("true");
-                });
             });
         });
         describe("On legend item click", () => {
@@ -3454,11 +3493,11 @@ describe("PairedResult", () => {
                 const criticalOuterElementPath = fetchElementByClass(
                     pairedResultGraphContainer,
                     styles.criticalityOuterPoint
-                ).firstChild;
+                ).firstChild.firstChild;
                 const criticalInnerElementPath = fetchElementByClass(
                     pairedResultGraphContainer,
                     styles.criticalityInnerPoint
-                ).firstChild;
+                ).firstChild.firstChild;
                 expect(criticalOuterElementPath.getAttribute("d")).toBe(
                     SHAPES.TEAR_ALT.path.d
                 );
@@ -4126,6 +4165,36 @@ describe("PairedResult", () => {
                             done();
                         });
                     });
+                });
+            });
+        });
+    });
+    describe("On legend item click", () => {
+        let inputPrimary = null;
+        let pairedResultPrimaryContent = null;
+        let pairedResultSecondaryContent = null;
+        beforeEach(() => {
+            inputPrimary = getInput(valuesDefault, false, false);
+            inputPrimary.regions = multiRegionSameData;
+            pairedResultPrimaryContent = new PairedResult(inputPrimary);
+            inputSecondary.regions = multiRegionSameData;
+            pairedResultSecondaryContent = new PairedResult(inputSecondary);
+            graphDefault.loadContent(pairedResultPrimaryContent);
+            graphDefault.loadContent(pairedResultSecondaryContent);
+        });
+        describe("When Multiple-paired result", () => {
+            it("Show region on legend click if regions are same", (done) => {
+                const legendItem = pairedResultGraphContainer.querySelector(
+                    `.${styles.legendItem}[aria-describedby="${inputPrimary.key}_low"]`
+                );
+                triggerEvent(legendItem, "click", () => {
+                    const regionElement = document.querySelector(
+                        `rect[aria-describedby="region_${inputPrimary.key}_low"]`
+                    );
+                    expect(regionElement.getAttribute("aria-hidden")).toBe(
+                        "false"
+                    );
+                    done();
                 });
             });
         });

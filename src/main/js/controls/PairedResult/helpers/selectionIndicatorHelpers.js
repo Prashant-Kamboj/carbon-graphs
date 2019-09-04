@@ -225,21 +225,22 @@ const transformPartialPoint = (scale) => (value) => (scaleFactor) => {
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} - d3 select object
  */
-export const translateSelectionBox = (scale, canvasSVG) =>
+export const translateSelectionBox = (scale, canvasSVG, transition) =>
     canvasSVG
         .selectAll(
             `.${styles.pairedBoxGroup} rect.${styles.dataPointSelection}`
         )
         .transition()
-        .call(constants.d3Transition)
+        .call(constants.d3Transition(transition))
         .each(function(value) {
             return updateSelectionIndicatorAttributes(
                 d3
                     .select(this)
                     .transition()
-                    .call(constants.d3Transition),
+                    .call(constants.d3Transition(transition)),
                 scale,
                 value
             );
@@ -252,17 +253,18 @@ export const translateSelectionBox = (scale, canvasSVG) =>
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} - d3 select object
  */
-export const translateSelectionItem = (scale, canvasSVG) =>
+export const translateSelectionItem = (scale, canvasSVG, transition) =>
     canvasSVG
         .selectAll(`.${styles.pairedBoxGroup} .${styles.dataPointSelection}`)
         .each(function(value) {
             return d3
                 .select(this)
-                .selectAll("path")
+                .select("g")
                 .transition()
-                .call(constants.d3Transition)
+                .call(constants.d3Transition(transition))
                 .attr("transform", function() {
                     return transformPartialPoint(
                         scale

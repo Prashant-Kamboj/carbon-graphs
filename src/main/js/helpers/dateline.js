@@ -21,16 +21,23 @@ import { getXAxisXPosition, getYAxisHeight, getYAxisYPosition } from "./axis";
  * @param {object} config - config object derived from input JSON
  * @param {Array} canvasSVG - d3 object of canvas svg
  * @param {Function} yAxisPositionHandler - call back to get y-axis position.Functions differ based on Constructs used
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translateDateline = (scale, config, canvasSVG, yAxisPositionHandler) => {
+const translateDateline = (
+    scale,
+    config,
+    canvasSVG,
+    yAxisPositionHandler,
+    transition
+) => {
     if (utils.isEmpty(config.dateline)) {
         return;
     }
     const datelineGroup = canvasSVG
         .selectAll(`.${styles.datelineGroup}`)
         .transition()
-        .call(constants.d3Transition)
+        .call(constants.d3Transition(transition))
         .attr(
             "transform",
             `translate(${getXAxisXPosition(config)},${yAxisPositionHandler(
@@ -39,7 +46,7 @@ const translateDateline = (scale, config, canvasSVG, yAxisPositionHandler) => {
         );
     datelineGroup
         .selectAll(`.${styles.datelinePoint}`)
-        .select("path")
+        .select("g")
         .attr("transform", function(d) {
             return `translate(${scale.x(
                 utils.parseDateTime(d.value)
@@ -100,12 +107,25 @@ const datelineClickHandler = (value, target) => {
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {Array} canvasSVG - d3 object of canvas svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const createDateline = (scale, config, canvasSVG) => {
-    const datelineContent = canvasSVG
-        .append("g")
-        .classed(styles.datelineContent, true);
+const createDateline = (scale, config, canvasSVG, transition) => {
+    let datelineContent;
+    if (
+        config.pan !== undefined &&
+        utils.isBoolean(config.pan.enabled) &&
+        config.pan.enabled
+    ) {
+        datelineContent = canvasSVG
+            .append("g")
+            .classed(styles.datelineContent, true)
+            .attr("clip-path", `url(#${config.clipPathDatelineId})`);
+    } else {
+        datelineContent = canvasSVG
+            .append("g")
+            .classed(styles.datelineContent, true);
+    }
     config.dateline.forEach((dateline) => {
         const datelineGroup = datelineContent
             .append("g")
@@ -144,7 +164,7 @@ const createDateline = (scale, config, canvasSVG) => {
             )
         );
     });
-    translateDateline(scale, config, canvasSVG, getYAxisYPosition);
+    translateDateline(scale, config, canvasSVG, getYAxisYPosition, transition);
 };
 /**
  * redraw a dateline for graph. To add the dateline content on top of the content
@@ -155,12 +175,13 @@ const createDateline = (scale, config, canvasSVG) => {
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {Array} canvasSVG - d3 object of canvas svg
+ * @param {object} transition - gets transition based on panning mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const redrawDatelineContent = (scale, config, canvasSVG) => {
+const redrawDatelineContent = (scale, config, canvasSVG, transition) => {
     if (!canvasSVG.select(`.${styles.datelineContent}`).empty()) {
         canvasSVG.select(`.${styles.datelineContent}`).remove();
-        createDateline(scale, config, canvasSVG);
+        createDateline(scale, config, canvasSVG, transition);
     }
 };
 /**

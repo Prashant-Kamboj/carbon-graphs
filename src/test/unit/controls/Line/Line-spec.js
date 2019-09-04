@@ -33,7 +33,7 @@ import {
     inputSecondary,
     valuesDefault,
     valuesTimeSeries,
-    inputThird
+    inputTertiary
 } from "./helpers";
 
 describe("Line", () => {
@@ -71,8 +71,33 @@ describe("Line", () => {
         });
         it("throws error when no values are provided", () => {
             expect(() => {
-                graphDefault.loadContent(new Line(getInput([], false, false)));
+                graphDefault.loadContent(
+                    new Line(getInput(undefined, false, false))
+                );
             }).toThrowError(errors.THROW_MSG_NO_DATA_POINTS);
+        });
+        it("display the legend when values are provided", () => {
+            const input = getInput(valuesDefault);
+            graphDefault.loadContent(new Line(input));
+            const legendContainer = fetchElementByClass(
+                lineGraphContainer,
+                styles.legend
+            );
+            const legendItems = legendContainer.children;
+            expect(legendContainer).not.toBeNull();
+            expect(legendContainer.tagName).toBe("UL");
+            expect(legendItems.length).toBe(1);
+            const legendItem = document.body.querySelector(
+                `.${styles.legendItem}`
+            );
+            expect(legendItem.getAttribute("aria-disabled")).toBe("false");
+        });
+        it("does not throw error when empty array is provided", () => {
+            const input = utils.deepClone(getInput(valuesDefault));
+            input.values = [];
+            expect(() => {
+                graphDefault.loadContent(new Line(input));
+            }).not.toThrow();
         });
         it("does not throw error when datetime values have milliseconds", () => {
             expect(() => {
@@ -553,7 +578,8 @@ describe("Line", () => {
                 );
                 const points = fetchElementByClass(pointsGroup, styles.point);
                 expect(
-                    points.firstChild.attributes.getNamedItem("d").value
+                    points.firstChild.firstChild.attributes.getNamedItem("d")
+                        .value
                 ).toBe(SHAPES.RHOMBUS.path.d);
             });
             it("points have correct unique key assigned", () => {
@@ -587,9 +613,9 @@ describe("Line", () => {
                     styles.dataPointSelection
                 );
                 expect(selectedPoints.tagName).toBe("svg");
-                expect(selectedPoints.children[0].getAttribute("id")).toBe(
-                    "circle"
-                );
+                expect(
+                    selectedPoints.firstChild.firstChild.getAttribute("d")
+                ).toBe(SHAPES.CIRCLE.path.d);
             });
             it("selected data point has correct unique key assigned", () => {
                 const selectedPoints = fetchElementByClass(
@@ -908,6 +934,22 @@ describe("Line", () => {
             });
         });
         describe("prepares to load legend item", () => {
+            it("display the legend when empty array is provided as input", () => {
+                graphDefault.loadContent(new Line(getInput([], false, true)));
+                const legendContainer = fetchElementByClass(
+                    lineGraphContainer,
+                    styles.legend
+                );
+                const legendItems = legendContainer.children;
+                expect(legendContainer).not.toBeNull();
+                expect(legendContainer.tagName).toBe("UL");
+                expect(legendItems.length).toBe(1);
+                const legendItem = document.body.querySelector(
+                    `.${styles.legendItem}`
+                );
+                expect(legendItem.getAttribute("aria-disabled")).toBe("true");
+                expect(legendItem.getAttribute("aria-selected")).toBe("true");
+            });
             it("does not load if legend is opted to be hidden", () => {
                 graphDefault.destroy();
                 const input = getAxes(axisDefault);
@@ -2252,7 +2294,25 @@ describe("Line", () => {
                 expect(regionGroupElement.childNodes.length).toBe(2);
                 expect(regionElement.nodeName).toBe("rect");
             });
-            it("If region are same show face-up", () => {
+            it("Hides region if one or more is missing", () => {
+                inputTertiary.regions = null;
+                lineThird = new Line(inputTertiary);
+                graphDefault.loadContent(lineThird);
+                const regionsElement = document.querySelectorAll(
+                    `.${styles.region}`
+                );
+                expect(regionsElement.length).toBe(2);
+                regionsElement.forEach((element) => {
+                    expect(element.getAttribute("aria-hidden")).toBe("true");
+                });
+                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
+                    `region_${inputPrimary.key}`
+                );
+                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
+                    `region_${inputSecondary.key}`
+                );
+            });
+            it("Shows region if one or more are identical", () => {
                 const regionsElement = document.querySelectorAll(
                     `.${styles.region}`
                 );
@@ -2267,14 +2327,14 @@ describe("Line", () => {
                     `region_${inputSecondary.key}`
                 );
             });
-            it("If region is not same hide the region", () => {
-                inputThird.regions = [
+            it("Hides region if one or more are not identical", () => {
+                inputTertiary.regions = [
                     {
                         start: 1,
                         end: 10
                     }
                 ];
-                lineThird = new Line(inputThird);
+                lineThird = new Line(inputTertiary);
                 graphDefault.loadContent(lineThird);
                 const regionsElement = document.querySelectorAll(
                     `.${styles.region}`
@@ -2290,24 +2350,7 @@ describe("Line", () => {
                     `region_${inputSecondary.key}`
                 );
                 expect(regionsElement[2].getAttribute("aria-describedby")).toBe(
-                    `region_${inputThird.key}`
-                );
-            });
-            it("If any region is missing hide regions", () => {
-                lineThird = new Line(inputThird);
-                graphDefault.loadContent(lineThird);
-                const regionsElement = document.querySelectorAll(
-                    `.${styles.region}`
-                );
-                expect(regionsElement.length).toBe(2);
-                regionsElement.forEach((element) => {
-                    expect(element.getAttribute("aria-hidden")).toBe("true");
-                });
-                expect(regionsElement[0].getAttribute("aria-describedby")).toBe(
-                    `region_${inputPrimary.key}`
-                );
-                expect(regionsElement[1].getAttribute("aria-describedby")).toBe(
-                    `region_${inputSecondary.key}`
+                    `region_${inputTertiary.key}`
                 );
             });
         });
@@ -2522,12 +2565,12 @@ describe("Line", () => {
                 expect(criticalInnerElement.nodeName).toBe(
                     currentShape.nodeName
                 );
-                expect(criticalOuterElement.firstChild.getAttribute("d")).toBe(
-                    currentShape.firstChild.getAttribute("d")
-                );
-                expect(criticalInnerElement.firstChild.getAttribute("d")).toBe(
-                    currentShape.firstChild.getAttribute("d")
-                );
+                expect(
+                    criticalOuterElement.firstChild.firstChild.getAttribute("d")
+                ).toBe(currentShape.firstChild.firstChild.getAttribute("d"));
+                expect(
+                    criticalInnerElement.firstChild.firstChild.getAttribute("d")
+                ).toBe(currentShape.firstChild.firstChild.getAttribute("d"));
             });
             it("Translates properly", () => {
                 const valuesMutated = utils.deepClone(valuesDefault);

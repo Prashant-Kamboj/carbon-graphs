@@ -12,7 +12,7 @@ import {
 import constants, { COLORS } from "../../../helpers/constants";
 import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
-import { validateTask } from "../GanttConfig";
+import { validateTask, settingsDictionary } from "../GanttConfig";
 import { getXAxisYPosition, isHashed } from "./creationHelpers";
 import {
     calculatePercentage,
@@ -309,7 +309,7 @@ const drawTasks = (
     taskPath
         .exit()
         .transition()
-        .call(constants.d3Transition)
+        .call(constants.d3Transition(settingsDictionary(config).transition))
         .remove();
 };
 

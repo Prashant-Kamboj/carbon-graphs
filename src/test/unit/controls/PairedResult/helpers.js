@@ -17,7 +17,7 @@ export const dataPointClickHandlerSpy = sinon.spy();
  * @returns {object} input JSON
  */
 export const getInput = (
-    values = [],
+    values,
     isDefaultColor = true,
     isDefaultShape = true,
     isY2Axis = false
@@ -260,8 +260,8 @@ export const regionMissing = {
     high: [
         {
             axis: "y",
-            start: 40,
-            end: 120
+            start: 140,
+            end: 220
         }
     ],
     low: [

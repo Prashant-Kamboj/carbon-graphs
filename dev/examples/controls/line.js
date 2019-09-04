@@ -1,6 +1,7 @@
 import Carbon from "../../../src/main/js/carbon";
 import utils from "../../../src/main/js/helpers/utils";
 import { getDemoData } from "../data";
+import d3 from "d3";
 
 const tickValues = [
     new Date(2016, 0, 1, 1, 0).toISOString(),
@@ -418,4 +419,75 @@ export const renderLineXOrientationTop = (id) => {
         Carbon.api.line(getDemoData(`#${id}`, "LINE_DEFAULT").data[0])
     );
     return lineDefault;
+};
+export const renderNoDataView = (id) => {
+    const axisData = utils.deepClone(getDemoData(`#${id}`, "NO_DATA_VIEW"));
+    const lineDefault = Carbon.api.graph(axisData);
+    lineDefault.loadContent(
+        Carbon.api.line(getDemoData(`#${id}`, "NO_DATA_VIEW").data[0])
+    );
+    return lineDefault;
+};
+export const renderLineWithPanning = (id) => {
+    const axisData = utils.deepClone(
+        getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE")
+    );
+    axisData.pan = {
+        enabled: true
+    };
+    let initialHour = 0;
+    const createGraph = () => {
+        const graph = Carbon.api.graph(axisData);
+        const lineData = utils.deepClone(
+            getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE").data[0]
+        );
+        lineData.regions = [regions[0]];
+        graph.loadContent(Carbon.api.line(lineData));
+    };
+    //dummy function to move the graph left
+    const moveLeft = () => {
+        d3.select(".carbon-graph-container").remove();
+        const hour = initialHour + 3;
+        initialHour = hour;
+        axisData.axis.x.lowerLimit = new Date(2016, 0, 1, hour).toISOString();
+        axisData.axis.x.upperLimit = new Date(2016, 0, 2, hour).toISOString();
+        createGraph();
+    };
+    //dummy function to move the graph right
+    const moveRight = () => {
+        d3.select(".carbon-graph-container").remove();
+        const hour = initialHour - 3;
+        initialHour = hour;
+        axisData.axis.x.lowerLimit = new Date(2016, 0, 1, hour).toISOString();
+        axisData.axis.x.upperLimit = new Date(2016, 0, 2, hour).toISOString();
+        createGraph();
+    };
+
+    //creats left arrow
+    d3.selectAll("#carbon_id_y1tb2Rl")
+        .append("button")
+        .classed("chevronLeft", true)
+        .on("click", moveLeft)
+        .append("svg")
+        .attr("height", 25)
+        .attr("width", 20)
+        .append("g")
+        .attr("transform", `translate(1,4)scale(0.4,0.4)`)
+        .append("path")
+        .attr("d", "M10.3,24,33.8,0l3.9,3.8L18,24,37.7,44.2,33.8,48Z");
+
+    //creats right arrow
+    d3.selectAll("#carbon_id_y1tb2Rl")
+        .append("button")
+        .classed("chevronRight", true)
+        .on("click", moveRight)
+        .append("svg")
+        .attr("height", 25)
+        .attr("width", 20)
+        .append("g")
+        .attr("transform", `translate(0,4)scale(0.4,0.4)`)
+        .append("path")
+        .attr("d", "M37.7,24,14.2,48l-3.9-3.8L30,24,10.3,3.8,14.2,0Z");
+
+    return createGraph();
 };

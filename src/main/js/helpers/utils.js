@@ -30,6 +30,14 @@ const isFunction = (o) => typeof o === "function";
  */
 const isArray = (o) => Array.isArray(o);
 /**
+ * Checks if parameter is an Array and it is having zero elements
+ *
+ * @private
+ * @param {object} o - source object
+ * @returns {boolean} true if it is an Array and length is zero
+ */
+const isEmptyArray = (o) => Array.isArray(o) && o.length === 0;
+/**
  * Checks if parameter is a String
  *
  * @private
@@ -177,6 +185,15 @@ const isNumber = (n) => typeof n === "number" && !isNaN(n);
  * @param {Date} b - date to compare
  * @returns {boolean} true if dates are equal
  */
+/**
+ * Checks if input is a boolean or not
+ *
+ * @private
+ * @param {*} n - input to be determined a number
+ * @returns {boolean} if not undefined or null return Number, 0 otherwise
+ */
+const isBoolean = (n) => typeof n === "boolean" && !isNaN(n);
+
 const isDateEqual = (a, b) => a.getTime() === b.getTime();
 /**
  * Compares 2 values and return true if equals. False if not.
@@ -197,6 +214,7 @@ export default {
     deepClone,
     isFunction,
     isArray,
+    isEmptyArray,
     isDefined,
     isUndefined,
     isEmpty,
@@ -209,5 +227,6 @@ export default {
     parseDateTime,
     getTime,
     isDateInstance,
-    isEqual
+    isEqual,
+    isBoolean
 };

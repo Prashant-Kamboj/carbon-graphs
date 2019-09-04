@@ -4,6 +4,7 @@ import constants, { AXIS_TYPE } from "../../../helpers/constants";
 import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
 import { barAttributesHelper, getXAxisXPosition } from "./creationHelpers";
+import { settingsDictionary } from "../../Graph/GraphConfig";
 
 const PADDING = constants.DEFAULT_BAR_SELECTION_PADDING;
 
@@ -116,7 +117,7 @@ const drawSelectionBars = (scale, ordinalScale, config, canvasSVG) => {
     selectionPath
         .exit()
         .transition()
-        .call(constants.d3Transition)
+        .call(constants.d3Transition(settingsDictionary(config).transition))
         .remove();
 };
 /**
@@ -227,7 +228,7 @@ const translateSelectBars = (scale, ordinalScale, canvasSVG, config) =>
         canvasSVG
             .select(`rect[aria-describedby=bar-selector-${i}]`)
             .transition()
-            .call(constants.d3Transition)
+            .call(constants.d3Transition(settingsDictionary(config).transition))
             .attr("x", selectionAttrHelper.x())
             .attr("y", selectionAttrHelper.y())
             .attr("height", selectionAttrHelper.height())
