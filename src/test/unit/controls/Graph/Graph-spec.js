@@ -3034,6 +3034,7 @@ describe("Graph", () => {
         });
         it("Check if different clipPath for dateline is created", () => {
             const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            expect(defsElement.childElementCount).toBe(2);
             expect(defsElement.nodeName).toBe("defs");
             expect(defsElement.lastChild.nodeName).toBe("clipPath");
             expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
