@@ -3,7 +3,7 @@ import d3 from "d3";
 import BaseConfig, { getDefaultValue, getDomain } from "../../core/BaseConfig";
 import {
     generateClipPathId,
-    generateClipPathDatelineId
+    generateDatelineClipPathId
 } from "../../core/BaseConfig/helper";
 import { hasY2Axis } from "../../helpers/axis";
 import constants, {
@@ -83,7 +83,7 @@ export const processInput = (input, config, type) => {
         return config;
     };
     config.clipPathId = generateClipPathId();
-    config.clipPathDatelineId = generateClipPathDatelineId();
+    config.datelineClipPathId = generateDatelineClipPathId();
     config.bindTo = input.bindTo;
     config.bindLegendTo = input.bindLegendTo;
     config.axis = _axis;

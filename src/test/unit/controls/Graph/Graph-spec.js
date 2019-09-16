@@ -39,7 +39,8 @@ import {
     axisDefaultWithDateline,
     axisTimeseriesWithDateline,
     datelineJSON,
-    axisTimeSeriesWithAxisTop
+    axisTimeSeriesWithAxisTop,
+    axisDefaultwithPanning
 } from "./helpers";
 
 describe("Graph", () => {
@@ -2855,7 +2856,8 @@ describe("Graph", () => {
                     y2: Object({})
                 }),
                 shownTargets: Object({}),
-                dateline: []
+                dateline: [],
+                pan: {}
             });
             expect(graph.axis).toEqual({
                 axisInfoRow: Object({
@@ -3021,6 +3023,21 @@ describe("Graph", () => {
                 );
                 expect(noDataTextElement).toBeNull();
             });
+        });
+    });
+    describe("When panning is enabled", () => {
+        beforeEach(() => {
+            graph = new Graph(axisDefaultwithPanning);
+        });
+        it("Check if clamp is false if pan is enabled", () => {
+            expect(graph.scale.x.clamp()).toEqual(false);
+        });
+        it("Check if different clipPath for dateline is created", () => {
+            const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            expect(defsElement.nodeName).toBe("defs");
+            expect(defsElement.lastChild.nodeName).toBe("clipPath");
+            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+            expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
         });
     });
 });

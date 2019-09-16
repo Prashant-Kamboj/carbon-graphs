@@ -240,6 +240,7 @@ class Graph extends Construct {
                     ? this.config.canvasWidth
                     : this.config.canvasWidth - BASE_CANVAS_WIDTH_PADDING
             );
+        createDefs(this.config, this.svg);
         createRegionContainer(this.config, this.svg);
         createGrid(this.axis, this.scale, this.config, this.svg);
         createContentContainer(this.config, this.svg);
@@ -258,7 +259,6 @@ class Graph extends Construct {
                 settingsDictionary(this.config).transition
             );
         }
-        createDefs(this.config, this.svg);
         if (this.config.showLegend) {
             /*
             If the consumer doesn't wish to show legend item then they can pass blank.
@@ -276,6 +276,7 @@ class Graph extends Construct {
             drawNoDataView(this.config, this.svg);
         }
         attachEventHandlers(this);
+        // createPanningControl(d3.select(this.config.bindTo), this.config, this.scale, this.axis, this.svg);
         return this.svg;
     }
 

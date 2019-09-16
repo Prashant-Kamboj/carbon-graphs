@@ -314,42 +314,31 @@ const scaleGraph = (scale, config) => {
  * @returns {undefined} return nothing
  */
 const createDefs = (config, canvasSVG) => {
+    const defsElement = canvasSVG.append("defs");
+
+    defsElement
+        .append("clipPath")
+        .attr("id", config.clipPathId)
+        .append("rect")
+        .attr(constants.X_AXIS, getXAxisXPosition(config))
+        .attr(constants.Y_AXIS, getYAxisYPosition(config))
+        .attr("width", getXAxisWidth(config))
+        .attr("height", getYAxisHeight(config));
+
     if (
         config.pan !== undefined &&
         utils.isBoolean(config.pan.enabled) &&
         config.pan.enabled &&
         config.dateline.length > 0
     ) {
-        const shapeHeightArr = [];
-        const shape = d3.selectAll(`.${styles.datelinePoint}`);
-        shape[0].forEach((element) => {
-            const shapeHeight = element.getBBox().height;
-            shapeHeightArr.push(shapeHeight);
-        });
-        const datelineIndicatorHeight = Math.max(...shapeHeightArr) / 2;
-
-        canvasSVG
-            .append("defs")
+        defsElement
             .append("clipPath")
-            .attr("id", config.clipPathId)
-            .append("rect")
-            .attr(constants.X_AXIS, getXAxisXPosition(config))
-            .attr(
-                constants.Y_AXIS,
-                getYAxisYPosition(config) - datelineIndicatorHeight
-            )
-            .attr("width", getXAxisWidth(config))
-            .attr("height", getYAxisHeight(config) + datelineIndicatorHeight);
-    } else {
-        canvasSVG
-            .append("defs")
-            .append("clipPath")
-            .attr("id", config.clipPathId)
+            .attr("id", config.datelineClipPathId)
             .append("rect")
             .attr(constants.X_AXIS, getXAxisXPosition(config))
             .attr(constants.Y_AXIS, getYAxisYPosition(config))
             .attr("width", getXAxisWidth(config))
-            .attr("height", getYAxisHeight(config));
+            .attr("height", 0);
     }
 };
 /**

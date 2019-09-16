@@ -1,7 +1,10 @@
 "use strict";
 import d3 from "d3";
 import BaseConfig, { getDefaultValue, getDomain } from "../../core/BaseConfig";
-import { generateClipPathId } from "../../core/BaseConfig/helper";
+import {
+    generateClipPathId,
+    generateDatelineClipPathId
+} from "../../core/BaseConfig/helper";
 import constants, { AXIS_TYPE } from "../../helpers/constants";
 import errors from "../../helpers/errors";
 import utils from "../../helpers/utils";
@@ -192,6 +195,7 @@ const getPadding = (config, inputPadding) => {
 export const processInput = (input, config) => {
     const _axis = utils.deepClone(input.axis);
     config.clipPathId = generateClipPathId();
+    config.datelineClipPathId = generateDatelineClipPathId();
     config.bindTo = input.bindTo;
     config.bindLegendTo = input.bindLegendTo;
     config.padding = getPadding(config, input.padding);

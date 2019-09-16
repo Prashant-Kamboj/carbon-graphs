@@ -65,7 +65,7 @@ export const generateClipPathId = () => `carbon-${+new Date()}-clip`;
  * @private
  * @returns {string} Clip path Dateline ID
  */
-export const generateClipPathDatelineId = () =>
+export const generateDatelineClipPathId = () =>
     `carbon-${+new Date()}-dateline-clip`;
 /**
  * Interpolation type can be:

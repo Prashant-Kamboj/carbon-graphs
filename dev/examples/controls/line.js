@@ -1,7 +1,7 @@
 import Carbon from "../../../src/main/js/carbon";
 import utils from "../../../src/main/js/helpers/utils";
 import { getDemoData } from "../data";
-import d3 from "d3";
+import { createPanningControls } from "./panHelpers";
 
 const tickValues = [
     new Date(2016, 0, 1, 1, 0).toISOString(),
@@ -429,65 +429,31 @@ export const renderNoDataView = (id) => {
     return lineDefault;
 };
 export const renderLineWithPanning = (id) => {
+    let graph;
     const axisData = utils.deepClone(
         getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE")
     );
     axisData.pan = {
-        enabled: true
+        enabled: true,
+        showControl: true
     };
-    let initialHour = 0;
-    const createGraph = () => {
-        const graph = Carbon.api.graph(axisData);
-        const lineData = utils.deepClone(
-            getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE").data[0]
-        );
-        lineData.regions = [regions[0]];
-        graph.loadContent(Carbon.api.line(lineData));
+    const graphData = utils.deepClone(
+        getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE").data[0]
+    );
+    graphData.regions = [regions[0]];
+    const createGraph = (axis, values) => {
+        if (graph) {
+            graph.destroy();
+        }
+        graph = Carbon.api.graph(axis);
+        graph.loadContent(Carbon.api.line(values));
+        return graph;
     };
-    //dummy function to move the graph left
-    const moveLeft = () => {
-        d3.select(".carbon-graph-container").remove();
-        const hour = initialHour + 3;
-        initialHour = hour;
-        axisData.axis.x.lowerLimit = new Date(2016, 0, 1, hour).toISOString();
-        axisData.axis.x.upperLimit = new Date(2016, 0, 2, hour).toISOString();
-        createGraph();
-    };
-    //dummy function to move the graph right
-    const moveRight = () => {
-        d3.select(".carbon-graph-container").remove();
-        const hour = initialHour - 3;
-        initialHour = hour;
-        axisData.axis.x.lowerLimit = new Date(2016, 0, 1, hour).toISOString();
-        axisData.axis.x.upperLimit = new Date(2016, 0, 2, hour).toISOString();
-        createGraph();
-    };
-
-    //creats left arrow
-    d3.selectAll("#carbon_id_y1tb2Rl")
-        .append("button")
-        .classed("chevronLeft", true)
-        .on("click", moveLeft)
-        .append("svg")
-        .attr("height", 25)
-        .attr("width", 20)
-        .append("g")
-        .attr("transform", `translate(1,4)scale(0.4,0.4)`)
-        .append("path")
-        .attr("d", "M10.3,24,33.8,0l3.9,3.8L18,24,37.7,44.2,33.8,48Z");
-
-    //creats right arrow
-    d3.selectAll("#carbon_id_y1tb2Rl")
-        .append("button")
-        .classed("chevronRight", true)
-        .on("click", moveRight)
-        .append("svg")
-        .attr("height", 25)
-        .attr("width", 20)
-        .append("g")
-        .attr("transform", `translate(0,4)scale(0.4,0.4)`)
-        .append("path")
-        .attr("d", "M37.7,24,14.2,48l-3.9-3.8L30,24,10.3,3.8,14.2,0Z");
-
-    return createGraph();
+    graph = createGraph(axisData, graphData);
+    createPanningControls(id, {
+        axisData,
+        graphData,
+        creationHandler: createGraph
+    });
+    return graph;
 };

@@ -2479,7 +2479,8 @@ describe("Gantt", () => {
                 }),
                 shownTargets: Object({}),
                 actionLegend: [],
-                dateline: []
+                dateline: [],
+                pan: {}
             });
             expect(gantt.axis).toEqual({});
             expect(gantt.scale).toEqual({});
@@ -2489,6 +2490,24 @@ describe("Gantt", () => {
             expect(gantt.tracks).toEqual([]);
             expect(gantt.trackConfig).toEqual([]);
             expect(gantt.resizeHandler).toBeNull();
+        });
+    });
+    describe("When panning is enabled", () => {
+        beforeEach(() => {
+            const axisData = utils.deepClone(getAxes(axisJSON));
+            axisData.dateline = datelineJSON;
+            axisData.pan = { enabled: true };
+            gantt = new Gantt(axisData);
+        });
+        it("Check if clamp is false if pan is enabled", () => {
+            expect(gantt.scale.x.clamp()).toEqual(false);
+        });
+        it("Check if different clipPath for dateline is created", () => {
+            const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            expect(defsElement.nodeName).toBe("defs");
+            expect(defsElement.lastChild.nodeName).toBe("clipPath");
+            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+            expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
         });
     });
 });

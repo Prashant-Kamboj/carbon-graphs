@@ -125,6 +125,11 @@ const getTrackLabelTransformProperty = (scale, config) => (trackName) =>
  * @returns {undefined} - returns nothing
  */
 const translateDefs = (config, canvasSVG) => {
+    canvasSVG
+        .select(`clipPath#${config.clipPathId}`)
+        .selectAll("rect")
+        .attr("height", getYAxisHeight(config))
+        .attr("width", getXAxisWidth(config));
     if (
         config.pan !== undefined &&
         utils.isBoolean(config.pan.enabled) &&
@@ -137,19 +142,18 @@ const translateDefs = (config, canvasSVG) => {
             const shapeHeight = element.getBBox().height;
             shapeHeightArr.push(shapeHeight);
         });
-        const datelineIndicatorHeight = Math.max(...shapeHeightArr) / 2;
-
+        const datelineIndicatorHeight = Math.floor(
+            Math.max(...shapeHeightArr) / 2
+        );
         canvasSVG
-            .select(`clipPath#${config.clipPathId}`)
+            .select(`clipPath#${config.datelineClipPathId}`)
             .selectAll("rect")
-            .attr("height", getYAxisHeight(config) + datelineIndicatorHeight)
-            .attr("width", getXAxisWidth(config));
-    } else {
-        canvasSVG
-            .select(`clipPath#${config.clipPathId}`)
-            .selectAll("rect")
-            .attr("height", getYAxisHeight(config))
-            .attr("width", getXAxisWidth(config));
+            .attr("height", config.height + datelineIndicatorHeight)
+            .attr("width", getXAxisWidth(config))
+            .attr(
+                constants.Y_AXIS,
+                getYAxisYPosition(config) - datelineIndicatorHeight
+            );
     }
 };
 /**

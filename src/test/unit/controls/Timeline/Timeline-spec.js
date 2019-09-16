@@ -1737,7 +1737,8 @@ describe("Timeline", () => {
                 axis: Object({
                     x: Object({})
                 }),
-                shownTargets: Object({})
+                shownTargets: Object({}),
+                pan: {}
             });
             expect(timeline.axis).toEqual({});
             expect(timeline.scale).toEqual({});
@@ -2369,6 +2370,16 @@ describe("Timeline", () => {
                     done();
                 });
             });
+        });
+    });
+    describe("When panning is enabled", () => {
+        beforeEach(() => {
+            const axisData = utils.deepClone(getAxes(axisJSON));
+            axisData.pan = { enabled: true };
+            timeline = new Timeline(axisData);
+        });
+        it("Check if clamp is false if pan is enabled", () => {
+            expect(timeline.scale.x.clamp()).toEqual(false);
         });
     });
 });

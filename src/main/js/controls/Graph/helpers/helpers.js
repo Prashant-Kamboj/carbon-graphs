@@ -101,11 +101,13 @@ const translateDefs = (config, canvasSVG) => {
             const shapeHeight = element.getBBox().height;
             shapeHeightArr.push(shapeHeight);
         });
-        const datelineIndicatorHeight = Math.max(...shapeHeightArr) / 2;
+        const datelineIndicatorHeight = Math.floor(
+            Math.max(...shapeHeightArr) / 2
+        );
         canvasSVG
-            .select(`clipPath#${config.clipPathDatelineId}`)
+            .select(`clipPath#${config.datelineClipPathId}`)
             .selectAll("rect")
-            .attr("height", datelineIndicatorHeight)
+            .attr("height", config.height + datelineIndicatorHeight)
             .attr("width", getXAxisWidth(config))
             .attr(
                 constants.Y_AXIS,
@@ -363,26 +365,14 @@ const createDefs = (config, canvasSVG) => {
         config.pan.enabled &&
         config.dateline.length > 0
     ) {
-        const shapeHeightArr = [];
-        const shape = d3.selectAll(`.${styles.datelinePoint}`);
-        shape[0].forEach((element) => {
-            const shapeHeight = element.getBBox().height;
-            shapeHeightArr.push(shapeHeight);
-        });
-        const datelineIndicatorHeight = Math.max(...shapeHeightArr) / 2;
-
-        canvasSVG
-            .selectAll("defs")
+        defsElement
             .append("clipPath")
-            .attr("id", config.clipPathDatelineId)
+            .attr("id", config.datelineClipPathId)
             .append("rect")
             .attr(constants.X_AXIS, getXAxisXPosition(config))
-            .attr(
-                constants.Y_AXIS,
-                calculateVerticalPadding(config) - datelineIndicatorHeight
-            )
+            .attr(constants.Y_AXIS, 0)
             .attr("width", getXAxisWidth(config))
-            .attr("height", datelineIndicatorHeight);
+            .attr("height", 0);
     }
 };
 

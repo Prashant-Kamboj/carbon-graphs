@@ -14,8 +14,7 @@ import {
     renderBarTimeSeriesWithDateline,
     renderBarTimeSeriesXOrientationTop,
     renderSimpleBarAxisInfoTextLabels,
-    renderStackedBarAxisInfoTextLabels,
-    renderBarPanning
+    renderStackedBarAxisInfoTextLabels
 } from "./examples/controls/bar";
 import { renderColorsExample } from "./examples/controls/colors";
 import {
@@ -41,8 +40,7 @@ import {
     renderGanttPercentage,
     renderGanttStyle,
     renderGanttTrackSelection,
-    renderGanttTruncate,
-    renderGanttPanning
+    renderGanttTruncate
 } from "./examples/controls/gantt";
 import {
     renderGoalLine,
@@ -106,10 +104,7 @@ import {
     renderCriticalityShapesLight
 } from "./examples/controls/shapes";
 import { renderSplineLine } from "./examples/controls/spline";
-import {
-    renderTimeline,
-    renderTimelinePanning
-} from "./examples/controls/timeline";
+import { renderTimeline } from "./examples/controls/timeline";
 import { createElementLegendBindTo } from "./examples/helpers";
 
 renderSiteApp(
@@ -169,11 +164,6 @@ renderSiteApp(
                     pathname: "/line/no-data",
                     content: renderNoDataView,
                     title: "No Data"
-                },
-                {
-                    pathname: "/line/panning-mode",
-                    content: renderLineWithPanning,
-                    title: "Panning Mode"
                 }
             ]
         },
@@ -294,11 +284,6 @@ renderSiteApp(
                     pathname: "/bar/stacked-axis-info-text-labels",
                     content: renderStackedBarAxisInfoTextLabels,
                     title: "Stacked - Axis Info Text Labels"
-                },
-                {
-                    pathname: "/bar/panning-mode",
-                    content: renderBarPanning,
-                    title: "Panning Mode"
                 }
             ]
         },
@@ -359,11 +344,6 @@ renderSiteApp(
                     pathname: "/gantt/label-truncation",
                     content: renderGanttTruncate,
                     title: "Label Truncation"
-                },
-                {
-                    pathname: "/gantt/panning-mode",
-                    content: renderGanttPanning,
-                    title: "Panning Mode"
                 }
             ]
         },
@@ -374,11 +354,6 @@ renderSiteApp(
                     pathname: "/timeline/simple",
                     content: renderTimeline,
                     title: "Simple"
-                },
-                {
-                    pathname: "/timeline/panning-mode",
-                    content: renderTimelinePanning,
-                    title: "Panning Mode"
                 }
             ]
         },
@@ -651,6 +626,21 @@ renderSiteApp(
                             pathname: "/regions/combination/identical",
                             content: renderCombinationIdenticalDatasetRegion,
                             title: "Dataset Region Identical"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            pathname: "/panning",
+            children: [
+                {
+                    pathname: "/panning/line",
+                    children: [
+                        {
+                            pathname: "/panning/line/simple",
+                            content: renderLineWithPanning,
+                            title: "Simple"
                         }
                     ]
                 }

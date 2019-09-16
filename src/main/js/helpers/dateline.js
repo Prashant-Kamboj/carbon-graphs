@@ -120,7 +120,7 @@ const createDateline = (scale, config, canvasSVG, transition) => {
         datelineContent = canvasSVG
             .append("g")
             .classed(styles.datelineContent, true)
-            .attr("clip-path", `url(#${config.clipPathDatelineId})`);
+            .attr("clip-path", `url(#${config.datelineClipPathId})`);
     } else {
         datelineContent = canvasSVG
             .append("g")
@@ -165,6 +165,38 @@ const createDateline = (scale, config, canvasSVG, transition) => {
         );
     });
     translateDateline(scale, config, canvasSVG, getYAxisYPosition, transition);
+
+    if (
+        config.pan !== undefined &&
+        utils.isBoolean(config.pan.enabled) &&
+        config.pan.enabled &&
+        config.dateline.length > 0
+    ) {
+        const shapeHeightArr = [];
+        const shape = d3.selectAll(`.${styles.datelinePoint}`);
+        shape[0].forEach((element) => {
+            const shapeHeight = element.getBBox().height;
+            shapeHeightArr.push(shapeHeight);
+        });
+        const datelineIndicatorHeight = Math.floor(
+            Math.max(...shapeHeightArr) / 2
+        );
+        canvasSVG
+            .select(`clipPath#${config.datelineClipPathId}`)
+            .selectAll("rect")
+            .attr(
+                "height",
+                getYAxisHeight(config) === 0
+                    ? datelineIndicatorHeight + 20
+                    : getYAxisHeight(config) + datelineIndicatorHeight
+            )
+            .attr(
+                constants.Y_AXIS,
+                getYAxisHeight(config) === 0
+                    ? getYAxisYPosition(config) - 4
+                    : getYAxisYPosition(config) - datelineIndicatorHeight
+            );
+    }
 };
 /**
  * redraw a dateline for graph. To add the dateline content on top of the content

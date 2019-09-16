@@ -9,7 +9,6 @@ import {
     loadTrackLabelPopup,
     loadTrackPopup
 } from "../popup";
-import d3 from "d3";
 
 const daysToMilliseconds = (d) => 24 * 60 * 60 * 1000 * d;
 const caretUp = {
@@ -351,64 +350,6 @@ export const renderGanttTruncate = (id) => {
         }
     });
     return ganttDefault;
-};
-export const renderGanttPanning = (id) => {
-    const axisData = utils.deepClone(getDemoData(`#${id}`, "GANTT"));
-    axisData.showActionLegend = false;
-    axisData.pan = {
-        enabled: true
-    };
-    let initialHour = 0;
-    const createGraph = () => {
-        const ganttDefault = Carbon.api.gantt(axisData);
-        loadTracks(ganttDefault, tasks, [], [], [], 4);
-    };
-
-    const moveLeft = () => {
-        d3.select(".carbon-graph-container").remove();
-        const month = initialHour + 1;
-        initialHour = month;
-        axisData.axis.x.lowerLimit = new Date(2018, month, 1).toISOString();
-        axisData.axis.x.upperLimit = new Date(2019, month, 2).toISOString();
-        createGraph();
-    };
-    //dummy function to move the graph right
-    const moveRight = () => {
-        d3.select(".carbon-graph-container").remove();
-        const month = initialHour - 1;
-        initialHour = month;
-        axisData.axis.x.lowerLimit = new Date(2018, month, 1).toISOString();
-        axisData.axis.x.upperLimit = new Date(2019, month, 2).toISOString();
-        createGraph();
-    };
-
-    //creats left arrow
-    d3.selectAll("#carbon_id_ctbW9kZQ")
-        .append("button")
-        .classed("chevronLeft-gantt", true)
-        .on("click", moveLeft)
-        .append("svg")
-        .attr("height", 25)
-        .attr("width", 20)
-        .append("g")
-        .attr("transform", `translate(1,4)scale(0.4,0.4)`)
-        .append("path")
-        .attr("d", "M10.3,24,33.8,0l3.9,3.8L18,24,37.7,44.2,33.8,48Z");
-
-    //creats right arrow
-    d3.selectAll("#carbon_id_ctbW9kZQ")
-        .append("button")
-        .classed("chevronRight", true)
-        .on("click", moveRight)
-        .append("svg")
-        .attr("height", 25)
-        .attr("width", 20)
-        .append("g")
-        .attr("transform", `translate(0,4)scale(0.4,0.4)`)
-        .append("path")
-        .attr("d", "M37.7,24,14.2,48l-3.9-3.8L30,24,10.3,3.8,14.2,0Z");
-
-    return createGraph();
 };
 export const renderGanttStyle = (id) => {
     const data = utils.deepClone(getDemoData(`#${id}`, "GANTT"));
