@@ -333,6 +333,9 @@ class Graph extends Construct {
         if (utils.notEmpty(content.config.values)) {
             removeNoDataView(this.svg);
         }
+        if (utils.notEmpty(content.config.values)) {
+            removeNoDataView(this.svg);
+        }
         this.resize();
         return this;
     }
