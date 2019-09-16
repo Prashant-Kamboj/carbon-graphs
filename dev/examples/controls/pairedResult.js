@@ -2,7 +2,6 @@ import Carbon from "../../../src/main/js/carbon";
 import utils from "../../../src/main/js/helpers/utils";
 import { getDemoData } from "../data";
 import { loadDatelinePopup } from "../popup";
-import d3 from "d3";
 
 const tickValues = [
     new Date(2016, 0, 1, 1, 0).toISOString(),
@@ -320,61 +319,4 @@ export const renderPairedResultXOrientationTop = (id) => {
         Carbon.api.pairedResult(getDemoData(`#${id}`, "PAIRED_DEFAULT").data[0])
     );
     return pairedDefault;
-};
-export const renderPairedResultPanning = (id) => {
-    const axisData = utils.deepClone(getDemoData(`#${id}`, "PAIRED_DEFAULT"));
-    axisData.pan = {
-        enabled: true
-    };
-    const createGraph = () => {
-        const graph = Carbon.api.graph(axisData);
-        graph.loadContent(
-            Carbon.api.pairedResult(
-                getDemoData(`#${id}`, "PAIRED_DEFAULT").data[0]
-            )
-        );
-    };
-
-    //dummy function to move the graph left
-    const moveLeft = () => {
-        d3.select(".carbon-graph-container").remove();
-        axisData.axis.x.lowerLimit = axisData.axis.x.lowerLimit + 100;
-        axisData.axis.x.upperLimit = axisData.axis.x.upperLimit + 100;
-        createGraph();
-    };
-    //dummy function to move the graph right
-    const moveRight = () => {
-        d3.select(".carbon-graph-container").remove();
-        axisData.axis.x.lowerLimit = axisData.axis.x.lowerLimit - 100;
-        axisData.axis.x.upperLimit = axisData.axis.x.upperLimit - 100;
-        createGraph();
-    };
-
-    //creats left arrow
-    d3.selectAll("#carbon_id_luZy1tb2Rl")
-        .append("button")
-        .classed("chevronLeft", true)
-        .on("click", moveLeft)
-        .append("svg")
-        .attr("height", 25)
-        .attr("width", 20)
-        .append("g")
-        .attr("transform", `translate(1,4)scale(0.4,0.4)`)
-        .append("path")
-        .attr("d", "M10.3,24,33.8,0l3.9,3.8L18,24,37.7,44.2,33.8,48Z");
-
-    //creats right arrow
-    d3.selectAll("#carbon_id_luZy1tb2Rl")
-        .append("button")
-        .classed("chevronRight", true)
-        .on("click", moveRight)
-        .append("svg")
-        .attr("height", 25)
-        .attr("width", 20)
-        .append("g")
-        .attr("transform", `translate(0,4)scale(0.4,0.4)`)
-        .append("path")
-        .attr("d", "M37.7,24,14.2,48l-3.9-3.8L30,24,10.3,3.8,14.2,0Z");
-
-    return createGraph();
 };

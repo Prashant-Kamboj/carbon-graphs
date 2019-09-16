@@ -43,7 +43,7 @@ import {
     renderGanttTruncate
 } from "./examples/controls/gantt";
 import {
-    renderGoalLine,
+    renderRegionLine,
     renderLine,
     renderLineBlankDataPoint,
     renderLineDateTimeBuckets,
@@ -72,6 +72,7 @@ import {
     renderMultiLineRegion,
     renderMultiLineIdenticalDatasetRegion,
     renderNoDataView,
+    renderLineCustomPadding,
     renderLineWithPanning
 } from "./examples/controls/line";
 import {
@@ -92,8 +93,7 @@ import {
     renderPairedResultXOrientationTop,
     renderPairedResultXStaticTicks,
     renderPairedResultY2Axis,
-    renderPairedResultYHidden,
-    renderPairedResultPanning
+    renderPairedResultYHidden
 } from "./examples/controls/pairedResult";
 import { renderPieLegendTo, renderPieSimple } from "./examples/controls/pie";
 import {
@@ -104,7 +104,10 @@ import {
     renderCriticalityShapesLight
 } from "./examples/controls/shapes";
 import { renderSplineLine } from "./examples/controls/spline";
-import { renderTimeline } from "./examples/controls/timeline";
+import {
+    renderTimeline,
+    renderTimelineCustomPadding
+} from "./examples/controls/timeline";
 import { createElementLegendBindTo } from "./examples/helpers";
 
 renderSiteApp(
@@ -143,12 +146,12 @@ renderSiteApp(
                     title: "Legend Hidden"
                 },
                 {
-                    pathname: "/line/legend-render-to",
+                    pathname: "/line/custom-legend-placement",
                     content: (id) => {
                         createElementLegendBindTo(id);
-                        renderLineLegendTo(id);
+                        return renderLineLegendTo(id);
                     },
-                    title: "Legend BindTo"
+                    title: "Custom Legend Placement"
                 },
                 {
                     pathname: "/line/legend-item-disabled",
@@ -234,11 +237,6 @@ renderSiteApp(
                     pathname: "/paired-result/legend-item-disabled",
                     content: renderPairedResultLegendItemDisabled,
                     title: "Legend Item Disabled"
-                },
-                {
-                    pathname: "/paired-result/panning-mode",
-                    content: renderPairedResultPanning,
-                    title: "Panning Mode"
                 }
             ]
         },
@@ -366,12 +364,12 @@ renderSiteApp(
                     title: "Simple"
                 },
                 {
-                    pathname: "/pie/legend-render-to",
+                    pathname: "/pie/custom-legend-placement",
                     content: (id) => {
                         createElementLegendBindTo(id);
-                        renderPieLegendTo(id);
+                        return renderPieLegendTo(id);
                     },
-                    title: "Legend BindTo"
+                    title: "Custom Legend Placement"
                 }
             ]
         },
@@ -505,11 +503,6 @@ renderSiteApp(
                             pathname: "/axes/gantt/datetime-buckets",
                             content: renderGanttDateTimeBuckets,
                             title: "Datetime Buckets"
-                        },
-                        {
-                            pathname: "/axes/gantt/custom-padding",
-                            content: renderGanttCustomPadding,
-                            title: "Custom Padding"
                         }
                     ]
                 },
@@ -547,9 +540,9 @@ renderSiteApp(
                             title: "Multiple Regions"
                         },
                         {
-                            pathname: "/regions/line/goal-line",
-                            content: renderGoalLine,
-                            title: "Goal line"
+                            pathname: "/regions/line/region-line",
+                            content: renderRegionLine,
+                            title: "Region-line"
                         },
                         {
                             pathname: "/regions/line/with-y2-axis",
@@ -673,6 +666,42 @@ renderSiteApp(
                     pathname: "/criticality/timeline",
                     content: renderCriticalityTimeline,
                     title: "Timeline"
+                }
+            ]
+        },
+        {
+            pathname: "/padding",
+            children: [
+                {
+                    pathname: "/padding/line",
+                    children: [
+                        {
+                            pathname: "/padding/line/custom-content-padding",
+                            content: renderLineCustomPadding,
+                            title: "Custom Content Padding"
+                        }
+                    ]
+                },
+                {
+                    pathname: "/padding/gantt",
+                    children: [
+                        {
+                            pathname: "/padding/gantt/custom-content-padding",
+                            content: renderGanttCustomPadding,
+                            title: "Custom Content Padding"
+                        }
+                    ]
+                },
+                {
+                    pathname: "/padding/timeline",
+                    children: [
+                        {
+                            pathname:
+                                "/padding/timeline/custom-content-padding",
+                            content: renderTimelineCustomPadding,
+                            title: "Custom Content Padding"
+                        }
+                    ]
                 }
             ]
         },

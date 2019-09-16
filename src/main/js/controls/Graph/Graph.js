@@ -276,7 +276,6 @@ class Graph extends Construct {
             drawNoDataView(this.config, this.svg);
         }
         attachEventHandlers(this);
-        // createPanningControl(d3.select(this.config.bindTo), this.config, this.scale, this.axis, this.svg);
         return this.svg;
     }
 
