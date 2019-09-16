@@ -495,6 +495,7 @@ describe("Timeline", () => {
         it("Creates defs element with height and width", () => {
             const currentWidth =
                 constants.PADDING.left +
+                constants.PADDING.right +
                 (constants.PADDING.top + constants.PADDING.bottom) * 2;
             const defsElement = fetchElementByClass(styles.canvas).firstChild;
             expect(defsElement.nodeName).toBe("defs");
@@ -2370,6 +2371,16 @@ describe("Timeline", () => {
                     done();
                 });
             });
+        });
+    });
+    describe("When panning is enabled", () => {
+        beforeEach(() => {
+            const axisData = utils.deepClone(getAxes(axisJSON));
+            axisData.pan = { enabled: true };
+            timeline = new Timeline(axisData);
+        });
+        it("Check if clamp is false if pan is enabled", () => {
+            expect(timeline.scale.x.clamp()).toEqual(false);
         });
     });
 });

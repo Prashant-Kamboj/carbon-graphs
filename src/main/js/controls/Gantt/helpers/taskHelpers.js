@@ -12,7 +12,7 @@ import {
 import constants, { COLORS } from "../../../helpers/constants";
 import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
-import { validateTask } from "../GanttConfig";
+import { validateTask, settingsDictionary } from "../GanttConfig";
 import { getXAxisYPosition, isHashed } from "./creationHelpers";
 import {
     calculatePercentage,
@@ -22,7 +22,6 @@ import {
     getTaskStyle,
     isAChunk
 } from "./durationHelpers";
-import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * Toggles the selection of a task, executes on click of a data point.
@@ -310,7 +309,7 @@ const drawTasks = (
     taskPath
         .exit()
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(settingsDictionary(config).transition))
         .remove();
 };
 

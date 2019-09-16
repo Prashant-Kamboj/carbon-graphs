@@ -21,6 +21,42 @@ export const processInput = (input, config) => {
     config.showLegend = getDefaultValue(input.showLegend, true);
     return config;
 };
+/**
+ * Checks if panning is enabled or not
+ *
+ * @private
+ * @param {object} config - config object used by the graph.
+ * @returns {boolean} returns true of panning enabled else false.
+ */
+export const isPanningModeEnabled = (config) => {
+    if (config.pan !== undefined && config.pan.enabled) {
+        return true;
+    }
+    return false;
+};
+/**
+ * Used to set the clamp and transition when panning is enabled or not.
+ *
+ * @private
+ * @param {object} config - config object used by the graph.
+ * @returns {undefined} returns nothing
+ */
+export const settingsDictionary = (config) =>
+    isPanningModeEnabled(config)
+        ? {
+              shouldClamp: false,
+              transition: {
+                  duration: 0,
+                  ease: "linear"
+              }
+          }
+        : {
+              shouldClamp: true,
+              transition: {
+                  duration: 250,
+                  ease: "linear"
+              }
+          };
 
 /**
  * API to parse consumer input for Graph

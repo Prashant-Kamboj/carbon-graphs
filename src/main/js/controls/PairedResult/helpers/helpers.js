@@ -20,7 +20,8 @@ import {
     hideAllRegions,
     isSingleTargetDisplayed,
     regionLegendHoverHandler,
-    showHideRegion
+    showHideRegion,
+    areRegionsIdentical
 } from "../../../helpers/region";
 import { getSVGObject } from "../../../helpers/shapeSVG";
 import styles from "../../../helpers/styles";
@@ -37,7 +38,6 @@ import {
     translateSelectionBox,
     translateSelectionItem
 } from "./selectionIndicatorHelpers";
-import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * @typedef PairedResult
@@ -105,15 +105,15 @@ const transformPoint = (scale, type) => (value) => (scaleFactor) => {
  *
  * @private
  * @param {object} scale - d3 scale for Graph
- * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} - d3 select object
  */
-const translateLines = (scale, config, canvasSVG) =>
+const translateLines = (scale, canvasSVG, transition) =>
     canvasSVG
         .selectAll(`.${styles.pairedBoxGroup} .${styles.pairedLine}`)
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(transition))
         .attr("d", (d) => (d.high && d.low ? createLine(scale, d) : ""));
 /**
  * Transforms points for a data point set (high, low and mid) in the Paired Result graph on resize
@@ -121,10 +121,10 @@ const translateLines = (scale, config, canvasSVG) =>
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} config - config object derived from input JSON
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} - d3 select object
  */
-const translatePoints = (scale, canvasSVG, config) =>
+const translatePoints = (scale, canvasSVG, transition) =>
     iterateOnPairType((type) => {
         canvasSVG
             .selectAll(
@@ -138,7 +138,7 @@ const translatePoints = (scale, canvasSVG, config) =>
                 pairedPointSVG
                     .select("g")
                     .transition()
-                    .call(translatePan(config))
+                    .call(constants.d3Transition(transition))
                     .attr("transform", function() {
                         return transformPoint(
                             scale,
@@ -157,9 +157,10 @@ const translatePoints = (scale, canvasSVG, config) =>
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @param {Array} dataTarget - Data points
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const draw = (scale, config, canvasSVG, dataTarget) => {
+const draw = (scale, config, canvasSVG, dataTarget, transition) => {
     const drawBox = (boxPath) => {
         drawSelectionIndicator(scale, config, boxPath);
         drawLine(scale, config, boxPath);
@@ -188,7 +189,7 @@ const draw = (scale, config, canvasSVG, dataTarget) => {
     pairedBoxPath
         .exit()
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(transition))
         .remove();
 };
 /**
@@ -421,19 +422,19 @@ const drawCriticalityPoints = (
  *
  * @private
  * @param {object} scale - d3 scale for Graph
- * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translatePairedResultGraph = (scale, config, canvasSVG) => {
-    translateSelectionBox(scale, canvasSVG, config);
-    translateSelectionItem(scale, canvasSVG, config);
-    translateLines(scale, config, canvasSVG);
-    translatePoints(scale, canvasSVG, config);
+const translatePairedResultGraph = (scale, canvasSVG, transition) => {
+    translateSelectionBox(scale, canvasSVG, transition);
+    translateSelectionItem(scale, canvasSVG, transition);
+    translateLines(scale, canvasSVG, transition);
+    translatePoints(scale, canvasSVG, transition);
 };
 /**
  * Show/hide regions based on the following criteria:
- * * If more than 1 target is displayed -> Hide regions
+ * * Regions would be checked if they are identical before hiding them.
  * * If only 1 target is displayed -> show the region using unique data set key
  *
  * @private
@@ -450,10 +451,31 @@ const processRegions = (graphContext, config, canvasSVG, { key }) => {
             `region_${key}`,
             config.shownTargets.indexOf(key) > -1
         );
+    } else if (
+        !config.shouldHideAllRegion &&
+        config.shownTargets.length > 0 &&
+        areRegionsIdentical(canvasSVG)
+    ) {
+        canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", false);
     } else {
         hideAllRegions(canvasSVG);
     }
 };
+/**
+ * Checks the region data of Paired Result so that if one of regions for Paired Result data pairs are not provided,
+ * i.e. if regions for "high" and "low" are provided and the values contain data for "high", "mid" and "low",
+ * all regions would be hidden(returns false) and if region for all "high", "mid" and "low" is there as well as value contains
+ * data for "high", "mid" and "low" then it returns true.
+ *
+ * @private
+ * @param {object} value - pairedResult values
+ * @param {object} regionList - List of all the regions provided
+ * @returns { boolean } returns true if regions are not missing for the value keys( high, mid or low) else false
+ */
+const isRegionMappedToAllValues = (value, regionList) =>
+    Object.keys(value).every((v) =>
+        Object.prototype.hasOwnProperty.call(regionList, v)
+    );
 /**
  * Handler for Request animation frame, executes on resize.
  *  * Order of execution
@@ -668,5 +690,6 @@ export {
     translatePairedResultGraph,
     prepareLegendItems,
     renderRegion,
+    isRegionMappedToAllValues,
     clear
 };

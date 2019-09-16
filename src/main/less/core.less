@@ -22,6 +22,7 @@ svg:not(:root) {
 }
 
 .carbon-graph-canvas {
+    display: block;
     overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;
@@ -278,4 +279,15 @@ svg:not(:root) {
             .opacity-hide();
         }
     }
+}
+
+.carbon-no-data-label {
+    font-size: 1.25rem;
+    text-anchor: middle;
+    fill: @grey65;
+}
+
+.carbon-no-data-overlay {
+    fill: @white;
+    opacity: 0.6;
 }

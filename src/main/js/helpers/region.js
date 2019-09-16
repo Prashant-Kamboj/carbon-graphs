@@ -151,7 +151,7 @@ const getYAxisRangePosition = (scale, config) => (bounds) =>
         : calculateVerticalPadding(config);
 /**
  * Returns the height for range based on Y Axes, start and end bounds
- * If start and end bounds arent provided then a "goal line" number is returned with
+ * If start and end bounds arent provided then a "region line" number is returned with
  * height worth of padding top
  *
  * @private
@@ -169,10 +169,9 @@ const getRegionHeight = (regionPath, bounds, scale, config) => {
           calculateVerticalPadding(config)
         : graphHeight + calculateVerticalPadding(config);
     // If start and end are the same then `padding.top` worth of height is
-    // applied to make it seem like a goal line
+    // applied to make it seem like a region line
     return (
-        lowerBound - upperBound ||
-        constants.DEFAULT_REGION_GOAL_LINE_STROKE_WIDTH
+        lowerBound - upperBound || constants.DEFAULT_REGION_LINE_STROKE_WIDTH
     );
 };
 /**
@@ -183,29 +182,20 @@ const getRegionHeight = (regionPath, bounds, scale, config) => {
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {object} regionGroupSVG - d3 object of region group svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} d3 svg path
  */
-const translateRegion = (scale, config, regionGroupSVG) =>
+const translateRegion = (scale, config, regionGroupSVG, transition) =>
     regionGroupSVG
         .selectAll(`.${styles.region}`)
         .attr(constants.X_AXIS, getXAxisXPosition(config))
         .attr(constants.Y_AXIS, getYAxisRangePosition(scale, config))
         .transition()
-        .call(constants.d3Transition)
+        .call(constants.d3Transition(transition))
         .attr("width", getXAxisWidth(config))
         .attr("height", function(d) {
             return getRegionHeight(d3.select(this), d, scale, config);
         });
-/**
- * Decides if regions needs to be hidden based on count of displayed targets in graph
- *
- * @private
- * @param {Array} regionList - List of regions to be shown within graph
- * @param {Array} graphTargets - List of all the items in the Graph
- * @returns {boolean} true if displayed targets are more than 1, false otherwise
- */
-const shouldHideAllRegions = (regionList, graphTargets) =>
-    utils.notEmpty(regionList) && graphTargets.length > 1;
 /**
  * Checks if only 1 content item is present in the graph
  *
@@ -214,6 +204,24 @@ const shouldHideAllRegions = (regionList, graphTargets) =>
  * @returns {boolean} true if displayed targets is equal to 1, false otherwise
  */
 const isSingleTargetDisplayed = (graphTargets) => graphTargets.length === 1;
+
+/**
+ * Check all the regions within a graph are same or not
+ *
+ * @private
+ * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @returns {boolean} - returns true is regions are same else false
+ */
+const areRegionsIdentical = (canvasSVG) => {
+    const regions = canvasSVG.selectAll(`.${styles.region}`).data();
+    const compare = regions[0];
+    return !regions.some(
+        (element) =>
+            compare.start !== element.start ||
+            compare.end !== element.end ||
+            compare.axis !== element.axis
+    );
+};
 /**
  * Hides all the regions within a graph
  *
@@ -256,14 +264,36 @@ const toggleRegion = (canvasSVG, key) =>
  * * If only 1 target is displayed -> show the region using unique data set key
  *
  * @private
- * @param {Array} shownTargets - Targets/data sets that are currently displayed in graph
+ * @param {object} config - Graph config object derived from input JSON
+ * @param { Array } config.shownTargets - List of all the items in the Graph
+ * @param { boolean } config.shouldHideAllRegion - returns true or false to hide or show regions
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @returns {object} d3 svg path
+ * @returns {undefined} - returns nothing
  */
-const processRegions = (shownTargets, canvasSVG) =>
+const processRegions = ({ shownTargets, shouldHideAllRegion }, canvasSVG) => {
     isSingleTargetDisplayed(shownTargets)
         ? toggleRegion(canvasSVG, ...shownTargets)
-        : hideAllRegions(canvasSVG);
+        : checkAllRegions({ shownTargets, shouldHideAllRegion }, canvasSVG);
+};
+/**
+ * Checks region for legend item click
+ *
+ * @private
+ * @param { object } graphConfig - graph property needed to check the isRegionSame property
+ * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @returns {undefined} - returns nothing
+ */
+const checkAllRegions = (graphConfig, canvasSVG) => {
+    if (
+        graphConfig.shownTargets.length > 1 &&
+        !graphConfig.shouldHideAllRegion &&
+        areRegionsIdentical(canvasSVG)
+    ) {
+        canvasSVG.selectAll(`.${styles.region}`).attr("aria-hidden", false);
+    } else {
+        hideAllRegions(canvasSVG);
+    }
+};
 /**
  * Handler for show/hide region(s) when hovered over a legend item
  *
@@ -289,13 +319,13 @@ const regionLegendHoverHandler = (shownTargets, canvasSVG, key, hoverState) => {
 export {
     createRegionContainer,
     createRegion,
+    areRegionsIdentical,
     hideAllRegions,
     isSingleTargetDisplayed,
     showHideRegion,
     processRegions,
     removeRegion,
     regionLegendHoverHandler,
-    shouldHideAllRegions,
     translateRegion,
     validateRegion
 };

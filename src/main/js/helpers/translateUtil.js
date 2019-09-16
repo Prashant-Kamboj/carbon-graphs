@@ -1,7 +1,7 @@
 import constants from "./constants";
 
 /**
- * Makes translation zero if panning is enabled
+ * Makes transition duration zero if panning is enabled
  *
  * @private
  * @param {object} config - config object derived from input JSON

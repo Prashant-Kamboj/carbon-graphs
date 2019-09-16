@@ -6,7 +6,7 @@ import { getRect } from "../../../helpers/barType";
 import constants, { COLORS } from "../../../helpers/constants";
 import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
-import { validateActivity } from "../GanttConfig";
+import { validateActivity, settingsDictionary } from "../GanttConfig";
 import { getXAxisYPosition, isHashed } from "./creationHelpers";
 import {
     getActivityDuration,
@@ -15,7 +15,6 @@ import {
     getStartDuration,
     isAChunk
 } from "./durationHelpers";
-import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * Processes the input for a activity and converts to an object needed to render a bar
@@ -166,7 +165,7 @@ const drawActivities = (
     activityPath
         .exit()
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(settingsDictionary(config).transition))
         .remove();
 };
 

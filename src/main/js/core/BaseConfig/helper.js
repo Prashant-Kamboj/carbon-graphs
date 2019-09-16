@@ -58,6 +58,15 @@ export const getType = (type) => getDefaultValue(type, AXIS_TYPE.DEFAULT);
  * @returns {string} Clip path ID
  */
 export const generateClipPathId = () => `carbon-${+new Date()}-clip`;
+
+/**
+ * Generates a clip path ID for Dateline based on current date
+ *
+ * @private
+ * @returns {string} Clip path Dateline ID
+ */
+export const generateDatelineClipPathId = () =>
+    `carbon-${+new Date()}-dateline-clip`;
 /**
  * Interpolation type can be:
  * * Linear (default)

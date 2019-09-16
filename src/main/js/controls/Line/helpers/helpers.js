@@ -31,7 +31,6 @@ import {
     getColorForTarget,
     getShapeForTarget
 } from "../../Graph/helpers/helpers";
-import { translatePan } from "../../../helpers/translateUtil";
 
 /**
  * @typedef Line
@@ -72,15 +71,15 @@ const transformPoint = (scale) => (value) => (scaleFactor) => {
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} graphConfig - graph configs needed for panning mode
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} d3 select object
  */
-const translateLines = (scale, canvasSVG, graphConfig) =>
+const translateLines = (scale, canvasSVG, transition) =>
     canvasSVG
         .selectAll(`.${styles.lineGraphContent} .${styles.line}`)
         .select("path")
         .transition()
-        .call(translatePan(graphConfig))
+        .call(constants.d3Transition(transition))
         .attr("d", (value) => createLine(scale, value));
 /**
  * Transforms points for a data point set in the Line graph on resize
@@ -89,10 +88,10 @@ const translateLines = (scale, canvasSVG, graphConfig) =>
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @param {string} cls - selector for the data point translation
- * @param {object} graphConfig - graph configs needed for panning mode
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} d3 select object
  */
-const translatePoints = (scale, canvasSVG, cls, graphConfig) =>
+const translatePoints = (scale, canvasSVG, cls, transition) =>
     canvasSVG
         .selectAll(`.${styles.lineGraphContent} .${cls}`)
         .each(function(d) {
@@ -100,7 +99,7 @@ const translatePoints = (scale, canvasSVG, cls, graphConfig) =>
             pointSVG
                 .select("g")
                 .transition()
-                .call(translatePan(graphConfig))
+                .call(constants.d3Transition(transition))
                 .attr("transform", function() {
                     return transformPoint(scale)(d)(getTransformScale(this));
                 });
@@ -165,13 +164,13 @@ const dataPointActionHandler = (value, index, target) => {
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} config - graph configuration needed for panning feature.
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translateLineGraph = (scale, canvasSVG, config) => {
-    translateLines(scale, canvasSVG, config);
-    translatePoints(scale, canvasSVG, styles.point, config);
-    translatePoints(scale, canvasSVG, styles.dataPointSelection, config);
+const translateLineGraph = (scale, canvasSVG, transition) => {
+    translateLines(scale, canvasSVG, transition);
+    translatePoints(scale, canvasSVG, styles.point, transition);
+    translatePoints(scale, canvasSVG, styles.dataPointSelection, transition);
 };
 /**
  * Draws the Line graph on the canvas element. This calls the Graph API to render the following first
@@ -186,9 +185,10 @@ const translateLineGraph = (scale, canvasSVG, config) => {
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @param {Array} dataTarget - Data points
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const draw = (scale, config, canvasSVG, dataTarget) => {
+const draw = (scale, config, canvasSVG, dataTarget, transition) => {
     const lineSVG = canvasSVG
         .append("g")
         .classed(styles.lineGraphContent, true)
@@ -211,7 +211,7 @@ const draw = (scale, config, canvasSVG, dataTarget) => {
     linePath
         .exit()
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(transition))
         .remove();
 
     if (config.showShapes) {
@@ -231,7 +231,7 @@ const draw = (scale, config, canvasSVG, dataTarget) => {
         currentPointsPath
             .exit()
             .transition()
-            .call(translatePan(config))
+            .call(constants.d3Transition(transition))
             .remove();
         const pointPath = lineSVG
             .select(`.${styles.currentPointsGroup}`)
@@ -241,7 +241,7 @@ const draw = (scale, config, canvasSVG, dataTarget) => {
         pointPath
             .exit()
             .transition()
-            .call(translatePan(config))
+            .call(constants.d3Transition(transition))
             .remove();
     }
 };
@@ -435,7 +435,7 @@ const drawDataPoints = (scale, config, pointGroupPath) => {
  */
 const onAnimationHandler = (graphContext, control, config, canvasSVG) => () => {
     control.redraw(graphContext);
-    processRegions(config.shownTargets, canvasSVG);
+    processRegions(config, canvasSVG);
 };
 /**
  * Click handler for legend item. Removes the line from graph when clicked and calls redraw

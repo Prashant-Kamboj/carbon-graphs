@@ -1,7 +1,10 @@
 "use strict";
 import d3 from "d3";
 import BaseConfig, { getDefaultValue, getDomain } from "../../core/BaseConfig";
-import { generateClipPathId } from "../../core/BaseConfig/helper";
+import {
+    generateClipPathId,
+    generateDatelineClipPathId
+} from "../../core/BaseConfig/helper";
 import constants, { AXIS_TYPE } from "../../helpers/constants";
 import errors from "../../helpers/errors";
 import utils from "../../helpers/utils";
@@ -112,6 +115,42 @@ const validateEventData = (content) => {
     }
 };
 /**
+ * Checks if panning is enabled or not
+ *
+ * @private
+ * @param {object} config - config object used by the graph.
+ * @returns {boolean} returns true of panning enabled else false.
+ */
+export const isPanningModeEnabled = (config) => {
+    if (config.pan !== undefined && config.pan.enabled) {
+        return true;
+    }
+    return false;
+};
+/**
+ * Used to set the clamp and transition when panning is enabled or not.
+ *
+ * @private
+ * @param {object} config - config object used by the graph.
+ * @returns {undefined} returns nothing
+ */
+export const settingsDictionary = (config) =>
+    isPanningModeEnabled(config)
+        ? {
+              shouldClamp: false,
+              transition: {
+                  duration: 0,
+                  ease: "linear"
+              }
+          }
+        : {
+              shouldClamp: true,
+              transition: {
+                  duration: 250,
+                  ease: "linear"
+              }
+          };
+/**
  * Helper function to set the right padding values based on input JSON.
  *
  * @private
@@ -156,6 +195,7 @@ const getPadding = (config, inputPadding) => {
 export const processInput = (input, config) => {
     const _axis = utils.deepClone(input.axis);
     config.clipPathId = generateClipPathId();
+    config.datelineClipPathId = generateDatelineClipPathId();
     config.bindTo = input.bindTo;
     config.bindLegendTo = input.bindLegendTo;
     config.padding = getPadding(config, input.padding);
@@ -163,7 +203,7 @@ export const processInput = (input, config) => {
         x: {},
         y: {}
     };
-    config.locale = d3.locale(getDefaultValue(input.locale, DEFAULT_LOCALE));
+    config.d3Locale = d3.locale(getDefaultValue(input.locale, DEFAULT_LOCALE));
     config.throttle = getDefaultValue(
         input.throttle,
         constants.RESIZE_THROTTLE

@@ -20,7 +20,8 @@ import { renderColorsExample } from "./examples/controls/colors";
 import {
     renderCombinationBar,
     renderCombinationRegion,
-    renderCombinationSimple
+    renderCombinationSimple,
+    renderCombinationIdenticalDatasetRegion
 } from "./examples/controls/combination";
 import {
     renderCriticalityLineSimple,
@@ -39,11 +40,10 @@ import {
     renderGanttPercentage,
     renderGanttStyle,
     renderGanttTrackSelection,
-    renderGanttTruncate,
-    renderGanttPanning
+    renderGanttTruncate
 } from "./examples/controls/gantt";
 import {
-    renderGoalLine,
+    renderRegionLine,
     renderLine,
     renderLineBlankDataPoint,
     renderLineDateTimeBuckets,
@@ -70,6 +70,9 @@ import {
     renderLineYHidden,
     renderMultiLine,
     renderMultiLineRegion,
+    renderMultiLineIdenticalDatasetRegion,
+    renderNoDataView,
+    renderLineCustomPadding,
     renderLineWithPanning
 } from "./examples/controls/line";
 import {
@@ -96,10 +99,15 @@ import { renderPieLegendTo, renderPieSimple } from "./examples/controls/pie";
 import {
     renderCriticalityShapes,
     renderFillTypes,
-    renderShapesSimple
+    renderShapesSimple,
+    renderShapesSimpleLight,
+    renderCriticalityShapesLight
 } from "./examples/controls/shapes";
 import { renderSplineLine } from "./examples/controls/spline";
-import { renderTimeline } from "./examples/controls/timeline";
+import {
+    renderTimeline,
+    renderTimelineCustomPadding
+} from "./examples/controls/timeline";
 import { createElementLegendBindTo } from "./examples/helpers";
 
 renderSiteApp(
@@ -138,12 +146,12 @@ renderSiteApp(
                     title: "Legend Hidden"
                 },
                 {
-                    pathname: "/line/legend-render-to",
+                    pathname: "/line/custom-legend-placement",
                     content: (id) => {
                         createElementLegendBindTo(id);
-                        renderLineLegendTo(id);
+                        return renderLineLegendTo(id);
                     },
-                    title: "Legend BindTo"
+                    title: "Custom Legend Placement"
                 },
                 {
                     pathname: "/line/legend-item-disabled",
@@ -156,9 +164,9 @@ renderSiteApp(
                     title: "Shapes Hidden"
                 },
                 {
-                    pathname: "/line/Panning",
-                    content: renderLineWithPanning,
-                    title: "Panning Mode"
+                    pathname: "/line/no-data",
+                    content: renderNoDataView,
+                    title: "No Data"
                 }
             ]
         },
@@ -334,11 +342,6 @@ renderSiteApp(
                     pathname: "/gantt/label-truncation",
                     content: renderGanttTruncate,
                     title: "Label Truncation"
-                },
-                {
-                    pathname: "/gantt/Panning Mode",
-                    content: renderGanttPanning,
-                    title: "Panning Mode"
                 }
             ]
         },
@@ -361,12 +364,12 @@ renderSiteApp(
                     title: "Simple"
                 },
                 {
-                    pathname: "/pie/legend-render-to",
+                    pathname: "/pie/custom-legend-placement",
                     content: (id) => {
                         createElementLegendBindTo(id);
-                        renderPieLegendTo(id);
+                        return renderPieLegendTo(id);
                     },
-                    title: "Legend BindTo"
+                    title: "Custom Legend Placement"
                 }
             ]
         },
@@ -500,11 +503,6 @@ renderSiteApp(
                             pathname: "/axes/gantt/datetime-buckets",
                             content: renderGanttDateTimeBuckets,
                             title: "Datetime Buckets"
-                        },
-                        {
-                            pathname: "/axes/gantt/custom-padding",
-                            content: renderGanttCustomPadding,
-                            title: "Custom Padding"
                         }
                     ]
                 },
@@ -542,9 +540,9 @@ renderSiteApp(
                             title: "Multiple Regions"
                         },
                         {
-                            pathname: "/regions/line/goal-line",
-                            content: renderGoalLine,
-                            title: "Goal line"
+                            pathname: "/regions/line/region-line",
+                            content: renderRegionLine,
+                            title: "Region-line"
                         },
                         {
                             pathname: "/regions/line/with-y2-axis",
@@ -560,6 +558,16 @@ renderSiteApp(
                             pathname: "/regions/line/no-upper-bound",
                             content: renderLineRegionNoUpper,
                             title: "No Upper Bound"
+                        }
+                    ]
+                },
+                {
+                    pathname: "/regions/multi-line",
+                    children: [
+                        {
+                            pathname: "/regions/multi-line/identical",
+                            content: renderMultiLineIdenticalDatasetRegion,
+                            title: "Dataset Region Identical"
                         }
                     ]
                 },
@@ -606,6 +614,26 @@ renderSiteApp(
                             pathname: "/regions/combination/simple",
                             content: renderCombinationRegion,
                             title: "Simple"
+                        },
+                        {
+                            pathname: "/regions/combination/identical",
+                            content: renderCombinationIdenticalDatasetRegion,
+                            title: "Dataset Region Identical"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            pathname: "/panning",
+            children: [
+                {
+                    pathname: "/panning/line",
+                    children: [
+                        {
+                            pathname: "/panning/line/simple",
+                            content: renderLineWithPanning,
+                            title: "Simple"
                         }
                     ]
                 }
@@ -642,6 +670,42 @@ renderSiteApp(
             ]
         },
         {
+            pathname: "/padding",
+            children: [
+                {
+                    pathname: "/padding/line",
+                    children: [
+                        {
+                            pathname: "/padding/line/custom-content-padding",
+                            content: renderLineCustomPadding,
+                            title: "Custom Content Padding"
+                        }
+                    ]
+                },
+                {
+                    pathname: "/padding/gantt",
+                    children: [
+                        {
+                            pathname: "/padding/gantt/custom-content-padding",
+                            content: renderGanttCustomPadding,
+                            title: "Custom Content Padding"
+                        }
+                    ]
+                },
+                {
+                    pathname: "/padding/timeline",
+                    children: [
+                        {
+                            pathname:
+                                "/padding/timeline/custom-content-padding",
+                            content: renderTimelineCustomPadding,
+                            title: "Custom Content Padding"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             pathname: "/styles",
             children: [
                 {
@@ -658,6 +722,16 @@ renderSiteApp(
                             title: "Criticality"
                         },
                         {
+                            pathname: "/styles/shapes/standard-light",
+                            content: renderShapesSimpleLight,
+                            title: "Standard - Light"
+                        },
+                        {
+                            pathname: "/styles/shapes/critical-light",
+                            content: renderCriticalityShapesLight,
+                            title: "Criticality - Light"
+                        },
+                        {
                             pathname: "/styles/shapes/fills",
                             content: renderFillTypes,
                             title: "Rectangle Fill"
@@ -672,5 +746,8 @@ renderSiteApp(
             ]
         }
     ],
-    "#/line/simple"
+    {
+        gettingStartedLink: "#/line/simple",
+        gitHubRepo: "https://github.com/cerner/carbon-graphs"
+    }
 );

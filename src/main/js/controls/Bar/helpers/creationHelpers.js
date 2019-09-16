@@ -66,12 +66,7 @@ const processDataPoints = (graphConfig, dataTarget) => {
         throw new Error(errors.THROW_MSG_INVALID_FORMAT_TYPE);
     }
     if (hasInvalidTicks(graphConfig.axis.x.ticks.values, dataTarget.values)) {
-        if (
-            graphConfig.pan === undefined ||
-            graphConfig.pan.enabled === false
-        ) {
-            throw new Error(errors.THROW_MSG_INVALID_X_AXIS_TICK_VALUES);
-        }
+        throw new Error(errors.THROW_MSG_INVALID_X_AXIS_TICK_VALUES);
     }
     if (utils.isDefined(dataTarget.axisInfoRow)) {
         if (utils.isEmpty(dataTarget.axisInfoRow)) {

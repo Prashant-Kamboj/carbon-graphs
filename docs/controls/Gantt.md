@@ -40,7 +40,7 @@ A native gantt chart using d3 based on standard design patterns.
             -   [Optional](#optional-8)
         -   [Layering](#layering)
         -   [Constraints](#constraints)
-        -   [Structure](#structure)
+    -   [Structure](#structure)
 
 ## Usage
 
@@ -80,6 +80,7 @@ ganttInstance.loadContent(/* Add "dataArray" JSON, shown below for example */);
 | showActionLegend | boolean  | true                                           | Toggle to show graph legend                                                          |
 | padding          | object   | `{ top: 10, bottom: 5, left: 100, right: 50 }` | Refer [Padding](Padding.md)                                                          |
 | clickPassThrough | object   | null                                           | Refer [Pass Through](#Pass-Through)                                                  |
+| pan              | object   | {}                                             | Set enabled to true inside pan to enable panning mode                                |
 
 ### Axis
 
@@ -98,12 +99,17 @@ X (Timeseries) axis should have the following properties:
 | ------------- | -------- | ------- | ---------------------------------- |
 | show          | boolean  | true    | Toggle for showing the axis        |
 | ticks         | object   | null    | Refer [Ticks](../helpers/Ticks.md) |
+| rangeRounding | boolean  | true    | Toggle for range rounding          |
 
 Y Axis should have the following properties:
 
 | Property Name | Expected | Default | Description                 |
 | ------------- | -------- | ------- | --------------------------- |
 | show          | boolean  | true    | Toggle for showing the axis |
+
+**Note:**
+
+-   `rangeRounding` property extends the domain so that it starts and ends on nice round values. This method typically modifies the scale’s domain, and may only extend the bounds to the nearest round value
 
 ### Pass Through
 
@@ -301,11 +307,11 @@ Loads the legend for `actions`.
 
 #### Optional
 
-| Property Name | Expected | Default       | Description                                                                        |
-| ------------- | -------- | ------------- | ---------------------------------------------------------------------------------- |
-| label         | object   | {}            | `display` property: Display value for the data-set which the data points belong to |
-| color         | string   | COLORS.BLACK  | Color for the data point `action`                                                  |
-| shape         | string   | SHAPES.CIRCLE | Shape for representing the data points                                             |
+| Property Name | Expected | Default            | Description                                                                        |
+| ------------- | -------- | ------------------ | ---------------------------------------------------------------------------------- |
+| label         | object   | {}                 | `display` property: Display value for the data-set which the data points belong to |
+| color         | string   | COLORS.BLACK       | Color for the data point `action`                                                  |
+| shape         | string   | SHAPES.DARK.CIRCLE | Shape for representing the data points                                             |
 
 ### Layering
 
@@ -353,7 +359,7 @@ var input = {
             label: {
                 display: "Action B"
             },
-            shape: Carbon.helpers.SHAPES.TRIANGLE,
+            shape: Carbon.helpers.SHAPES.DARK.TRIANGLE,
             color: Carbon.helpers.COLORS.GREEN
         }
     ],
@@ -364,7 +370,7 @@ var input = {
                 display: "Release A"
             },
             color: "#d3d4d5",
-            shape: Carbon.helpers.SHAPES.TRIANGLE,
+            shape: Carbon.helpers.SHAPES.DARK.TRIANGLE,
             onClick: (onCloseCB, payload) => {
                 // onCloseCB needs to called by the consumer after popup is closed;
                 // Payload is the dateline input object
@@ -372,6 +378,9 @@ var input = {
             value: new Date(2018, 5, 1).toISOString()
         }
     ],
+    pan: {
+        enabled: false
+    }
     showActionLegend: true
 };
 var ganttInstance = Carbon.api.gantt(input);

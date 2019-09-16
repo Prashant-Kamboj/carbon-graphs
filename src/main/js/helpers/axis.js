@@ -8,7 +8,6 @@ import styles from "../helpers/styles";
 import utils from "../helpers/utils";
 import { DEFAULT_TICK_FORMAT } from "../locale";
 import { prepareHAxis } from "./datetimeBuckets";
-import { translatePan } from "./translateUtil";
 
 /**
  * @module axis
@@ -176,7 +175,7 @@ const getAxesScale = (axis, scale, config) => {
         config.axis.x.ticks.values,
         getXAxisWidth(config),
         getAxisTickFormat(
-            config.locale,
+            config.d3Locale,
             config.axis.x.ticks.format,
             config.axis.x.type
         ),
@@ -314,7 +313,7 @@ const prepareHorizontalAxis = (scale, tickValues, config, orientation) =>
         tickValues,
         getXAxisWidth(config),
         getAxisTickFormat(
-            config.locale,
+            config.d3Locale,
             config.axis.x.ticks.format,
             config.axis.x.type
         ),
@@ -884,15 +883,16 @@ const hasY2Axis = (axis) => utils.isDefined(axis.y2) && axis.y2.show;
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translateAxes = (axis, scale, config, canvasSVG) => {
+const translateAxes = (axis, scale, config, canvasSVG, transition) => {
     getAxesScale(axis, scale, config);
     prepareHAxis(scale, axis, config, prepareHorizontalAxis);
     canvasSVG
         .select(`.${styles.axisX}`)
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(transition))
         .attr(
             "transform",
             `translate(${getXAxisXPosition(config)},${getXAxisYPosition(
@@ -903,7 +903,7 @@ const translateAxes = (axis, scale, config, canvasSVG) => {
     canvasSVG
         .select(`.${styles.axisY}`)
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(transition))
         .attr(
             "transform",
             `translate(${getYAxisXPosition(config)}, ${getYAxisYPosition(
@@ -915,7 +915,7 @@ const translateAxes = (axis, scale, config, canvasSVG) => {
         canvasSVG
             .select(`.${styles.axisY2}`)
             .transition()
-            .call(translatePan(config))
+            .call(constants.d3Transition(transition))
             .attr(
                 "transform",
                 `translate(${getY2AxisXPosition(config)}, ${getY2AxisYPosition(
@@ -926,7 +926,8 @@ const translateAxes = (axis, scale, config, canvasSVG) => {
     }
     canvasSVG
         .select(`.${styles.axisInfoRow}`)
-        .transition(translatePan(config))
+        .transition()
+        .call(constants.d3Transition(transition))
         .attr(
             "transform",
             `translate(${getXAxisXPosition(config)}, ${getAxisInfoRowYPosition(
@@ -944,13 +945,20 @@ const translateAxes = (axis, scale, config, canvasSVG) => {
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translateAxisReferenceLine = (axis, scale, config, canvasSVG) => {
+const translateAxisReferenceLine = (
+    axis,
+    scale,
+    config,
+    canvasSVG,
+    transition
+) => {
     const setTranslate = (path, style) =>
         path
             .transition()
-            .call(translatePan(config))
+            .call(constants.d3Transition(transition))
             .attr("aria-hidden", false)
             .attr(
                 "d",

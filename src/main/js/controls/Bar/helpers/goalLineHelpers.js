@@ -8,7 +8,7 @@ import { validateRegion } from "../../../helpers/region";
 import styles from "../../../helpers/styles";
 import { round2Decimals } from "../../../helpers/transformUtils";
 import utils from "../../../helpers/utils";
-import { translatePan } from "../../../helpers/translateUtil";
+import { settingsDictionary } from "../../Graph/GraphConfig";
 
 /**
  * Calculates x-axis range for given region
@@ -129,7 +129,7 @@ const createRegion = (scale, config, regionGroupSVG, regionList, uniqueKey) => {
     regionPath
         .exit()
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(settingsDictionary(config).transition))
         .remove();
 };
 /**
@@ -140,12 +140,13 @@ const createRegion = (scale, config, regionGroupSVG, regionList, uniqueKey) => {
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {object} regionGroupSVG - d3 object of region group svg
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translateRegion = (scale, config, regionGroupSVG) => {
+const translateRegion = (scale, config, regionGroupSVG, transition) => {
     regionGroupSVG
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(transition))
         .attr(constants.X_AXIS, (d) => d.xRange | 0)
         .attr(constants.Y_AXIS, getYAxisRangePosition(scale, config))
         .attr("width", (d) => d.width | 0)
@@ -186,14 +187,11 @@ const getRegionHeight = (regionPath, bounds, scale, config) => {
     const upperBound = utils.getNumber(regionPath.attr(constants.Y_AXIS));
     const lowerBound = bounds.start
         ? round2Decimals(scale[getRegionAxis(bounds)](bounds.start)) +
-          constants.DEFAULT_REGION_GOAL_LINE_STROKE_WIDTH
-        : config.height + constants.DEFAULT_REGION_GOAL_LINE_STROKE_WIDTH;
-    // If start and end are the same then `constants.DEFAULT_REGION_GOAL_LINE_STROKE_WIDTH`
+          constants.DEFAULT_GOAL_LINE_STROKE_WIDTH
+        : config.height + constants.DEFAULT_GOAL_LINE_STROKE_WIDTH;
+    // If start and end are the same then `constants.DEFAULT_GOAL_LINE_STROKE_WIDTH`
     // worth of height is applied to make it seem like a goal line
-    return (
-        lowerBound - upperBound ||
-        constants.DEFAULT_REGION_GOAL_LINE_STROKE_WIDTH
-    );
+    return lowerBound - upperBound || constants.DEFAULT_GOAL_LINE_STROKE_WIDTH;
 };
 
 export { processGoalLines, translateRegion, createRegion };

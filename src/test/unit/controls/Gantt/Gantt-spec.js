@@ -591,16 +591,16 @@ describe("Gantt", () => {
             expect(legend).toBeUndefined();
         });
         it("Creates canvas elements in order", () => {
-            const gridElement = fetchElementByClass(styles.canvas)
-                .childNodes[0];
-            const contentContainer = fetchElementByClass(styles.canvas)
-                .childNodes[1];
-            const axisXElement = fetchElementByClass(styles.canvas)
-                .childNodes[2];
-            const axisYElement = fetchElementByClass(styles.canvas)
-                .childNodes[3];
             const defsElement = fetchElementByClass(styles.canvas)
-                .childNodes[5];
+                .childNodes[0];
+            const gridElement = fetchElementByClass(styles.canvas)
+                .childNodes[1];
+            const contentContainer = fetchElementByClass(styles.canvas)
+                .childNodes[2];
+            const axisXElement = fetchElementByClass(styles.canvas)
+                .childNodes[3];
+            const axisYElement = fetchElementByClass(styles.canvas)
+                .childNodes[4];
             expect(defsElement).not.toBeNull();
             expect(gridElement).not.toBeNull();
             expect(axisXElement).not.toBeNull();
@@ -638,7 +638,7 @@ describe("Gantt", () => {
                 gantt.config.axisSizes.y +
                 gantt.config.axisLabelWidths.y +
                 (constants.PADDING.top + constants.PADDING.bottom) * 2;
-            const defsElement = fetchElementByClass(styles.canvas).lastChild;
+            const defsElement = fetchElementByClass(styles.canvas).firstChild;
             expect(defsElement.nodeName).toBe("defs");
             expect(defsElement.firstChild.nodeName).toBe("clipPath");
             expect(defsElement.firstChild.firstChild.nodeName).toBe("rect");
@@ -2089,8 +2089,8 @@ describe("Gantt", () => {
             );
             triggerEvent(window, "resize", () => {
                 const defsElement = fetchElementByClass(styles.canvas)
-                    .lastChild;
-                const clipPathRect = defsElement.lastChild.firstChild;
+                    .firstChild;
+                const clipPathRect = defsElement.firstChild.firstChild;
                 expect(+clipPathRect.getAttribute("height")).toBe(
                     gantt.config.height
                 );
@@ -2490,6 +2490,25 @@ describe("Gantt", () => {
             expect(gantt.tracks).toEqual([]);
             expect(gantt.trackConfig).toEqual([]);
             expect(gantt.resizeHandler).toBeNull();
+        });
+    });
+    describe("When panning is enabled", () => {
+        beforeEach(() => {
+            const axisData = utils.deepClone(getAxes(axisJSON));
+            axisData.dateline = datelineJSON;
+            axisData.pan = { enabled: true };
+            gantt = new Gantt(axisData);
+        });
+        it("Check if clamp is false if pan is enabled", () => {
+            expect(gantt.scale.x.clamp()).toEqual(false);
+        });
+        it("Check if different clipPath for dateline is created", () => {
+            const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            expect(defsElement.childElementCount).toBe(2);
+            expect(defsElement.nodeName).toBe("defs");
+            expect(defsElement.lastChild.nodeName).toBe("clipPath");
+            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+            expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
         });
     });
 });

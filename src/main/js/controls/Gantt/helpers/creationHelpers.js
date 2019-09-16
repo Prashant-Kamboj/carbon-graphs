@@ -26,6 +26,7 @@ import {
     translateHorizontalGrid,
     translateVerticalGrid
 } from "./translateHelpers";
+import { settingsDictionary } from "../../Gantt/GanttConfig";
 
 /**
  * Calculates the height for Y and Y2 axes.
@@ -232,7 +233,7 @@ const getAxesScale = (axis, scale, config) => {
         config.axis.x.ticks.values,
         getXAxisWidth(config),
         getAxisTickFormat(
-            config.locale,
+            config.d3Locale,
             config.axis.x.ticks.format,
             config.axis.x.type
         ),
@@ -291,22 +292,11 @@ const getYAxisRange = (trackList) =>
  * @returns {undefined} - returns nothing
  */
 const scaleGraph = (scale, config) => {
-    if (
-        config.pan !== undefined &&
-        utils.isBoolean(config.pan.enabled) &&
-        config.pan.enabled === true
-    ) {
-        scale.x = d3.time
-            .scale()
-            .domain(config.axis.x.domain)
-            .range([0, getXAxisWidth(config)]);
-    } else {
-        scale.x = d3.time
-            .scale()
-            .domain(config.axis.x.domain)
-            .range([0, getXAxisWidth(config)])
-            .clamp(true);
-    }
+    scale.x = d3.time
+        .scale()
+        .domain(config.axis.x.domain)
+        .range([0, getXAxisWidth(config)])
+        .clamp(settingsDictionary(config).shouldClamp);
     scale.y = d3.scale
         .ordinal()
         .domain(getYAxisDomain(config.axis.y.trackList))
@@ -321,45 +311,34 @@ const scaleGraph = (scale, config) => {
  * @private
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @returns {undefined} d3 svg path
+ * @returns {undefined} return nothing
  */
 const createDefs = (config, canvasSVG) => {
+    const defsElement = canvasSVG.append("defs");
+
+    defsElement
+        .append("clipPath")
+        .attr("id", config.clipPathId)
+        .append("rect")
+        .attr(constants.X_AXIS, getXAxisXPosition(config))
+        .attr(constants.Y_AXIS, getYAxisYPosition(config))
+        .attr("width", getXAxisWidth(config))
+        .attr("height", getYAxisHeight(config));
+
     if (
         config.pan !== undefined &&
         utils.isBoolean(config.pan.enabled) &&
         config.pan.enabled &&
         config.dateline.length > 0
     ) {
-        const shapeHeightArr = [];
-        const shape = d3.selectAll(".carbon-dateline-point");
-        shape[0].forEach((element) => {
-            const shapeHeight = element.getBBox().height;
-            shapeHeightArr.push(shapeHeight);
-        });
-        const datelineIndicatorHeight = Math.max(...shapeHeightArr) / 2;
-
-        canvasSVG
-            .append("defs")
+        defsElement
             .append("clipPath")
-            .attr("id", config.clipPathId)
-            .append("rect")
-            .attr(constants.X_AXIS, getXAxisXPosition(config))
-            .attr(
-                constants.Y_AXIS,
-                getYAxisYPosition(config) - datelineIndicatorHeight
-            )
-            .attr("width", getXAxisWidth(config))
-            .attr("height", getYAxisHeight(config) + datelineIndicatorHeight);
-    } else {
-        canvasSVG
-            .append("defs")
-            .append("clipPath")
-            .attr("id", config.clipPathId)
+            .attr("id", config.datelineClipPathId)
             .append("rect")
             .attr(constants.X_AXIS, getXAxisXPosition(config))
             .attr(constants.Y_AXIS, getYAxisYPosition(config))
             .attr("width", getXAxisWidth(config))
-            .attr("height", getYAxisHeight(config));
+            .attr("height", 0);
     }
 };
 /**

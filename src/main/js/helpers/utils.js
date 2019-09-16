@@ -178,14 +178,6 @@ const getNumber = (n) => (n ? Number(n) : 0);
  */
 const isNumber = (n) => typeof n === "number" && !isNaN(n);
 /**
- * Checks if input is a boolean or not
- *
- * @private
- * @param {*} n - input to be determined a number
- * @returns {boolean} if not undefined or null return Number, 0 otherwise
- */
-const isBoolean = (n) => typeof n === "boolean" && !isNaN(n);
-/**
  * Checks if provided dates are equal
  *
  * @private
@@ -193,6 +185,15 @@ const isBoolean = (n) => typeof n === "boolean" && !isNaN(n);
  * @param {Date} b - date to compare
  * @returns {boolean} true if dates are equal
  */
+/**
+ * Checks if input is a boolean or not
+ *
+ * @private
+ * @param {*} n - input to be determined a number
+ * @returns {boolean} if not undefined or null return Number, 0 otherwise
+ */
+const isBoolean = (n) => typeof n === "boolean" && !isNaN(n);
+
 const isDateEqual = (a, b) => a.getTime() === b.getTime();
 /**
  * Compares 2 values and return true if equals. False if not.

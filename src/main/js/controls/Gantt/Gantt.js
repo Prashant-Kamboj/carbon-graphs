@@ -11,7 +11,7 @@ import {
     contentLoadHandler,
     contentUnloadHandler
 } from "../../helpers/constructUtils";
-import GanttConfig, { processInput } from "./GanttConfig";
+import GanttConfig, { processInput, settingsDictionary } from "./GanttConfig";
 import {
     prepareLegendEventHandlers,
     renderLegendItems
@@ -205,14 +205,19 @@ class Gantt extends Construct {
                     ? this.config.canvasWidth
                     : this.config.canvasWidth - BASE_CANVAS_WIDTH_PADDING
             );
+        createDefs(this.config, this.svg);
         createGrid(this.axis, this.scale, this.config, this.svg);
         createContentContainer(this.config, this.svg);
         createAxes(this.axis, this.scale, this.config, this.svg);
         createGanttContent(this.config, this.svg);
         if (utils.notEmpty(this.config.dateline)) {
-            createDateline(this.scale, this.config, this.svg);
+            createDateline(
+                this.scale,
+                this.config,
+                this.svg,
+                settingsDictionary(this.config).transition
+            );
         }
-        createDefs(this.config, this.svg);
         if (this.config.showActionLegend) {
             this.legendSVG = createLegend(
                 this.config.bindLegendTo

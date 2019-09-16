@@ -59,6 +59,7 @@ timelineDefault.loadContent(/* Data array D */);
 | showLabel     | boolean  | true                                          | Toggle to show X axis label                                                          |
 | showLegend    | boolean  | true                                          | Toggle to show graph legend                                                          |
 | padding       | object   | `{ top: 10, bottom: 5, left: 30, right: 50 }` | Refer [Padding](Padding.md)                                                          |
+| pan           | object   | {}                                            | Set enabled to true inside pan to enable panning mode                                |
 
 ### Axis
 
@@ -92,11 +93,11 @@ Timeline is marked only on `X Axis`, there is no other axis supplied. Axis is se
 
 #### Optional
 
-| Property Name | Expected | Default       | Description                                                      |
-| ------------- | -------- | ------------- | ---------------------------------------------------------------- |
-| color         | string   | COLORS.BLACK  | Color for the data point and line                                |
-| shape         | string   | SHAPES.CIRCLE | Shape for representing the data points                           |
-| onClick       | Function | undefined     | Any action that can be performed when clicking on the data point |
+| Property Name | Expected | Default            | Description                                                      |
+| ------------- | -------- | ------------------ | ---------------------------------------------------------------- |
+| color         | string   | COLORS.BLACK       | Color for the data point and line                                |
+| shape         | string   | SHAPES.DARK.CIRCLE | Shape for representing the data points                           |
+| onClick       | Function | undefined          | Any action that can be performed when clicking on the data point |
 
 ### Values
 
@@ -125,6 +126,9 @@ var input = {
             upperLimit: new Date(2016, 0, 1, 15, 59).toISOString()
         }
     },
+    pan: {
+        enabled: false
+    }
     showLabel: true,
     showLegend: true
 };
@@ -133,7 +137,7 @@ var data = {
     label: {
         display: "Timeline A"
     },
-    shape: Carbon.helpers.SHAPES.RHOMBUS,
+    shape: Carbon.helpers.SHAPES.DARK.RHOMBUS,
     color: Carbon.helpers.COLORS.BLUE,
     onClick: (onCloseCB, key, index, value) => {
         // onCloseCB needs to called by the consumer after popup is closed to deselect data point.

@@ -6,7 +6,7 @@
 
 .bindto-container {
     display: flex;
-    align-items: center;
+    width: 100%;
 
     .legend-bindto-container {
         width: 20%;
@@ -85,4 +85,24 @@
     top: 0;
     left: 0;
     z-index: 1200;
+}
+
+.shape-container {
+    width: 100%;
+}
+
+.panning-container {
+    display: flex;
+    padding: 1rem;
+    & .nav-left,
+    & .nav-right {
+        display: flex;
+        padding: 0.5rem;
+        cursor: pointer;
+        font-size: inherit;
+        border-radius: 0.25rem;
+        margin-right: 0.5rem;
+        border: 0.1rem solid #dedfe0;
+        background-color: #dedfe0;
+    }
 }

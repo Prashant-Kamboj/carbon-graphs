@@ -11,8 +11,8 @@ import {
     createRegion,
     hideAllRegions,
     removeRegion,
-    shouldHideAllRegions,
-    translateRegion
+    translateRegion,
+    areRegionsIdentical
 } from "../../helpers/region";
 import styles from "../../helpers/styles";
 import utils from "../../helpers/utils";
@@ -26,6 +26,7 @@ import {
     translateLineGraph
 } from "./helpers/helpers";
 import LineConfig from "./LineConfig";
+import { settingsDictionary } from "../Graph/GraphConfig";
 
 /**
  * @typedef {object} Line
@@ -105,7 +106,13 @@ class Line extends GraphContent {
      */
     load(graph) {
         this.dataTarget = processDataPoints(graph.config, this.config);
-        draw(graph.scale, graph.config, graph.svg, this.dataTarget);
+        draw(
+            graph.scale,
+            graph.config,
+            graph.svg,
+            this.dataTarget,
+            settingsDictionary(graph.config).transition
+        );
         if (utils.notEmpty(this.dataTarget.regions)) {
             createRegion(
                 graph.scale,
@@ -150,7 +157,8 @@ class Line extends GraphContent {
         removeLegendItem(graph.legendSVG, this.dataTarget);
         removeLabelShapeItem(
             graph.axesLabelShapeGroup[this.config.yAxis],
-            this.dataTarget
+            this.dataTarget,
+            graph.config
         );
         this.dataTarget = {};
         this.config = {};
@@ -161,20 +169,30 @@ class Line extends GraphContent {
      * @inheritdoc
      */
     resize(graph) {
-        if (
-            shouldHideAllRegions(
-                this.dataTarget.regions,
-                graph.config.shownTargets
-            )
-        ) {
+        if (utils.notEmpty(this.dataTarget.regions)) {
+            if (graph.content.length > 1 && !graph.config.shouldHideAllRegion) {
+                if (areRegionsIdentical(graph.svg)) {
+                    graph.config.shouldHideAllRegion = false;
+                } else {
+                    hideAllRegions(graph.svg);
+                    graph.config.shouldHideAllRegion = true;
+                }
+            }
+        } else {
             hideAllRegions(graph.svg);
+            graph.config.shouldHideAllRegion = true;
         }
         translateRegion(
             graph.scale,
             graph.config,
-            graph.svg.select(`.${styles.regionGroup}`)
+            graph.svg.select(`.${styles.regionGroup}`),
+            settingsDictionary(graph.config).transition
         );
-        translateLineGraph(graph.scale, graph.svg, graph.config);
+        translateLineGraph(
+            graph.scale,
+            graph.svg,
+            settingsDictionary(graph.config).transition
+        );
         return this;
     }
 
@@ -183,7 +201,13 @@ class Line extends GraphContent {
      */
     redraw(graph) {
         clear(graph.svg, this.dataTarget);
-        draw(graph.scale, graph.config, graph.svg, this.dataTarget);
+        draw(
+            graph.scale,
+            graph.config,
+            graph.svg,
+            this.dataTarget,
+            settingsDictionary(graph.config).transition
+        );
         return this;
     }
 }

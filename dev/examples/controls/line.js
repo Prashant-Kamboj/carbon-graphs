@@ -1,6 +1,7 @@
 import Carbon from "../../../src/main/js/carbon";
 import utils from "../../../src/main/js/helpers/utils";
 import { getDemoData } from "../data";
+import { createPanningControls } from "./panHelpers";
 
 const tickValues = [
     new Date(2016, 0, 1, 1, 0).toISOString(),
@@ -323,7 +324,29 @@ export const renderMultiLineRegion = (id) => {
     );
     return lineDefault;
 };
-export const renderGoalLine = (id) => {
+export const renderMultiLineIdenticalDatasetRegion = (id) => {
+    const lineDefault = Carbon.api.graph(getDemoData(`#${id}`, "LINE_DEFAULT"));
+    const data = utils.deepClone(getDemoData(`#${id}`, "LINE_DEFAULT").data[0]);
+    const dataAlt = utils.deepClone(
+        getDemoData(`#${id}`, "LINE_DEFAULT").data[2]
+    );
+    data.regions = [
+        {
+            start: 2,
+            end: 14
+        }
+    ];
+    dataAlt.regions = [
+        {
+            start: 2,
+            end: 14
+        }
+    ];
+    lineDefault.loadContent(Carbon.api.line(data));
+    lineDefault.loadContent(Carbon.api.line(dataAlt));
+    return lineDefault;
+};
+export const renderRegionLine = (id) => {
     const lineDefault = Carbon.api.graph(getDemoData(`#${id}`, "LINE_DEFAULT"));
     const data = utils.deepClone(getDemoData(`#${id}`, "LINE_DEFAULT").data[5]);
     data.regions = [
@@ -397,19 +420,57 @@ export const renderLineXOrientationTop = (id) => {
     );
     return lineDefault;
 };
-
+export const renderNoDataView = (id) => {
+    const axisData = utils.deepClone(getDemoData(`#${id}`, "NO_DATA_VIEW"));
+    const lineDefault = Carbon.api.graph(axisData);
+    lineDefault.loadContent(
+        Carbon.api.line(getDemoData(`#${id}`, "NO_DATA_VIEW").data[0])
+    );
+    return lineDefault;
+};
+export const renderLineCustomPadding = (id) => {
+    const data = utils.deepClone(getDemoData(`#${id}`, "LINE_DEFAULT"));
+    data.showLegend = false;
+    data.axis.x.show = false;
+    data.axis.y.show = false;
+    data.padding = {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0
+    };
+    const lineDefault = Carbon.api.graph(data);
+    lineDefault.loadContent(
+        Carbon.api.line(getDemoData(`#${id}`, "LINE_DEFAULT").data[0])
+    );
+    return lineDefault;
+};
 export const renderLineWithPanning = (id) => {
+    let graph;
     const axisData = utils.deepClone(
         getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE")
     );
     axisData.pan = {
-        enabled: true
+        enabled: true,
+        showControl: true
     };
-    const lineDefault = Carbon.api.graph(axisData);
-    lineDefault.loadContent(
-        Carbon.api.line(
-            getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE").data[0]
-        )
+    const graphData = utils.deepClone(
+        getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE").data[0]
     );
-    return lineDefault;
+    graphData.regions = [regions[0]];
+    const createGraph = (axis, values) => {
+        if (graph) {
+            graph.destroy();
+        }
+        graph = Carbon.api.graph(axis);
+        graph.loadContent(Carbon.api.line(values));
+        return graph;
+    };
+    graph = createGraph(axisData, graphData);
+    createPanningControls(id, {
+        axisData,
+        graphData,
+        creationHandler: createGraph
+    });
+    return graph;
 };

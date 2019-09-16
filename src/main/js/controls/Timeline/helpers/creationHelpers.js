@@ -28,6 +28,7 @@ import {
     getShapeForTarget
 } from "../../Graph/helpers/helpers";
 import { transformPoint } from "./translateHelpers";
+import { settingsDictionary } from "../TimelineConfig";
 
 /**
  * @typedef TimelineContent
@@ -101,7 +102,10 @@ const getXAxisYPosition = (config) =>
  * @returns {number} X Axis width
  */
 const getXAxisWidth = (config) =>
-    config.canvasWidth - config.padding.left - getXAxisYPosition(config);
+    config.canvasWidth -
+    config.padding.left -
+    config.padding.right -
+    getXAxisYPosition(config);
 /**
  * X Axis label's starting position below the graph
  *
@@ -137,7 +141,7 @@ const getAxesScale = (axis, scale, config) => {
         config.axis.x.ticks.values,
         getXAxisWidth(config),
         getAxisTickFormat(
-            config.locale,
+            config.d3Locale,
             config.axis.x.ticks.format,
             config.axis.x.type
         )
@@ -164,22 +168,11 @@ const getAxesScale = (axis, scale, config) => {
  * @returns {undefined} - returns nothing
  */
 const scaleGraph = (scale, config) => {
-    if (
-        config.pan !== undefined &&
-        utils.isBoolean(config.pan.enabled) &&
-        config.pan.enabled === true
-    ) {
-        scale.x = d3.time
-            .scale()
-            .domain(config.axis.x.domain)
-            .range([0, getXAxisWidth(config)]);
-    } else {
-        scale.x = d3.time
-            .scale()
-            .domain(config.axis.x.domain)
-            .range([0, getXAxisWidth(config)])
-            .clamp(true);
-    }
+    scale.x = d3.time
+        .scale()
+        .domain(config.axis.x.domain)
+        .range([0, getXAxisWidth(config)])
+        .clamp(settingsDictionary(config).shouldClamp);
     if (config.axis.x.rangeRounding) {
         scale.x.nice();
     }

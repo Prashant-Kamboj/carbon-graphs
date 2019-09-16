@@ -5,7 +5,9 @@ import Graph from "../../../../main/js/controls/Graph/index";
 import Line from "../../../../main/js/controls/Line/Line";
 import {
     getXAxisWidth,
-    getYAxisHeight
+    getYAxisHeight,
+    getXAxisLabelXPosition,
+    getYAxisLabelYPosition
 } from "../../../../main/js/helpers/axis";
 import constants, {
     AXES_ORIENTATION,
@@ -37,7 +39,8 @@ import {
     axisDefaultWithDateline,
     axisTimeseriesWithDateline,
     datelineJSON,
-    axisTimeSeriesWithAxisTop
+    axisTimeSeriesWithAxisTop,
+    axisDefaultwithPanning
 } from "./helpers";
 
 describe("Graph", () => {
@@ -233,6 +236,10 @@ describe("Graph", () => {
                     );
                 }).toThrowError(errors.THROW_MSG_NO_AXIS_LABEL_INFO);
             });
+            it("If showNoDataText is not present, default value of showNoDataText is set to true", () => {
+                const graph = new Graph(getAxes(axisDefault));
+                expect(graph.config.showNoDataText).toEqual(true);
+            });
         });
         it("Throws error on empty input", () => {
             expect(() => {
@@ -294,9 +301,11 @@ describe("Graph", () => {
             expect(graph.config.bindTo).toEqual(input.bindTo);
             expect(graph.config.axis).not.toBeNull();
             expect(graph.config.locale).not.toBeNull();
+            expect(graph.config.d3Locale).not.toBeNull();
             expect(graph.config.throttle).toEqual(constants.RESIZE_THROTTLE);
             expect(graph.config.showLabel).toEqual(true);
             expect(graph.config.showLegend).toEqual(true);
+            expect(graph.config.showNoDataText).toEqual(true);
             expect(graph.config.showShapes).toEqual(true);
             expect(graph.config.showHGrid).toEqual(true);
             expect(graph.config.showVGrid).toEqual(true);
@@ -383,9 +392,11 @@ describe("Graph", () => {
             expect(graph.config.bindTo).toEqual(input.bindTo);
             expect(graph.config.axis).not.toBeNull();
             expect(graph.config.locale).not.toBeNull();
+            expect(graph.config.d3Locale).not.toBeNull();
             expect(graph.config.throttle).toEqual(constants.RESIZE_THROTTLE);
             expect(graph.config.showLabel).toEqual(true);
             expect(graph.config.showLegend).toEqual(true);
+            expect(graph.config.showNoDataText).toEqual(true);
             expect(graph.config.showShapes).toEqual(true);
             expect(graph.config.showHGrid).toEqual(true);
             expect(graph.config.showVGrid).toEqual(true);
@@ -1069,25 +1080,25 @@ describe("Graph", () => {
             expect(legend.getAttribute("role")).toBe("list");
         });
         it("Creates canvas elements in order", () => {
-            const regionElement = fetchElementByClass(styles.canvas)
-                .childNodes[0];
-            const gridElement = fetchElementByClass(styles.canvas)
-                .childNodes[1];
-            const contentContainer = fetchElementByClass(styles.canvas)
-                .childNodes[2];
-            const axisXElement = fetchElementByClass(styles.canvas)
-                .childNodes[3];
-            const axisYElement = fetchElementByClass(styles.canvas)
-                .childNodes[4];
-            const axisInfoRowElement = fetchElementByClass(styles.canvas)
-                .childNodes[5];
-            const axisXLabelElement = fetchElementByClass(styles.canvas)
-                .childNodes[6];
-            const axisYLabelElement = fetchElementByClass(styles.canvas)
-                .childNodes[7];
-            const axisReferenceLintElement = fetchElementByClass(styles.canvas)
-                .childNodes[8];
             const defsElement = fetchElementByClass(styles.canvas)
+                .childNodes[0];
+            const regionElement = fetchElementByClass(styles.canvas)
+                .childNodes[1];
+            const gridElement = fetchElementByClass(styles.canvas)
+                .childNodes[2];
+            const contentContainer = fetchElementByClass(styles.canvas)
+                .childNodes[3];
+            const axisXElement = fetchElementByClass(styles.canvas)
+                .childNodes[4];
+            const axisYElement = fetchElementByClass(styles.canvas)
+                .childNodes[5];
+            const axisInfoRowElement = fetchElementByClass(styles.canvas)
+                .childNodes[6];
+            const axisXLabelElement = fetchElementByClass(styles.canvas)
+                .childNodes[7];
+            const axisYLabelElement = fetchElementByClass(styles.canvas)
+                .childNodes[8];
+            const axisReferenceLintElement = fetchElementByClass(styles.canvas)
                 .childNodes[9];
             expect(defsElement).not.toBeNull();
             expect(regionElement).not.toBeNull();
@@ -1156,7 +1167,7 @@ describe("Graph", () => {
                 graph.config.axisSizes.y2 +
                 graph.config.axisLabelWidths.y +
                 graph.config.axisLabelWidths.y2;
-            const defsElement = fetchElementByClass(styles.canvas).lastChild;
+            const defsElement = fetchElementByClass(styles.canvas).firstChild;
             expect(defsElement.nodeName).toBe("defs");
             expect(defsElement.firstChild.nodeName).toBe("clipPath");
             expect(defsElement.firstChild.firstChild.nodeName).toBe("rect");
@@ -1171,7 +1182,7 @@ describe("Graph", () => {
         });
         it("Creates region container", () => {
             const regionElement = fetchElementByClass(styles.canvas)
-                .childNodes[0];
+                .childNodes[1];
             expect(regionElement.nodeName).toBe("g");
             expect(regionElement.getAttribute("class")).toBe(
                 styles.regionGroup
@@ -2372,7 +2383,7 @@ describe("Graph", () => {
         it("Sets the defs clipPath width and height correctly", () => {
             graphContainer.setAttribute("style", "width: 800px; height: 200px");
             graph.resize();
-            const defsElement = fetchElementByClass(styles.canvas).lastChild;
+            const defsElement = fetchElementByClass(styles.canvas).firstChild;
             const clipPathRect = defsElement.firstChild.firstChild;
             expect(toNumber(clipPathRect.getAttribute("height"))).toBe(
                 graph.config.height
@@ -2512,6 +2523,32 @@ describe("Graph", () => {
                 expect(
                     y2AxisShapeContainer.getAttribute("transform")
                 ).toContain("rotate(90)");
+                done();
+            });
+        });
+        it("No data view aligns correctly", (done) => {
+            graphContainer.setAttribute("style", "width: 800px; height: 200px");
+            graph.resize();
+            triggerEvent(window, "resize", () => {
+                const noDataContainer = fetchElementByClass(
+                    styles.noDataOverlay
+                );
+                expect(toNumber(noDataContainer.getAttribute("height"))).toBe(
+                    getYAxisHeight(graph.config) /
+                        constants.NO_DATA_VIEW_PROPORTION
+                );
+                expect(toNumber(noDataContainer.getAttribute("width"))).toBe(
+                    getXAxisWidth(graph.config)
+                );
+
+                const noDataLabel = fetchElementByClass(styles.noDataLabel);
+                expect(toNumber(noDataLabel.getAttribute("x"))).toBe(
+                    getXAxisLabelXPosition(graph.config)
+                );
+                expect(toNumber(noDataLabel.getAttribute("y"))).toBe(
+                    getYAxisLabelYPosition(graph.config) +
+                        constants.NO_DATA_LABEL_PADDING
+                );
                 done();
             });
         });
@@ -2843,9 +2880,11 @@ describe("Graph", () => {
             expect(graph.config.bindTo).toEqual(input.bindTo);
             expect(graph.config.axis).not.toBeNull();
             expect(graph.config.locale).not.toBeNull();
+            expect(graph.config.d3Locale).not.toBeNull();
             expect(graph.config.throttle).toEqual(constants.RESIZE_THROTTLE);
             expect(graph.config.showLabel).toEqual(true);
             expect(graph.config.showLegend).toEqual(true);
+            expect(graph.config.showNoDataText).toEqual(true);
             expect(graph.config.showShapes).toEqual(true);
             expect(graph.config.showHGrid).toEqual(true);
             expect(graph.config.showVGrid).toEqual(true);
@@ -2925,6 +2964,81 @@ describe("Graph", () => {
             ).translate;
             expect(toNumber(translate[0], 10)).toBeCloserTo(72);
             expect(toNumber(translate[1], 10)).toBeCloserTo(10);
+        });
+    });
+    describe("No Data", () => {
+        describe("Will be displayed", () => {
+            it("If showNoDataText is set to true or undefined", () => {
+                graph = new Graph(getAxes(axisDefault));
+                const noDataTextElement = fetchElementByClass(
+                    styles.noDataContainer
+                );
+                expect(noDataTextElement).not.toBeNull();
+            });
+            it("If showNoDataText is set to true or undefined and the value of the data is not present", () => {
+                const primaryContent = new Line(getData());
+                graph = new Graph(getAxes(axisDefault));
+                graph.loadContent(primaryContent);
+                const noDataTextElement = fetchElementByClass(
+                    styles.noDataContainer
+                );
+                expect(noDataTextElement).not.toBeNull();
+            });
+            it("if data is unloaded and no more data present on the screen to display", () => {
+                const primaryContent = new Line(getData(valuesDefault));
+                graph = new Graph(getAxes(axisDefault));
+                graph.loadContent(primaryContent);
+                const noNoDataTextElement = fetchElementByClass(
+                    styles.noDataContainer
+                );
+                expect(noNoDataTextElement).toBeNull();
+                graph.unloadContent(primaryContent);
+                const noDataTextElement = fetchElementByClass(
+                    styles.noDataContainer
+                );
+                expect(noDataTextElement).not.toBeNull();
+            });
+        });
+        describe("Will not be displayed", () => {
+            it("if showNoDataText is set to false", () => {
+                graph = new Graph(
+                    Object.assign(
+                        {
+                            showNoDataText: false
+                        },
+                        getAxes(axisDefault)
+                    )
+                );
+                const noDataTextElement = fetchElementByClass(
+                    styles.noDataContainer
+                );
+                expect(noDataTextElement).toBeNull();
+            });
+            it("if loaded data contains value", () => {
+                const primaryContent = new Line(getData(valuesDefault));
+                graph = new Graph(getAxes(axisDefault));
+                graph.loadContent(primaryContent);
+                const noDataTextElement = fetchElementByClass(
+                    styles.noDataContainer
+                );
+                expect(noDataTextElement).toBeNull();
+            });
+        });
+    });
+    describe("When panning is enabled", () => {
+        beforeEach(() => {
+            graph = new Graph(axisDefaultwithPanning);
+        });
+        it("Check if clamp is false if pan is enabled", () => {
+            expect(graph.scale.x.clamp()).toEqual(false);
+        });
+        it("Check if different clipPath for dateline is created", () => {
+            const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            expect(defsElement.childElementCount).toBe(2);
+            expect(defsElement.nodeName).toBe("defs");
+            expect(defsElement.lastChild.nodeName).toBe("clipPath");
+            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+            expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
         });
     });
 });

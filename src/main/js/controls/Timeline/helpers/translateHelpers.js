@@ -13,7 +13,7 @@ import {
     getXAxisXPosition,
     getXAxisYPosition
 } from "./creationHelpers";
-import { translatePan } from "../../../helpers/translateUtil";
+import { settingsDictionary } from "../TimelineConfig";
 
 /**
  * Updates clipPath rectangle width and height on resize.
@@ -46,7 +46,7 @@ const translateAxes = (axis, scale, config, canvasSVG) => {
     canvasSVG
         .select(`.${styles.axisX}`)
         .transition()
-        .call(translatePan(config))
+        .call(constants.d3Transition(settingsDictionary(config).transition))
         .attr(
             "transform",
             `translate(${getXAxisXPosition(config)},${getXAxisYPosition(
@@ -68,7 +68,7 @@ const translateLabel = (config, canvasSVG) => {
         canvasSVG
             .select(`.${styles.axisLabelX}`)
             .transition()
-            .call(translatePan(config))
+            .call(constants.d3Transition(settingsDictionary(config).transition))
             .attr(
                 "transform",
                 `translate(${getXAxisLabelXPosition(
@@ -113,7 +113,11 @@ const translatePoints = (scale, config, canvasSVG, key, style) =>
             pointGroupSVG
                 .select("g")
                 .transition()
-                .call(translatePan(config))
+                .call(
+                    constants.d3Transition(
+                        settingsDictionary(config).transition
+                    )
+                )
                 .attr("transform", function() {
                     return transformPoint(
                         scale,
