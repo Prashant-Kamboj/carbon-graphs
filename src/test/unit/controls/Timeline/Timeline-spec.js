@@ -494,7 +494,8 @@ describe("Timeline", () => {
         });
         it("Creates defs element with height and width", () => {
             const currentWidth =
-                constants.PADDING.left + constants.PADDING.right +
+                constants.PADDING.left +
+                constants.PADDING.right +
                 (constants.PADDING.top + constants.PADDING.bottom) * 2;
             const defsElement = fetchElementByClass(styles.canvas).firstChild;
             expect(defsElement.nodeName).toBe("defs");
@@ -2372,14 +2373,52 @@ describe("Timeline", () => {
             });
         });
     });
-    describe("When panning is enabled", () => {
+    describe("When pan is enabled", () => {
         beforeEach(() => {
+            const valuesMutated = utils.deepClone(valuesJSON);
+            const inputPrimary = getData(valuesMutated, false, false);
             const axisData = utils.deepClone(getAxes(axisJSON));
             axisData.pan = { enabled: true };
             timeline = new Timeline(axisData);
+            timeline.loadContent(inputPrimary);
         });
         it("Check if clamp is false if pan is enabled", () => {
             expect(timeline.scale.x.clamp()).toEqual(false);
+        });
+        it("check if data point are getting translated properly", () => {
+            const dataPoint = fetchElementByClass(styles.point).firstChild;
+            expect(
+                getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                    .translate[0]
+            ).not.toBeNull();
+            expect(
+                getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                    .translate[1]
+            ).not.toBeNull();
+        });
+    });
+    describe("When pan is disabled", () => {
+        beforeEach(() => {
+            const valuesMutated = utils.deepClone(valuesJSON);
+            const inputPrimary = getData(valuesMutated, false, false);
+            const axisData = utils.deepClone(getAxes(axisJSON));
+            axisData.pan = { enabled: false };
+            timeline = new Timeline(axisData);
+            timeline.loadContent(inputPrimary);
+        });
+        it("Check if clamp is true if pan is disabled", () => {
+            expect(timeline.scale.x.clamp()).toEqual(true);
+        });
+        it("check if data point are getting translated properly", () => {
+            const dataPoint = fetchElementByClass(styles.point).firstChild;
+            expect(
+                getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                    .translate[0]
+            ).not.toBeNull();
+            expect(
+                getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                    .translate[1]
+            ).not.toBeNull();
         });
     });
 });

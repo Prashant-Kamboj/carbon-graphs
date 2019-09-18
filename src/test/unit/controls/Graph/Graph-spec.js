@@ -3025,7 +3025,7 @@ describe("Graph", () => {
             });
         });
     });
-    describe("When panning is enabled", () => {
+    describe("When pan is enabled", () => {
         beforeEach(() => {
             graph = new Graph(axisDefaultwithPanning);
         });
@@ -3039,6 +3039,43 @@ describe("Graph", () => {
             expect(defsElement.lastChild.nodeName).toBe("clipPath");
             expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
             expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
+        });
+        it("DatelineGroup translates properly when panning is enabled", (done) => {
+            const datelineGroup = fetchElementByClass(styles.datelineGroup);
+            setTimeout(() => {
+                const translate = getSVGAnimatedTransformList(
+                    datelineGroup.getAttribute("transform")
+                ).translate;
+                expect(toNumber(translate[0], 10)).toBeCloserTo(73);
+                expect(toNumber(translate[1], 10)).toBeCloserTo(5);
+                done();
+            }, 0);
+        });
+    });
+    describe("When pan is disabled", () => {
+        beforeEach(() => {
+            graph = new Graph(axisTimeseriesWithDateline);
+        });
+        it("Check if clamp is true if pan is disabled", () => {
+            expect(graph.scale.x.clamp()).toEqual(true);
+        });
+        it("Check if different clipPath for dateline is not created", () => {
+            const defsElement = fetchElementByClass(styles.canvas).firstChild;
+            expect(defsElement.childElementCount).toBe(1);
+            expect(defsElement.nodeName).toBe("defs");
+            expect(defsElement.lastChild.nodeName).toBe("clipPath");
+            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+        });
+        it("Dateline group translates properly when panning is disabled", (done) => {
+            const datelineGroup = fetchElementByClass(styles.datelineGroup);
+            delay(() => {
+                const translate = getSVGAnimatedTransformList(
+                    datelineGroup.getAttribute("transform")
+                ).translate;
+                expect(toNumber(translate[0], 10)).toBeCloserTo(73);
+                expect(toNumber(translate[1], 10)).toBeCloserTo(5);
+                done();
+            });
         });
     });
 });
