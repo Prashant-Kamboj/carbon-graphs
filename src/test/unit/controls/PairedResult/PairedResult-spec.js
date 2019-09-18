@@ -4230,7 +4230,7 @@ describe("PairedResult", () => {
                 const translate = getSVGAnimatedTransformList(
                     datelineGroup.getAttribute("transform")
                 ).translate;
-                expect(toNumber(translate[0], 10)).toBeCloseTo(81);
+                expect(toNumber(translate[0], 10)).toBeGreaterThanOrEqual(80);
                 expect(toNumber(translate[1], 10)).toBeCloseTo(5);
                 done();
             }, 0);
@@ -4266,7 +4266,7 @@ describe("PairedResult", () => {
                 const translate = getSVGAnimatedTransformList(
                     datelineGroup.getAttribute("transform")
                 ).translate;
-                expect(toNumber(translate[0], 10)).toBeCloseTo(81);
+                expect(toNumber(translate[0], 10)).toBeGreaterThanOrEqual(80);
                 expect(toNumber(translate[1], 10)).toBeCloseTo(5);
                 done();
             });

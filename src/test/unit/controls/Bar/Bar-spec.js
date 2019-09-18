@@ -2139,7 +2139,7 @@ describe("Bar", () => {
                 const translate = getSVGAnimatedTransformList(
                     datelineGroup.getAttribute("transform")
                 ).translate;
-                expect(toNumber(translate[0], 10)).toBeCloseTo(73);
+                expect(toNumber(translate[0], 10)).toBeGreaterThanOrEqual(72);
                 expect(toNumber(translate[1], 10)).toBeCloseTo(5);
                 done();
             }, 0);
@@ -2175,7 +2175,7 @@ describe("Bar", () => {
                 const translate = getSVGAnimatedTransformList(
                     datelineGroup.getAttribute("transform")
                 ).translate;
-                expect(toNumber(translate[0], 10)).toBeCloseTo(73);
+                expect(toNumber(translate[0], 10)).toBeGreaterThanOrEqual(72);
                 expect(toNumber(translate[1], 10)).toBeCloseTo(5);
                 done();
             });
