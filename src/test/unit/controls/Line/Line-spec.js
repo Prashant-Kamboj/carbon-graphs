@@ -3134,8 +3134,8 @@ describe("Line", () => {
                 const translate = getSVGAnimatedTransformList(
                     datelineGroup.getAttribute("transform")
                 ).translate;
-                expect(toNumber(translate[0], 10)).toEqual(73);
-                expect(toNumber(translate[1], 10)).toEqual(5);
+                expect(toNumber(translate[0], 10)).toBeCloseTo(73);
+                expect(toNumber(translate[1], 10)).toBeCloseTo(5);
                 done();
             }, 0);
         });
@@ -3170,8 +3170,8 @@ describe("Line", () => {
                 const translate = getSVGAnimatedTransformList(
                     datelineGroup.getAttribute("transform")
                 ).translate;
-                expect(toNumber(translate[0], 10)).toEqual(73);
-                expect(toNumber(translate[1], 10)).toEqual(5);
+                expect(toNumber(translate[0], 10)).toBeCloseTo(73);
+                expect(toNumber(translate[1], 10)).toBeCloseTo(5);
                 done();
             });
         });

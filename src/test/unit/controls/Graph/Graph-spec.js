@@ -3049,7 +3049,7 @@ describe("Graph", () => {
                 expect(toNumber(translate[0], 10)).toBeCloserTo(73);
                 expect(toNumber(translate[1], 10)).toBeCloserTo(5);
                 done();
-            }, 0);
+            }, 10);
         });
     });
     describe("When pan is disabled", () => {
