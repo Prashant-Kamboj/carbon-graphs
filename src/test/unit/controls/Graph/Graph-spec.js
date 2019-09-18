@@ -3066,7 +3066,7 @@ describe("Graph", () => {
             expect(defsElement.lastChild.nodeName).toBe("clipPath");
             expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
         });
-        it("Dateline group translates properly when panning is disabled", (done) => {
+        it("Dateline group translates properly when pan is disabled", (done) => {
             const datelineGroup = fetchElementByClass(styles.datelineGroup);
             delay(() => {
                 const translate = getSVGAnimatedTransformList(
