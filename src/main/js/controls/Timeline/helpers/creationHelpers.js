@@ -28,7 +28,6 @@ import {
     getShapeForTarget
 } from "../../Graph/helpers/helpers";
 import { transformPoint } from "./translateHelpers";
-import { settingsDictionary } from "../TimelineConfig";
 
 /**
  * @typedef TimelineContent
@@ -172,7 +171,7 @@ const scaleGraph = (scale, config) => {
         .scale()
         .domain(config.axis.x.domain)
         .range([0, getXAxisWidth(config)])
-        .clamp(settingsDictionary(config).shouldClamp);
+        .clamp(config.settingsDictionary.shouldClamp);
     if (config.axis.x.rangeRounding) {
         scale.x.nice();
     }

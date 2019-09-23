@@ -225,22 +225,26 @@ const transformPartialPoint = (scale) => (value) => (scaleFactor) => {
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
+ * @param {object} config - Graph config object derived from input JSON
  * @returns {object} - d3 select object
  */
-export const translateSelectionBox = (scale, canvasSVG, transition) =>
+export const translateSelectionBox = (scale, canvasSVG, config) =>
     canvasSVG
         .selectAll(
             `.${styles.pairedBoxGroup} rect.${styles.dataPointSelection}`
         )
         .transition()
-        .call(constants.d3Transition(transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .each(function(value) {
             return updateSelectionIndicatorAttributes(
                 d3
                     .select(this)
                     .transition()
-                    .call(constants.d3Transition(transition)),
+                    .call(
+                        constants.d3Transition(
+                            config.settingsDictionary.transition
+                        )
+                    ),
                 scale,
                 value
             );
@@ -253,10 +257,10 @@ export const translateSelectionBox = (scale, canvasSVG, transition) =>
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
+ * @param {object} config - Graph config object derived from input JSON
  * @returns {object} - d3 select object
  */
-export const translateSelectionItem = (scale, canvasSVG, transition) =>
+export const translateSelectionItem = (scale, canvasSVG, config) =>
     canvasSVG
         .selectAll(`.${styles.pairedBoxGroup} .${styles.dataPointSelection}`)
         .each(function(value) {
@@ -264,7 +268,9 @@ export const translateSelectionItem = (scale, canvasSVG, transition) =>
                 .select(this)
                 .select("g")
                 .transition()
-                .call(constants.d3Transition(transition))
+                .call(
+                    constants.d3Transition(config.settingsDictionary.transition)
+                )
                 .attr("transform", function() {
                     return transformPartialPoint(
                         scale

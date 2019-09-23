@@ -26,7 +26,6 @@ import {
     translateLineGraph
 } from "./helpers/helpers";
 import LineConfig from "./LineConfig";
-import { settingsDictionary } from "../Graph/GraphConfig";
 
 /**
  * @typedef {object} Line
@@ -106,13 +105,7 @@ class Line extends GraphContent {
      */
     load(graph) {
         this.dataTarget = processDataPoints(graph.config, this.config);
-        draw(
-            graph.scale,
-            graph.config,
-            graph.svg,
-            this.dataTarget,
-            settingsDictionary(graph.config).transition
-        );
+        draw(graph.scale, graph.config, graph.svg, this.dataTarget);
         if (utils.notEmpty(this.dataTarget.regions)) {
             createRegion(
                 graph.scale,
@@ -185,14 +178,9 @@ class Line extends GraphContent {
         translateRegion(
             graph.scale,
             graph.config,
-            graph.svg.select(`.${styles.regionGroup}`),
-            settingsDictionary(graph.config).transition
+            graph.svg.select(`.${styles.regionGroup}`)
         );
-        translateLineGraph(
-            graph.scale,
-            graph.svg,
-            settingsDictionary(graph.config).transition
-        );
+        translateLineGraph(graph.scale, graph.svg, graph.config);
         return this;
     }
 
@@ -201,13 +189,7 @@ class Line extends GraphContent {
      */
     redraw(graph) {
         clear(graph.svg, this.dataTarget);
-        draw(
-            graph.scale,
-            graph.config,
-            graph.svg,
-            this.dataTarget,
-            settingsDictionary(graph.config).transition
-        );
+        draw(graph.scale, graph.config, graph.svg, this.dataTarget);
         return this;
     }
 }

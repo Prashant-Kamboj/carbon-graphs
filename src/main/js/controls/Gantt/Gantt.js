@@ -11,7 +11,7 @@ import {
     contentLoadHandler,
     contentUnloadHandler
 } from "../../helpers/constructUtils";
-import GanttConfig, { processInput, settingsDictionary } from "./GanttConfig";
+import GanttConfig, { processInput } from "./GanttConfig";
 import {
     prepareLegendEventHandlers,
     renderLegendItems
@@ -215,7 +215,7 @@ class Gantt extends Construct {
                 this.scale,
                 this.config,
                 this.svg,
-                settingsDictionary(this.config).transition
+                this.config.settingsDictionary.transition
             );
         }
         if (this.config.showActionLegend) {

@@ -106,14 +106,14 @@ const transformPoint = (scale, type) => (value) => (scaleFactor) => {
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
+ * @param {object} config - Graph config object derived from input JSON
  * @returns {object} - d3 select object
  */
-const translateLines = (scale, canvasSVG, transition) =>
+const translateLines = (scale, canvasSVG, config) =>
     canvasSVG
         .selectAll(`.${styles.pairedBoxGroup} .${styles.pairedLine}`)
         .transition()
-        .call(constants.d3Transition(transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr("d", (d) => (d.high && d.low ? createLine(scale, d) : ""));
 /**
  * Transforms points for a data point set (high, low and mid) in the Paired Result graph on resize
@@ -121,10 +121,10 @@ const translateLines = (scale, canvasSVG, transition) =>
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
+ * @param {object} config - Graph config object derived from input JSON
  * @returns {object} - d3 select object
  */
-const translatePoints = (scale, canvasSVG, transition) =>
+const translatePoints = (scale, canvasSVG, config) =>
     iterateOnPairType((type) => {
         canvasSVG
             .selectAll(
@@ -138,7 +138,11 @@ const translatePoints = (scale, canvasSVG, transition) =>
                 pairedPointSVG
                     .select("g")
                     .transition()
-                    .call(constants.d3Transition(transition))
+                    .call(
+                        constants.d3Transition(
+                            config.settingsDictionary.transition
+                        )
+                    )
                     .attr("transform", function() {
                         return transformPoint(
                             scale,
@@ -157,10 +161,9 @@ const translatePoints = (scale, canvasSVG, transition) =>
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @param {Array} dataTarget - Data points
- * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const draw = (scale, config, canvasSVG, dataTarget, transition) => {
+const draw = (scale, config, canvasSVG, dataTarget) => {
     const drawBox = (boxPath) => {
         drawSelectionIndicator(scale, config, boxPath);
         drawLine(scale, config, boxPath);
@@ -189,7 +192,7 @@ const draw = (scale, config, canvasSVG, dataTarget, transition) => {
     pairedBoxPath
         .exit()
         .transition()
-        .call(constants.d3Transition(transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .remove();
 };
 /**
@@ -423,14 +426,14 @@ const drawCriticalityPoints = (
  * @private
  * @param {object} scale - d3 scale for Graph
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
+ * @param {object} config - Graph config object derived from input JSON
  * @returns {undefined} - returns nothing
  */
-const translatePairedResultGraph = (scale, canvasSVG, transition) => {
-    translateSelectionBox(scale, canvasSVG, transition);
-    translateSelectionItem(scale, canvasSVG, transition);
-    translateLines(scale, canvasSVG, transition);
-    translatePoints(scale, canvasSVG, transition);
+const translatePairedResultGraph = (scale, canvasSVG, config) => {
+    translateSelectionBox(scale, canvasSVG, config);
+    translateSelectionItem(scale, canvasSVG, config);
+    translateLines(scale, canvasSVG, config);
+    translatePoints(scale, canvasSVG, config);
 };
 /**
  * Show/hide regions based on the following criteria:

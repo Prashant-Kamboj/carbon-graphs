@@ -34,7 +34,6 @@ import {
 import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
 import { translateDateline } from "../../../helpers/dateline";
-import { settingsDictionary } from "../GraphConfig";
 
 const BASE_CANVAS_WIDTH_PADDING = constants.BASE_CANVAS_WIDTH_PADDING;
 const DEFAULT_HEIGHT = constants.DEFAULT_HEIGHT;
@@ -181,10 +180,9 @@ const translateVerticalGrid = (axis, config) => {
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translateGrid = (axis, scale, config, canvasSVG, transition) => {
+const translateGrid = (axis, scale, config, canvasSVG) => {
     getAxesScale(axis, scale, config);
     canvasSVG
         .select(`.${styles.grid}`)
@@ -198,7 +196,7 @@ const translateGrid = (axis, scale, config, canvasSVG, transition) => {
         canvasSVG
             .select(`.${styles.gridH}`)
             .transition()
-            .call(constants.d3Transition(transition))
+            .call(constants.d3Transition(config.settingsDictionary.transition))
             .call(translateHorizontalGrid(axis, config));
     }
 
@@ -221,7 +219,7 @@ const translateVGridHandler = (canvasSVG, axis, style, config) => {
     canvasSVG
         .select(`.${style}`)
         .transition()
-        .call(constants.d3Transition(settingsDictionary(config).transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .call(translateVerticalGrid(axis, config));
 };
 /**
@@ -230,14 +228,13 @@ const translateVGridHandler = (canvasSVG, axis, style, config) => {
  * @private
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} d3 svg path
  */
-const translateContentContainer = (config, canvasSVG, transition) =>
+const translateContentContainer = (config, canvasSVG) =>
     canvasSVG
         .select(`.${styles.contentContainer}`)
         .transition()
-        .call(constants.d3Transition(transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr("width", getXAxisWidth(config))
         .attr("height", config.height)
         .attr(
@@ -250,15 +247,14 @@ const translateContentContainer = (config, canvasSVG, transition) =>
  * @private
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translateLabel = (config, canvasSVG, transition) => {
+const translateLabel = (config, canvasSVG) => {
     if (config.axis.x.label) {
         canvasSVG
             .select(`.${styles.axisLabelX}`)
             .transition()
-            .call(constants.d3Transition(transition))
+            .call(constants.d3Transition(config.settingsDictionary.transition))
             .attr(
                 "transform",
                 `translate(${getXAxisLabelXPosition(
@@ -273,7 +269,7 @@ const translateLabel = (config, canvasSVG, transition) => {
         canvasSVG
             .select(`.${styles.axisLabelY}`)
             .transition()
-            .call(constants.d3Transition(transition))
+            .call(constants.d3Transition(config.settingsDictionary.transition))
             .attr(
                 "transform",
                 `translate(${getYAxisLabelXPosition(
@@ -288,7 +284,7 @@ const translateLabel = (config, canvasSVG, transition) => {
         canvasSVG
             .select(`.${styles.axisLabelY2}`)
             .transition()
-            .call(constants.d3Transition(transition))
+            .call(constants.d3Transition(config.settingsDictionary.transition))
             .attr(
                 "transform",
                 `translate(${getY2AxisLabelXPosition(
@@ -360,9 +356,7 @@ const createDefs = (config, canvasSVG) => {
         .attr("height", config.height);
 
     if (
-        config.pan !== undefined &&
-        utils.isBoolean(config.pan.enabled) &&
-        config.pan.enabled &&
+        config.settingsDictionary.shouldCreateDatelineDefs &&
         config.dateline.length > 0
     ) {
         defsElement
@@ -534,7 +528,7 @@ const scaleGraph = (scale, config) => {
     scale.x = getScale(config.axis.x.type)
         .domain(config.axis.x.domain)
         .range(getXAxisRange(config))
-        .clamp(settingsDictionary(config).shouldClamp);
+        .clamp(config.settingsDictionary.shouldClamp);
 
     scale.y = d3.scale
         .linear()
@@ -579,44 +573,23 @@ const scaleGraph = (scale, config) => {
 const translateGraph = (control) => {
     translateCanvas(control.config, control.svg);
     translateDefs(control.config, control.svg);
-    translateAxes(
-        control.axis,
-        control.scale,
-        control.config,
-        control.svg,
-        settingsDictionary(control.config).transition
-    );
-    translateGrid(
-        control.axis,
-        control.scale,
-        control.config,
-        control.svg,
-        settingsDictionary(control.config).transition
-    );
-    translateContentContainer(
-        control.config,
-        control.svg,
-        settingsDictionary(control.config).transition
-    );
-    translateLabel(
-        control.config,
-        control.svg,
-        settingsDictionary(control.config).transition
-    );
+    translateAxes(control.axis, control.scale, control.config, control.svg);
+    translateGrid(control.axis, control.scale, control.config, control.svg);
+    translateContentContainer(control.config, control.svg);
+    translateLabel(control.config, control.svg);
     translateLabelShapeContainer(control.config, control.axesLabelShapeGroup);
     translateAxisReferenceLine(
         control.axis,
         control.scale,
         control.config,
-        control.svg,
-        settingsDictionary(control.config).transition
+        control.svg
     );
     translateDateline(
         control.scale,
         control.config,
         control.svg,
         getYAxisYPosition,
-        settingsDictionary(control.config).transition
+        control.config.settingsDictionary.transition
     );
     translateNoDataView(control.config, control.svg);
 };
@@ -812,7 +785,7 @@ const drawNoDataView = (config, svg) => {
 const translateNoDataView = (config, svg) => {
     svg.select(`.${styles.noDataOverlay}`)
         .transition()
-        .call(constants.d3Transition(settingsDictionary(config).transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr(
             "height",
             getYAxisHeight(config) / constants.NO_DATA_VIEW_PROPORTION
@@ -820,7 +793,7 @@ const translateNoDataView = (config, svg) => {
         .attr("width", getXAxisWidth(config));
     svg.select(`.${styles.noDataLabel}`)
         .transition()
-        .call(constants.d3Transition)
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr("x", getXAxisLabelXPosition(config))
         .attr(
             "y",

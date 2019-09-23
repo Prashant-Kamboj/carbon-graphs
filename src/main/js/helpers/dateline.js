@@ -167,9 +167,7 @@ const createDateline = (scale, config, canvasSVG, transition) => {
     translateDateline(scale, config, canvasSVG, getYAxisYPosition, transition);
 
     if (
-        config.pan !== undefined &&
-        utils.isBoolean(config.pan.enabled) &&
-        config.pan.enabled &&
+        config.settingsDictionary.shouldCreateDatelineDefs &&
         config.dateline.length > 0
     ) {
         const shapeHeightArr = [];
@@ -184,12 +182,7 @@ const createDateline = (scale, config, canvasSVG, transition) => {
         canvasSVG
             .select(`clipPath#${config.datelineClipPathId}`)
             .selectAll("rect")
-            .attr(
-                "height",
-                getYAxisHeight(config) === 0
-                    ? datelineIndicatorHeight + 20
-                    : getYAxisHeight(config) + datelineIndicatorHeight
-            )
+            .attr("height", getYAxisHeight(config) + datelineIndicatorHeight)
             .attr(
                 constants.Y_AXIS,
                 getYAxisHeight(config) === 0

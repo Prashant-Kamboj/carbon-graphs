@@ -8,7 +8,6 @@ import { validateRegion } from "../../../helpers/region";
 import styles from "../../../helpers/styles";
 import { round2Decimals } from "../../../helpers/transformUtils";
 import utils from "../../../helpers/utils";
-import { settingsDictionary } from "../../Graph/GraphConfig";
 
 /**
  * Calculates x-axis range for given region
@@ -129,7 +128,7 @@ const createRegion = (scale, config, regionGroupSVG, regionList, uniqueKey) => {
     regionPath
         .exit()
         .transition()
-        .call(constants.d3Transition(settingsDictionary(config).transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .remove();
 };
 /**
@@ -140,13 +139,12 @@ const createRegion = (scale, config, regionGroupSVG, regionList, uniqueKey) => {
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {object} regionGroupSVG - d3 object of region group svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {undefined} - returns nothing
  */
-const translateRegion = (scale, config, regionGroupSVG, transition) => {
+const translateRegion = (scale, config, regionGroupSVG) => {
     regionGroupSVG
         .transition()
-        .call(constants.d3Transition(transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr(constants.X_AXIS, (d) => d.xRange | 0)
         .attr(constants.Y_AXIS, getYAxisRangePosition(scale, config))
         .attr("width", (d) => d.width | 0)

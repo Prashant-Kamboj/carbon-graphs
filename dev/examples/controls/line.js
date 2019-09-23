@@ -451,8 +451,7 @@ export const renderLineWithPanning = (id) => {
         getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE")
     );
     axisData.pan = {
-        enabled: true,
-        showControl: true
+        enabled: true
     };
     const graphData = utils.deepClone(
         getDemoData(`#${id}`, "LINE_TIMESERIES_DATELINE").data[0]

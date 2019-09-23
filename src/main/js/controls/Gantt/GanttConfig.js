@@ -138,17 +138,13 @@ export const settingsDictionary = (config) =>
     isPanningModeEnabled(config)
         ? {
               shouldClamp: false,
-              transition: {
-                  duration: 0,
-                  ease: "linear"
-              }
+              transition: constants.D3_TRANSITION_PROPERTIES_DISABLED,
+              shouldCreateDatelineDefs: true
           }
         : {
               shouldClamp: true,
-              transition: {
-                  duration: 250,
-                  ease: "linear"
-              }
+              transition: constants.D3_TRANSITION_PROPERTIES_ENABLED,
+              shouldCreateDatelineDefs: false
           };
 /**
  * Helper function to set the right padding values based on input JSON.
@@ -213,6 +209,7 @@ export const processInput = (input, config) => {
         utils.deepClone(input.actionLegend),
         []
     );
+    config.settingsDictionary = settingsDictionary(input);
     config.showActionLegend = getDefaultValue(input.showActionLegend, false);
     config.axis.x = Object.assign(_axis.x, {
         type: AXIS_TYPE.TIME_SERIES,

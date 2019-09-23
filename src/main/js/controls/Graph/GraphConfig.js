@@ -96,6 +96,7 @@ export const processInput = (input, config, type) => {
         input.throttle,
         constants.RESIZE_THROTTLE
     );
+    config.settingsDictionary = settingsDictionary(input);
     config.showLabel = getDefaultValue(input.showLabel, true);
     config.showLegend = getDefaultValue(input.showLegend, true);
     config.showShapes = getDefaultValue(input.showShapes, true);
@@ -192,17 +193,13 @@ export const settingsDictionary = (config) =>
     isPanningModeEnabled(config)
         ? {
               shouldClamp: false,
-              transition: {
-                  duration: 0,
-                  ease: "linear"
-              }
+              transition: constants.D3_TRANSITION_PROPERTIES_DISABLED,
+              shouldCreateDatelineDefs: true
           }
         : {
               shouldClamp: true,
-              transition: {
-                  duration: 250,
-                  ease: "linear"
-              }
+              transition: constants.D3_TRANSITION_PROPERTIES_ENABLED,
+              shouldCreateDatelineDefs: false
           };
 /**
  * API to parse consumer input for Graph

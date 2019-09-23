@@ -29,7 +29,6 @@ import {
     translatePairedResultGraph
 } from "./helpers/helpers";
 import PairedResultConfig from "./PairedResultConfig";
-import { settingsDictionary } from "../Graph/GraphConfig";
 
 /**
  * @typedef {object} PairedResult
@@ -131,13 +130,7 @@ class PairedResult extends GraphContent {
      */
     load(graph) {
         this.dataTarget = processDataPoints(graph.config, this.config);
-        draw(
-            graph.scale,
-            graph.config,
-            graph.svg,
-            this.dataTarget,
-            settingsDictionary(graph.config).transition
-        );
+        draw(graph.scale, graph.config, graph.svg, this.dataTarget);
         if (utils.notEmpty(this.dataTarget.regions)) {
             renderRegion(graph.scale, graph.config, graph.svg, this.dataTarget);
         }
@@ -229,19 +222,14 @@ class PairedResult extends GraphContent {
                 graph.config,
                 graph.svg.select(
                     `g[aria-describedby="region_${this.dataTarget.key}"]`
-                ),
-                settingsDictionary(graph.config).transition
+                )
             );
         } else {
             hideAllRegions(graph.svg);
             graph.config.shouldHideAllRegion = true;
         }
 
-        translatePairedResultGraph(
-            graph.scale,
-            graph.svg,
-            settingsDictionary(graph.config).transition
-        );
+        translatePairedResultGraph(graph.scale, graph.svg, graph.config);
         return this;
     }
 
@@ -250,13 +238,7 @@ class PairedResult extends GraphContent {
      */
     redraw(graph) {
         clear(graph.svg, this.dataTarget);
-        draw(
-            graph.scale,
-            graph.config,
-            graph.svg,
-            this.dataTarget,
-            settingsDictionary(graph.config).transition
-        );
+        draw(graph.scale, graph.config, graph.svg, this.dataTarget);
         return this;
     }
 }

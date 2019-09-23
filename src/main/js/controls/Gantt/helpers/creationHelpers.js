@@ -26,7 +26,6 @@ import {
     translateHorizontalGrid,
     translateVerticalGrid
 } from "./translateHelpers";
-import { settingsDictionary } from "../../Gantt/GanttConfig";
 
 /**
  * Calculates the height for Y and Y2 axes.
@@ -296,7 +295,7 @@ const scaleGraph = (scale, config) => {
         .scale()
         .domain(config.axis.x.domain)
         .range([0, getXAxisWidth(config)])
-        .clamp(settingsDictionary(config).shouldClamp);
+        .clamp(config.settingsDictionary.shouldClamp);
     scale.y = d3.scale
         .ordinal()
         .domain(getYAxisDomain(config.axis.y.trackList))
@@ -326,9 +325,7 @@ const createDefs = (config, canvasSVG) => {
         .attr("height", getYAxisHeight(config));
 
     if (
-        config.pan !== undefined &&
-        utils.isBoolean(config.pan.enabled) &&
-        config.pan.enabled &&
+        config.settingsDictionary.shouldCreateDatelineDefs &&
         config.dateline.length > 0
     ) {
         defsElement

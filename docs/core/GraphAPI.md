@@ -43,7 +43,7 @@ GraphAPI is a set of graphs that share a common set of base visualization struct
 | showVGrid      | boolean  | true                                          | Toggle to show vertical grid                                                         |
 | showHGrid      | boolean  | true                                          | Toggle to show horizontal grid                                                       |
 | dateline       | array    | []                                            | Refer [Dateline](../helpers/Dateline.md)                                             |
-| pan            | object   | {}                                            | Set enabled to true inside pan to enable panning mode                                |
+| pan            | object   | {}                                            | Refer [Panning](../controls/Panning.md)                                              |
 | padding        | object   | `{ top: 10, bottom: 5, left: 30, right: 50 }` | Refer [Padding](../controls/Padding.md)                                              |
 | showNoDataText | boolean  | true                                          | Toggle to show no data text                                                          |
 
@@ -83,9 +83,6 @@ var input = {
             upperLimit: 250
         }
     },
-    pan: {
-        enabled : false
-    }
     showLabel: true,
     showLegend: true,
     showShapes: true,

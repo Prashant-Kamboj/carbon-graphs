@@ -22,7 +22,6 @@ import { translateSelectBars } from "./selectionHelpers";
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @param {object} dataTarget - Data points object
  * @param {object} config - graph config object
- * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} d3 select object
  */
 const translateBarGraph = (
@@ -30,15 +29,14 @@ const translateBarGraph = (
     ordinalScale,
     canvasSVG,
     dataTarget,
-    config,
-    transition
+    config
 ) => {
     const attributeHelper = barAttributesHelper(scale, ordinalScale);
     translateSelectBars(scale, ordinalScale, canvasSVG, config);
     return canvasSVG
         .selectAll(`rect[aria-describedby=${dataTarget.key}]`)
         .transition()
-        .call(constants.d3Transition(transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr("x", (d) => attributeHelper.x(d))
         .attr("y", (d) => attributeHelper.y(d))
         .attr("width", attributeHelper.width)
@@ -55,7 +53,6 @@ const translateBarGraph = (
  * @param {Array} canvasSVG -d3 object of canvas svg
  * @param {Array} textLabelList - input axis info row JSON
  * @param {object} dataTarget - Data points object
- * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} d3 select object
  */
 const translateTextLabel = (
@@ -64,15 +61,14 @@ const translateTextLabel = (
     config,
     canvasSVG,
     textLabelList,
-    dataTarget,
-    transition
+    dataTarget
 ) => {
     const attributeHelper = barAttributesHelper(scale, ordinalScale);
     const axisInfoPath = canvasSVG.select(`.${styles.axisInfoRow}`);
     return axisInfoPath
         .selectAll(`g[aria-describedby="text_label_${dataTarget.key}"]`)
         .transition()
-        .call(constants.d3Transition(transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr(
             "transform",
             (d, index) =>

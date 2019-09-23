@@ -11,7 +11,6 @@ import {
     d3RemoveElement,
     getColorForTarget
 } from "../controls/Graph/helpers/helpers";
-import { settingsDictionary } from "../controls/Graph/GraphConfig";
 import { Shape } from "../core";
 import { getDefaultSVGProps } from "../core/Shape";
 import {
@@ -92,7 +91,7 @@ const getShapeContainerSize = (shapeContainerPath) =>
 const translateYAxisLabelShapeContainer = (config, shapeContainerPath) =>
     shapeContainerPath
         .transition()
-        .call(constants.d3Transition(settingsDictionary(config).transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr(
             "transform",
             `translate(${getYAxisLabelShapeXPosition(
@@ -115,7 +114,7 @@ const translateYAxisLabelShapeContainer = (config, shapeContainerPath) =>
 const translateY2AxisLabelShapeContainer = (config, shapeContainerPath) =>
     shapeContainerPath
         .transition()
-        .call(constants.d3Transition(settingsDictionary(config).transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr(
             "transform",
             `translate(${getY2AxisLabelShapeXPosition(
@@ -170,7 +169,7 @@ const translateAllLabelShapeItem = (shapeContainerPath, config) =>
     shapeContainerPath
         .selectAll("svg")
         .transition()
-        .call(constants.d3Transition(settingsDictionary(config).transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .each(function(data, index) {
             d3.select(this).attr(
                 "x",

@@ -182,16 +182,15 @@ const getRegionHeight = (regionPath, bounds, scale, config) => {
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
  * @param {object} regionGroupSVG - d3 object of region group svg
- * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} d3 svg path
  */
-const translateRegion = (scale, config, regionGroupSVG, transition) =>
+const translateRegion = (scale, config, regionGroupSVG) =>
     regionGroupSVG
         .selectAll(`.${styles.region}`)
         .attr(constants.X_AXIS, getXAxisXPosition(config))
         .attr(constants.Y_AXIS, getYAxisRangePosition(scale, config))
         .transition()
-        .call(constants.d3Transition(transition))
+        .call(constants.d3Transition(config.settingsDictionary.transition))
         .attr("width", getXAxisWidth(config))
         .attr("height", function(d) {
             return getRegionHeight(d3.select(this), d, scale, config);

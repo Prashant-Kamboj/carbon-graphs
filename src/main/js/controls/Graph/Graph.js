@@ -15,11 +15,7 @@ import errors from "../../helpers/errors";
 import { createLegend } from "../../helpers/legend";
 import { createRegionContainer } from "../../helpers/region";
 import styles from "../../helpers/styles";
-import GraphConfig, {
-    processInput,
-    validateContent,
-    settingsDictionary
-} from "./GraphConfig";
+import GraphConfig, { processInput, validateContent } from "./GraphConfig";
 import utils from "../../helpers/utils";
 import { createDateline, redrawDatelineContent } from "../../helpers/dateline";
 import {
@@ -256,7 +252,7 @@ class Graph extends Construct {
                 this.scale,
                 this.config,
                 this.svg,
-                settingsDictionary(this.config).transition
+                this.config.settingsDictionary.transition
             );
         }
         if (this.config.showLegend) {
@@ -327,7 +323,7 @@ class Graph extends Construct {
                 this.scale,
                 this.config,
                 this.svg,
-                settingsDictionary(this.config).transition
+                this.config.settingsDictionary.transition
             );
         }
         if (utils.notEmpty(content.config.values)) {

@@ -80,7 +80,7 @@ ganttInstance.loadContent(/* Add "dataArray" JSON, shown below for example */);
 | showActionLegend | boolean  | true                                           | Toggle to show graph legend                                                          |
 | padding          | object   | `{ top: 10, bottom: 5, left: 100, right: 50 }` | Refer [Padding](Padding.md)                                                          |
 | clickPassThrough | object   | null                                           | Refer [Pass Through](#Pass-Through)                                                  |
-| pan              | object   | {}                                             | Set enabled to true inside pan to enable panning mode                                |
+| pan              | object   | {}                                             | Refer [Panning](./Panning.md)                                                        |
 
 ### Axis
 
@@ -378,9 +378,6 @@ var input = {
             value: new Date(2018, 5, 1).toISOString()
         }
     ],
-    pan: {
-        enabled: false
-    }
     showActionLegend: true
 };
 var ganttInstance = Carbon.api.gantt(input);

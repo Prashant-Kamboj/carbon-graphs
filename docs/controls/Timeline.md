@@ -59,7 +59,7 @@ timelineDefault.loadContent(/* Data array D */);
 | showLabel     | boolean  | true                                          | Toggle to show X axis label                                                          |
 | showLegend    | boolean  | true                                          | Toggle to show graph legend                                                          |
 | padding       | object   | `{ top: 10, bottom: 5, left: 30, right: 50 }` | Refer [Padding](Padding.md)                                                          |
-| pan           | object   | {}                                            | Set enabled to true inside pan to enable panning mode                                |
+| pan           | object   | {}                                            | Refer [Panning](./Panning.md)                                                        |
 
 ### Axis
 
@@ -126,9 +126,6 @@ var input = {
             upperLimit: new Date(2016, 0, 1, 15, 59).toISOString()
         }
     },
-    pan: {
-        enabled: false
-    }
     showLabel: true,
     showLegend: true
 };
