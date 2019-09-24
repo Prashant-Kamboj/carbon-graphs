@@ -2492,78 +2492,119 @@ describe("Gantt", () => {
             expect(gantt.resizeHandler).toBeNull();
         });
     });
-    describe("When pan is enabled", () => {
-        beforeEach(() => {
-            const axisData = utils.deepClone(getAxes(axisJSON));
-            axisData.dateline = datelineJSON;
-            axisData.pan = { enabled: true };
-            gantt = new Gantt(axisData);
+    describe("Panning", () => {
+        describe("When enabled", () => {
+            beforeEach(() => {
+                const axisData = utils.deepClone(getAxes(axisJSON));
+                axisData.dateline = datelineJSON;
+                axisData.pan = { enabled: true };
+                gantt = new Gantt(axisData);
+            });
+            it("Check if clamp is false if pan is enabled", () => {
+                expect(gantt.scale.x.clamp()).toEqual(false);
+            });
+            it("Check if different clipPath for dateline is created", () => {
+                const defsElement = fetchElementByClass(styles.canvas)
+                    .firstChild;
+                expect(defsElement.childElementCount).toBe(2);
+                expect(defsElement.nodeName).toBe("defs");
+                expect(defsElement.lastChild.nodeName).toBe("clipPath");
+                expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+                expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
+            });
+            it("Dateline group translates properly when pan is enabled", (done) => {
+                const datelineGroupElement = fetchElementByClass(
+                    styles.datelineGroup
+                );
+                expect(d3.select(datelineGroupElement).datum().value).toBe(
+                    datelineAlt.value
+                );
+                expect(datelineGroupElement.getAttribute("aria-selected")).toBe(
+                    "false"
+                );
+                setTimeout(() => {
+                    const translate = getSVGAnimatedTransformList(
+                        datelineGroupElement.getAttribute("transform")
+                    ).translate;
+                    expect(toNumber(translate[0], 10)).toBeCloseTo(106);
+                    expect(toNumber(translate[1], 10)).toBeCloseTo(5);
+                    done();
+                }, 10);
+            });
         });
-        it("Check if clamp is false if pan is enabled", () => {
-            expect(gantt.scale.x.clamp()).toEqual(false);
+        describe("When disabled", () => {
+            beforeEach(() => {
+                const axisData = utils.deepClone(getAxes(axisJSON));
+                axisData.dateline = datelineJSON;
+                axisData.pan = { enabled: false };
+                gantt = new Gantt(axisData);
+            });
+            it("Check if clamp is false if pan is enabled", () => {
+                expect(gantt.scale.x.clamp()).toEqual(true);
+            });
+            it("Check if different clipPath for dateline is not created", () => {
+                const defsElement = fetchElementByClass(styles.canvas)
+                    .firstChild;
+                expect(defsElement.childElementCount).toBe(1);
+                expect(defsElement.nodeName).toBe("defs");
+                expect(defsElement.lastChild.nodeName).toBe("clipPath");
+                expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+            });
+            it("Dateline group translates properly when panning is disabled", (done) => {
+                const datelineGroupElement = fetchElementByClass(
+                    styles.datelineGroup
+                );
+                expect(d3.select(datelineGroupElement).datum().value).toBe(
+                    datelineAlt.value
+                );
+                expect(datelineGroupElement.getAttribute("aria-selected")).toBe(
+                    "false"
+                );
+                delay(() => {
+                    const translate = getSVGAnimatedTransformList(
+                        datelineGroupElement.getAttribute("transform")
+                    ).translate;
+                    expect(toNumber(translate[0], 10)).toBeCloseTo(106);
+                    expect(toNumber(translate[1], 10)).toBeCloseTo(5);
+                    done();
+                });
+            });
         });
-        it("Check if different clipPath for dateline is created", () => {
-            const defsElement = fetchElementByClass(styles.canvas).firstChild;
-            expect(defsElement.childElementCount).toBe(2);
-            expect(defsElement.nodeName).toBe("defs");
-            expect(defsElement.lastChild.nodeName).toBe("clipPath");
-            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
-            expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
-        });
-        it("Dateline group translates properly when pan is enabled", (done) => {
-            const datelineGroupElement = fetchElementByClass(
-                styles.datelineGroup
-            );
-            expect(d3.select(datelineGroupElement).datum().value).toBe(
-                datelineAlt.value
-            );
-            expect(datelineGroupElement.getAttribute("aria-selected")).toBe(
-                "false"
-            );
-            setTimeout(() => {
-                const translate = getSVGAnimatedTransformList(
-                    datelineGroupElement.getAttribute("transform")
-                ).translate;
-                expect(toNumber(translate[0], 10)).toBeCloseTo(106);
-                expect(toNumber(translate[1], 10)).toBeCloseTo(5);
-                done();
-            }, 10);
-        });
-    });
-    describe("When pan is disabled", () => {
-        beforeEach(() => {
-            const axisData = utils.deepClone(getAxes(axisJSON));
-            axisData.dateline = datelineJSON;
-            axisData.pan = { enabled: false };
-            gantt = new Gantt(axisData);
-        });
-        it("Check if clamp is false if pan is enabled", () => {
-            expect(gantt.scale.x.clamp()).toEqual(true);
-        });
-        it("Check if different clipPath for dateline is not created", () => {
-            const defsElement = fetchElementByClass(styles.canvas).firstChild;
-            expect(defsElement.childElementCount).toBe(1);
-            expect(defsElement.nodeName).toBe("defs");
-            expect(defsElement.lastChild.nodeName).toBe("clipPath");
-            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
-        });
-        it("Dateline group translates properly when panning is disabled", (done) => {
-            const datelineGroupElement = fetchElementByClass(
-                styles.datelineGroup
-            );
-            expect(d3.select(datelineGroupElement).datum().value).toBe(
-                datelineAlt.value
-            );
-            expect(datelineGroupElement.getAttribute("aria-selected")).toBe(
-                "false"
-            );
-            delay(() => {
-                const translate = getSVGAnimatedTransformList(
-                    datelineGroupElement.getAttribute("transform")
-                ).translate;
-                expect(toNumber(translate[0], 10)).toBeCloseTo(106);
-                expect(toNumber(translate[1], 10)).toBeCloseTo(5);
-                done();
+        describe("When undefined", () => {
+            beforeEach(() => {
+                const axisData = utils.deepClone(getAxes(axisJSON));
+                axisData.dateline = datelineJSON;
+                gantt = new Gantt(axisData);
+            });
+            it("Check if clamp is false if pan is undefined", () => {
+                expect(gantt.scale.x.clamp()).toEqual(true);
+            });
+            it("Check if different clipPath for dateline is not created", () => {
+                const defsElement = fetchElementByClass(styles.canvas)
+                    .firstChild;
+                expect(defsElement.childElementCount).toBe(1);
+                expect(defsElement.nodeName).toBe("defs");
+                expect(defsElement.lastChild.nodeName).toBe("clipPath");
+                expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+            });
+            it("Dateline group translates properly when panning is undefined", (done) => {
+                const datelineGroupElement = fetchElementByClass(
+                    styles.datelineGroup
+                );
+                expect(d3.select(datelineGroupElement).datum().value).toBe(
+                    datelineAlt.value
+                );
+                expect(datelineGroupElement.getAttribute("aria-selected")).toBe(
+                    "false"
+                );
+                delay(() => {
+                    const translate = getSVGAnimatedTransformList(
+                        datelineGroupElement.getAttribute("transform")
+                    ).translate;
+                    expect(toNumber(translate[0], 10)).toBeCloseTo(106);
+                    expect(toNumber(translate[1], 10)).toBeCloseTo(5);
+                    done();
+                });
             });
         });
     });

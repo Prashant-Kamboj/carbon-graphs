@@ -3,6 +3,7 @@ import utils from "../../../src/main/js/helpers/utils";
 import { getDemoData } from "../data";
 import { loadDatelinePopup, loadTextLabelPopup } from "../popup";
 import { createPanningControls } from "./panHelpers";
+import { loadBarPopup } from "../../examples/popup";
 
 const tickValues = [
     new Date(2018, 0, 1).toISOString(),
@@ -386,10 +387,10 @@ export const renderBarWithPanning = (id) => {
     const graphData = {
         key: "uid_bar_t1",
         label: {
-            display: "Data Label t1"
+            display: "Data Label"
         },
         color: Carbon.helpers.COLORS.BLUE,
-        //onClick: loadBarPopup,
+        onClick: loadBarPopup,
         values: [
             {
                 x: new Date(2016, 0, 1, 2).toISOString(),

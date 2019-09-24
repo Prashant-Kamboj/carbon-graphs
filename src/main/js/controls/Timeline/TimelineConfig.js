@@ -1,7 +1,10 @@
 "use strict";
 import d3 from "d3";
 import BaseConfig, { getDefaultValue, getDomain } from "../../core/BaseConfig";
-import { generateClipPathId } from "../../core/BaseConfig/helper";
+import {
+    generateClipPathId,
+    isPanningModeEnabled
+} from "../../core/BaseConfig/helper";
 import constants, { AXIS_TYPE } from "../../helpers/constants";
 import errors from "../../helpers/errors";
 import utils from "../../helpers/utils";
@@ -49,19 +52,6 @@ export const processInput = (input, config) => {
     return config;
 };
 
-/**
- * Checks if panning is enabled or not
- *
- * @private
- * @param {object} config - config object used by the graph.
- * @returns {boolean} returns true of panning enabled else false.
- */
-export const isPanningModeEnabled = (config) => {
-    if (config.pan !== undefined && config.pan.enabled) {
-        return true;
-    }
-    return false;
-};
 /**
  * Used to set the clamp and transition when panning is enabled or not.
  *

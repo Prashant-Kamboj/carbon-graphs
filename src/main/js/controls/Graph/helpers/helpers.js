@@ -89,9 +89,7 @@ const translateDefs = (config, canvasSVG) => {
         );
 
     if (
-        config.pan !== undefined &&
-        utils.isBoolean(config.pan.enabled) &&
-        config.pan.enabled &&
+        config.settingsDictionary.shouldCreateDatelineDefs &&
         config.dateline.length > 0
     ) {
         const shapeHeightArr = [];

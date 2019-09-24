@@ -145,12 +145,7 @@ const translateDefs = (config, canvasSVG) => {
         canvasSVG
             .select(`clipPath#${config.datelineClipPathId}`)
             .selectAll("rect")
-            .attr(
-                "height",
-                config.height === 0
-                    ? datelineIndicatorHeight + 5
-                    : config.height + datelineIndicatorHeight
-            )
+            .attr("height", config.height + datelineIndicatorHeight)
             .attr("width", getXAxisWidth(config))
             .attr(
                 constants.Y_AXIS,

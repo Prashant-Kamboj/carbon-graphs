@@ -40,7 +40,8 @@ import {
     axisTimeseriesWithDateline,
     datelineJSON,
     axisTimeSeriesWithAxisTop,
-    axisDefaultwithPanning
+    axisDefaultwithPanning,
+    axisDefaultwithoutPanning
 } from "./helpers";
 
 describe("Graph", () => {
@@ -3025,56 +3026,87 @@ describe("Graph", () => {
             });
         });
     });
-    describe("When pan is enabled", () => {
-        beforeEach(() => {
-            graph = new Graph(axisDefaultwithPanning);
+    describe("Panning", () => {
+        describe("When enabled", () => {
+            beforeEach(() => {
+                graph = new Graph(axisDefaultwithPanning);
+            });
+            it("Check if clamp is false if pan is enabled", () => {
+                expect(graph.scale.x.clamp()).toEqual(false);
+            });
+            it("Check if different clipPath for dateline is created", () => {
+                const defsElement = fetchElementByClass(styles.canvas)
+                    .firstChild;
+                expect(defsElement.childElementCount).toBe(2);
+                expect(defsElement.nodeName).toBe("defs");
+                expect(defsElement.lastChild.nodeName).toBe("clipPath");
+                expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+                expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
+            });
+            it("DatelineGroup translates properly when panning is enabled", (done) => {
+                const datelineGroup = fetchElementByClass(styles.datelineGroup);
+                setTimeout(() => {
+                    const translate = getSVGAnimatedTransformList(
+                        datelineGroup.getAttribute("transform")
+                    ).translate;
+                    expect(toNumber(translate[0], 10)).toBeCloserTo(73);
+                    expect(toNumber(translate[1], 10)).toBeCloserTo(5);
+                    done();
+                }, 10);
+            });
         });
-        it("Check if clamp is false if pan is enabled", () => {
-            expect(graph.scale.x.clamp()).toEqual(false);
+        describe("When disabled", () => {
+            beforeEach(() => {
+                graph = new Graph(axisDefaultwithoutPanning);
+            });
+            it("Check if clamp is true if pan is disabled", () => {
+                expect(graph.scale.x.clamp()).toEqual(true);
+            });
+            it("Check if different clipPath for dateline is not created", () => {
+                const defsElement = fetchElementByClass(styles.canvas)
+                    .firstChild;
+                expect(defsElement.childElementCount).toBe(1);
+                expect(defsElement.nodeName).toBe("defs");
+                expect(defsElement.lastChild.nodeName).toBe("clipPath");
+                expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+            });
+            it("Dateline group translates properly when pan is disabled", (done) => {
+                const datelineGroup = fetchElementByClass(styles.datelineGroup);
+                delay(() => {
+                    const translate = getSVGAnimatedTransformList(
+                        datelineGroup.getAttribute("transform")
+                    ).translate;
+                    expect(toNumber(translate[0], 10)).toBeCloserTo(73);
+                    expect(toNumber(translate[1], 10)).toBeCloserTo(5);
+                    done();
+                });
+            });
         });
-        it("Check if different clipPath for dateline is created", () => {
-            const defsElement = fetchElementByClass(styles.canvas).firstChild;
-            expect(defsElement.childElementCount).toBe(2);
-            expect(defsElement.nodeName).toBe("defs");
-            expect(defsElement.lastChild.nodeName).toBe("clipPath");
-            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
-            expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
-        });
-        it("DatelineGroup translates properly when panning is enabled", (done) => {
-            const datelineGroup = fetchElementByClass(styles.datelineGroup);
-            setTimeout(() => {
-                const translate = getSVGAnimatedTransformList(
-                    datelineGroup.getAttribute("transform")
-                ).translate;
-                expect(toNumber(translate[0], 10)).toBeCloserTo(73);
-                expect(toNumber(translate[1], 10)).toBeCloserTo(5);
-                done();
-            }, 10);
-        });
-    });
-    describe("When pan is disabled", () => {
-        beforeEach(() => {
-            graph = new Graph(axisTimeseriesWithDateline);
-        });
-        it("Check if clamp is true if pan is disabled", () => {
-            expect(graph.scale.x.clamp()).toEqual(true);
-        });
-        it("Check if different clipPath for dateline is not created", () => {
-            const defsElement = fetchElementByClass(styles.canvas).firstChild;
-            expect(defsElement.childElementCount).toBe(1);
-            expect(defsElement.nodeName).toBe("defs");
-            expect(defsElement.lastChild.nodeName).toBe("clipPath");
-            expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
-        });
-        it("Dateline group translates properly when pan is disabled", (done) => {
-            const datelineGroup = fetchElementByClass(styles.datelineGroup);
-            delay(() => {
-                const translate = getSVGAnimatedTransformList(
-                    datelineGroup.getAttribute("transform")
-                ).translate;
-                expect(toNumber(translate[0], 10)).toBeCloserTo(73);
-                expect(toNumber(translate[1], 10)).toBeCloserTo(5);
-                done();
+        describe("When undefined", () => {
+            beforeEach(() => {
+                graph = new Graph(axisTimeseriesWithDateline);
+            });
+            it("Check if clamp is true if pan is undefined", () => {
+                expect(graph.scale.x.clamp()).toEqual(true);
+            });
+            it("Check if different clipPath for dateline is not created", () => {
+                const defsElement = fetchElementByClass(styles.canvas)
+                    .firstChild;
+                expect(defsElement.childElementCount).toBe(1);
+                expect(defsElement.nodeName).toBe("defs");
+                expect(defsElement.lastChild.nodeName).toBe("clipPath");
+                expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
+            });
+            it("Dateline group translates properly when pan is undefined", (done) => {
+                const datelineGroup = fetchElementByClass(styles.datelineGroup);
+                delay(() => {
+                    const translate = getSVGAnimatedTransformList(
+                        datelineGroup.getAttribute("transform")
+                    ).translate;
+                    expect(toNumber(translate[0], 10)).toBeCloserTo(73);
+                    expect(toNumber(translate[1], 10)).toBeCloserTo(5);
+                    done();
+                });
             });
         });
     });

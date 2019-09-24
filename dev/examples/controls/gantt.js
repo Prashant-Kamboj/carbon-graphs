@@ -378,7 +378,7 @@ export const renderGanttPanning = (id) => {
             graph.destroy();
         }
         graph = Carbon.api.gantt(axis);
-        //graph.loadContent(values);
+        graph.loadContent(values);
         return graph;
     };
     graph = createGraph(axisData, graphData);

@@ -3,7 +3,8 @@ import d3 from "d3";
 import BaseConfig, { getDefaultValue, getDomain } from "../../core/BaseConfig";
 import {
     generateClipPathId,
-    generateDatelineClipPathId
+    generateDatelineClipPathId,
+    isPanningModeEnabled
 } from "../../core/BaseConfig/helper";
 import { hasY2Axis } from "../../helpers/axis";
 import constants, {
@@ -170,19 +171,6 @@ export const validateContent = (content, input) => {
     }
 };
 /**
- * Checks if panning is enabled or not
- *
- * @private
- * @param {object} config - config object used by the graph.
- * @returns {boolean} returns true of panning enabled else false.
- */
-export const isPanningModeEnabled = (config) => {
-    if (config.pan !== undefined && config.pan.enabled) {
-        return true;
-    }
-    return false;
-};
-/**
  * Used to set the clamp and transition when panning is enabled or not.
  *
  * @private
@@ -201,6 +189,7 @@ export const settingsDictionary = (config) =>
               transition: constants.D3_TRANSITION_PROPERTIES_ENABLED,
               shouldCreateDatelineDefs: false
           };
+
 /**
  * API to parse consumer input for Graph
  *

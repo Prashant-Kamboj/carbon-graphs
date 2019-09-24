@@ -211,12 +211,7 @@ class Gantt extends Construct {
         createAxes(this.axis, this.scale, this.config, this.svg);
         createGanttContent(this.config, this.svg);
         if (utils.notEmpty(this.config.dateline)) {
-            createDateline(
-                this.scale,
-                this.config,
-                this.svg,
-                this.config.settingsDictionary.transition
-            );
+            createDateline(this.scale, this.config, this.svg);
         }
         if (this.config.showActionLegend) {
             this.legendSVG = createLegend(

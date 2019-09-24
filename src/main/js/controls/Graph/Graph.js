@@ -248,12 +248,7 @@ class Graph extends Construct {
             utils.notEmpty(this.config.dateline) &&
             this.config.axis.x.type === AXIS_TYPE.TIME_SERIES
         ) {
-            createDateline(
-                this.scale,
-                this.config,
-                this.svg,
-                this.config.settingsDictionary.transition
-            );
+            createDateline(this.scale, this.config, this.svg);
         }
         if (this.config.showLegend) {
             /*
@@ -319,12 +314,7 @@ class Graph extends Construct {
             utils.notEmpty(this.config.dateline) &&
             this.config.axis.x.type === AXIS_TYPE.TIME_SERIES
         ) {
-            redrawDatelineContent(
-                this.scale,
-                this.config,
-                this.svg,
-                this.config.settingsDictionary.transition
-            );
+            redrawDatelineContent(this.scale, this.config, this.svg);
         }
         if (utils.notEmpty(content.config.values)) {
             removeNoDataView(this.svg);

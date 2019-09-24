@@ -359,8 +359,7 @@ export const renderPairedResultWithPanning = (id) => {
             {
                 high: {
                     x: "2015-12-31T20:30:00.000Z",
-                    y: 150,
-                    isCritical: false
+                    y: 150
                 },
                 mid: {
                     x: "2015-12-31T20:30:00.000Z",
@@ -368,8 +367,7 @@ export const renderPairedResultWithPanning = (id) => {
                 },
                 low: {
                     x: "2015-12-31T20:30:00.000Z",
-                    y: 10,
-                    isCritical: false
+                    y: 10
                 }
             },
             {

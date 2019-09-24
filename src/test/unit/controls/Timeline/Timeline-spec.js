@@ -2373,52 +2373,77 @@ describe("Timeline", () => {
             });
         });
     });
-    describe("When pan is enabled", () => {
-        beforeEach(() => {
-            const values = utils.deepClone(valuesJSON);
-            const input = getData(values, false, false);
-            const axisData = utils.deepClone(getAxes(axisJSON));
-            axisData.pan = { enabled: true };
-            timeline = new Timeline(axisData);
-            timeline.loadContent(input);
+    describe("Panning", () => {
+        describe("When enabled", () => {
+            beforeEach(() => {
+                const values = utils.deepClone(valuesJSON);
+                const input = getData(values, false, false);
+                const axisData = utils.deepClone(getAxes(axisJSON));
+                axisData.pan = { enabled: true };
+                timeline = new Timeline(axisData);
+                timeline.loadContent(input);
+            });
+            it("Check if clamp is false if pan is enabled", () => {
+                expect(timeline.scale.x.clamp()).toEqual(false);
+            });
+            it("check if data point are getting translated properly", () => {
+                const dataPoint = fetchElementByClass(styles.point).firstChild;
+                expect(
+                    getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                        .translate[0]
+                ).not.toBeNull();
+                expect(
+                    getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                        .translate[1]
+                ).not.toBeNull();
+            });
         });
-        it("Check if clamp is false if pan is enabled", () => {
-            expect(timeline.scale.x.clamp()).toEqual(false);
+        describe("When disabled", () => {
+            beforeEach(() => {
+                const values = utils.deepClone(valuesJSON);
+                const input = getData(values, false, false);
+                const axisData = utils.deepClone(getAxes(axisJSON));
+                axisData.pan = { enabled: false };
+                timeline = new Timeline(axisData);
+                timeline.loadContent(input);
+            });
+            it("Check if clamp is true if pan is disabled", () => {
+                expect(timeline.scale.x.clamp()).toEqual(true);
+            });
+            it("check if data point are getting translated properly", () => {
+                const dataPoint = fetchElementByClass(styles.point).firstChild;
+                expect(
+                    getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                        .translate[0]
+                ).not.toBeNull();
+                expect(
+                    getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                        .translate[1]
+                ).not.toBeNull();
+            });
         });
-        it("check if data point are getting translated properly", () => {
-            const dataPoint = fetchElementByClass(styles.point).firstChild;
-            expect(
-                getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
-                    .translate[0]
-            ).not.toBeNull();
-            expect(
-                getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
-                    .translate[1]
-            ).not.toBeNull();
-        });
-    });
-    describe("When pan is disabled", () => {
-        beforeEach(() => {
-            const values = utils.deepClone(valuesJSON);
-            const input = getData(values, false, false);
-            const axisData = utils.deepClone(getAxes(axisJSON));
-            axisData.pan = { enabled: false };
-            timeline = new Timeline(axisData);
-            timeline.loadContent(input);
-        });
-        it("Check if clamp is true if pan is disabled", () => {
-            expect(timeline.scale.x.clamp()).toEqual(true);
-        });
-        it("check if data point are getting translated properly", () => {
-            const dataPoint = fetchElementByClass(styles.point).firstChild;
-            expect(
-                getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
-                    .translate[0]
-            ).not.toBeNull();
-            expect(
-                getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
-                    .translate[1]
-            ).not.toBeNull();
+        describe("When undefined", () => {
+            beforeEach(() => {
+                const values = utils.deepClone(valuesJSON);
+                const input = getData(values, false, false);
+                const axisData = utils.deepClone(getAxes(axisJSON));
+                timeline = new Timeline(axisData);
+                timeline.loadContent(input);
+            });
+            it("Check if clamp is true if pan is undefined", () => {
+                expect(timeline.scale.x.clamp()).toEqual(true);
+            });
+            it("Check if data point are getting translated properly", () => {
+                const dataPoint = fetchElementByClass(styles.point).firstChild;
+                expect(
+                    getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                        .translate[0]
+                ).not.toBeNull();
+                expect(
+                    getSVGAnimatedTransformList(getCurrentTransform(dataPoint))
+                        .translate[1]
+                ).not.toBeNull();
+            });
         });
     });
 });

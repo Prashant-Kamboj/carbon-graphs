@@ -3,17 +3,25 @@
 Panning is applied with timeline/custom button
 
 -   [Panning](#panning)
+    -   [Usage](#usage)
     -   [JSON Properties](#json-properties)
         -   [Root](#root)
-            -   [Required](#required)
+            -   [Optional](#optional)
     -   [Constraints](#constraints)
-    -   [Default Panning](#default-panning)
+
+## Usage
+
+```javascript
+var pan = {
+    enabled: true
+};
+```
 
 ## JSON Properties
 
 ### Root
 
-#### Required
+#### Optional
 
 | Property Name | Expected | Description                        |
 | ------------- | -------- | ---------------------------------- |
@@ -22,13 +30,3 @@ Panning is applied with timeline/custom button
 ## Constraints
 
 -   If panning is not provided then enabled will be false.
-
-## Default Panning
-
--   By defalut enabled will be false to enable set it to true as below
-
-```javascript
-var pan = {
-    enabled: true
-};
-```
