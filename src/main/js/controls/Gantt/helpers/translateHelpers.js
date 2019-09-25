@@ -397,8 +397,7 @@ const translateGraph = (control) => {
         control.scale,
         control.config,
         control.svg,
-        getYAxisYPosition,
-        control.config.settingsDictionary.transition
+        getYAxisYPosition
     );
 };
 /**

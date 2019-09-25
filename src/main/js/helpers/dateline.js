@@ -177,9 +177,7 @@ const createDateline = (scale, config, canvasSVG) => {
             .attr("height", getYAxisHeight(config) + datelineIndicatorHeight)
             .attr(
                 constants.Y_AXIS,
-                getYAxisHeight(config) === 0
-                    ? getYAxisYPosition(config) - 4
-                    : getYAxisYPosition(config) - datelineIndicatorHeight
+                getYAxisYPosition(config) - datelineIndicatorHeight
             );
     }
 };
