@@ -91,6 +91,21 @@ const datelineClickHandler = (value, target) => {
     );
 };
 /**
+ * getting the height of the dateline indicator.
+ *
+ * @private
+ * @returns { number } returns height of the dateline indicator
+ */
+const getDatelineIndicatorHeight = () => {
+    const shapeHeightArr = [];
+    d3.selectAll(`.${styles.datelinePoint}`).each(function() {
+        const shapeHeight = this.getBBox().height;
+        shapeHeightArr.push(shapeHeight);
+    });
+    const datelineIndicatorHeight = Math.max(...shapeHeightArr);
+    return datelineIndicatorHeight;
+};
+/**
  * Creates a dateline for graph. We are not adding
  * x1, x2, y1, y2 co-ordinates for the straight line since they will be adjusted when
  * content is loaded.
@@ -99,7 +114,7 @@ const datelineClickHandler = (value, target) => {
  * @private
  * @param {object} scale - d3 scale taking into account the input parameters
  * @param {object} config - config object derived from input JSON
- * @param {Array} canvasSVG - d3 object of canvas sv
+ * @param {Array} canvasSVG - d3 object of canvas svg
  * @returns {undefined} - returns nothing
  */
 const createDateline = (scale, config, canvasSVG) => {
@@ -162,14 +177,8 @@ const createDateline = (scale, config, canvasSVG) => {
         config.settingsDictionary.shouldCreateDatelineDefs &&
         config.dateline.length > 0
     ) {
-        const shapeHeightArr = [];
-        const shape = d3.selectAll(`.${styles.datelinePoint}`);
-        shape[0].forEach((element) => {
-            const shapeHeight = element.getBBox().height;
-            shapeHeightArr.push(shapeHeight);
-        });
         const datelineIndicatorHeight = Math.floor(
-            Math.max(...shapeHeightArr) / 2
+            getDatelineIndicatorHeight() / 2
         );
         canvasSVG
             .select(`clipPath#${config.datelineClipPathId}`)
@@ -235,5 +244,6 @@ export {
     validateDateline,
     createDateline,
     translateDateline,
-    redrawDatelineContent
+    redrawDatelineContent,
+    getDatelineIndicatorHeight
 };

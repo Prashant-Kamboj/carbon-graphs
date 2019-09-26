@@ -551,6 +551,26 @@ const removeTrackContainer = (canvasSVG, key) =>
  */
 const isHashed = (style) => !(utils.isEmpty(style) || !style.isHashed);
 
+/**
+ * Removes the element with provided selector using d3
+ *
+ * @private
+ * @param {Selection|object} el - d3 selection element
+ * @param {string} selector - attribute to query the element, typically a class or id
+ * @param {boolean} [isBatchSelect] - enables `selectAll` rather than default `select`
+ * @returns {undefined} - returns nothing
+ */
+const d3RemoveElement = (el, selector, isBatchSelect = false) => {
+    if (!el) {
+        return;
+    }
+    if (isBatchSelect) {
+        el.selectAll(selector).remove();
+    } else {
+        el.select(selector).remove();
+    }
+};
+
 export {
     getXAxisWidth,
     getXAxisXPosition,
@@ -578,5 +598,6 @@ export {
     updateAxesDomain,
     updateTrackProps,
     prepareLoadAtIndex,
-    isHashed
+    isHashed,
+    d3RemoveElement
 };

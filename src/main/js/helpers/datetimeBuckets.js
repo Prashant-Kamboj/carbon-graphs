@@ -226,10 +226,15 @@ const translateVGridDatetimeBuckets = (
  * @param {Array} values - list of all tick values.
  * @param {string} height - Y axis height.
  * @param {string} orientation - X axis orientation.
- * @param {object} transit - gets transition based on pannig mode is enabled or not
+ * @param {object} transition - gets transition based on pannig mode is enabled or not
  * @returns {object} - config with tick values and height.
  */
-const createDatetimeBucketConfig = (values, height, orientation, transit) => ({
+const createDatetimeBucketConfig = (
+    values,
+    height,
+    orientation,
+    transition
+) => ({
     axis: {
         x: {
             ticks: {
@@ -240,7 +245,7 @@ const createDatetimeBucketConfig = (values, height, orientation, transit) => ({
     },
     height: `${height}`,
     settingsDictionary: {
-        transition: transit
+        transition
     }
 });
 

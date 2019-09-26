@@ -23,9 +23,9 @@ var pan = {
 
 #### Optional
 
-| Property Name | Expected | Description                        |
-| ------------- | -------- | ---------------------------------- |
-| `enabled`     | boolean  | Set to true when panning is needed |
+| Property Name | Expected | Default   | Description                        |
+| ------------- | -------- | --------- | ---------------------------------- |
+| enabled       | boolean  | undefined | Set to true when panning is needed |
 
 ## Constraints
 

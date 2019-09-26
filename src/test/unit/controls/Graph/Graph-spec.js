@@ -3043,6 +3043,22 @@ describe("Graph", () => {
                 expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
                 expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
             });
+            it("Check the height for dateline defs is proper", () => {
+                const defsElement = fetchElementByClass(styles.canvas)
+                    .firstChild;
+                const shapeHeightArr = [];
+                d3.selectAll(`.${styles.datelinePoint}`).each(function() {
+                    const shapeHeight = this.getBBox().height;
+                    shapeHeightArr.push(shapeHeight);
+                });
+                const datelineIndicatorHeight = Math.max(...shapeHeightArr);
+                const datelineDefsHeight =
+                    graph.config.height +
+                    Math.floor(datelineIndicatorHeight / 2);
+                expect(
+                    defsElement.lastChild.firstChild.getAttribute("height")
+                ).toBe(datelineDefsHeight.toString());
+            });
             it("DatelineGroup translates properly when panning is enabled", (done) => {
                 const datelineGroup = fetchElementByClass(styles.datelineGroup);
                 setTimeout(() => {

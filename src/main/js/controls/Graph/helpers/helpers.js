@@ -33,7 +33,10 @@ import {
 } from "../../../helpers/label";
 import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
-import { translateDateline } from "../../../helpers/dateline";
+import {
+    translateDateline,
+    getDatelineIndicatorHeight
+} from "../../../helpers/dateline";
 
 const BASE_CANVAS_WIDTH_PADDING = constants.BASE_CANVAS_WIDTH_PADDING;
 const DEFAULT_HEIGHT = constants.DEFAULT_HEIGHT;
@@ -92,14 +95,8 @@ const translateDefs = (config, canvasSVG) => {
         config.settingsDictionary.shouldCreateDatelineDefs &&
         config.dateline.length > 0
     ) {
-        const shapeHeightArr = [];
-        const shape = d3.selectAll(`.${styles.datelinePoint}`);
-        shape[0].forEach((element) => {
-            const shapeHeight = element.getBBox().height;
-            shapeHeightArr.push(shapeHeight);
-        });
         const datelineIndicatorHeight = Math.floor(
-            Math.max(...shapeHeightArr) / 2
+            getDatelineIndicatorHeight() / 2
         );
         canvasSVG
             .select(`clipPath#${config.datelineClipPathId}`)
@@ -586,8 +583,7 @@ const translateGraph = (control) => {
         control.scale,
         control.config,
         control.svg,
-        getYAxisYPosition,
-        control.config.settingsDictionary.transition
+        getYAxisYPosition
     );
     translateNoDataView(control.config, control.svg);
 };

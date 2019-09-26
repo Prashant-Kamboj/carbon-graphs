@@ -125,9 +125,5 @@ export const parseTypedValue = (x, xAxisType) =>
  * @param {object} config - config object used by the graph.
  * @returns {boolean} returns true of panning enabled else false.
  */
-export const isPanningModeEnabled = (config) => {
-    if (config.pan !== undefined && config.pan.enabled) {
-        return true;
-    }
-    return false;
-};
+export const isPanningModeEnabled = (config) =>
+    utils.isDefined(config.pan) && config.pan.enabled;

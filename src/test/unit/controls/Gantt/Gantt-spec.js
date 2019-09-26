@@ -2512,6 +2512,22 @@ describe("Gantt", () => {
                 expect(defsElement.lastChild.firstChild.nodeName).toBe("rect");
                 expect(defsElement.lastChild.id).toContain(`-dateline-clip`);
             });
+            it("Check the height for dateline defs is proper", () => {
+                const defsElement = fetchElementByClass(styles.canvas)
+                    .firstChild;
+                const shapeHeightArr = [];
+                d3.selectAll(`.${styles.datelinePoint}`).each(function() {
+                    const shapeHeight = this.getBBox().height;
+                    shapeHeightArr.push(shapeHeight);
+                });
+                const datelineIndicatorHeight = Math.max(...shapeHeightArr);
+                const datelineDefsHeight =
+                    gantt.config.height +
+                    Math.floor(datelineIndicatorHeight / 2);
+                expect(
+                    defsElement.lastChild.firstChild.getAttribute("height")
+                ).toBe(datelineDefsHeight.toString());
+            });
             it("Dateline group translates properly when pan is enabled", (done) => {
                 const datelineGroupElement = fetchElementByClass(
                     styles.datelineGroup
