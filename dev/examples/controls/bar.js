@@ -376,11 +376,11 @@ export const renderBarWithPanning = (id) => {
     };
     axisData.axis.x.ticks = {
         values: [
-            new Date(2016, 0, 1, 2).toISOString(),
-            new Date(2016, 0, 1, 4).toISOString(),
-            new Date(2016, 0, 1, 8).toISOString(),
-            new Date(2016, 0, 1, 10).toISOString(),
-            new Date(2016, 0, 1, 12).toISOString()
+            new Date(2016, 0, 1, 3).toISOString(),
+            new Date(2016, 0, 1, 6).toISOString(),
+            new Date(2016, 0, 1, 9).toISOString(),
+            new Date(2016, 0, 1, 12).toISOString(),
+            new Date(2016, 0, 1, 15).toISOString()
         ],
         format: "%H"
     };
@@ -393,23 +393,23 @@ export const renderBarWithPanning = (id) => {
         onClick: loadBarPopup,
         values: [
             {
-                x: new Date(2016, 0, 1, 2).toISOString(),
+                x: new Date(2016, 0, 1, 3).toISOString(),
                 y: 15
             },
             {
-                x: new Date(2016, 0, 1, 4).toISOString(),
+                x: new Date(2016, 0, 1, 6).toISOString(),
                 y: 19
             },
             {
-                x: new Date(2016, 0, 1, 8).toISOString(),
+                x: new Date(2016, 0, 1, 9).toISOString(),
                 y: 10
             },
             {
-                x: new Date(2016, 0, 1, 10).toISOString(),
+                x: new Date(2016, 0, 1, 12).toISOString(),
                 y: 13
             },
             {
-                x: new Date(2016, 0, 1, 12).toISOString(),
+                x: new Date(2016, 0, 1, 15).toISOString(),
                 y: 15
             }
         ]

@@ -119,11 +119,7 @@ const getDatelineIndicatorHeight = () => {
  */
 const createDateline = (scale, config, canvasSVG) => {
     let datelineContent;
-    if (
-        config.pan !== undefined &&
-        utils.isBoolean(config.pan.enabled) &&
-        config.pan.enabled
-    ) {
+    if (config.settingsDictionary.shouldCreateDatelineDefs) {
         datelineContent = canvasSVG
             .append("g")
             .classed(styles.datelineContent, true)
