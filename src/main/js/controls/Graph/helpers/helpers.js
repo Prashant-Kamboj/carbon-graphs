@@ -75,6 +75,10 @@ const getAxisInfoRowLabelHeight = (config) =>
  * `clipPath` updates are necessary since the clip-path URL needs to get
  * the necessary parameters on resize so that data points are not cut off
  *
+ * @description
+ * Calling getDatelineIndicatorHeight() will trigger a page reflow and resizing the page might cause Layout Thrashing.
+ * We understand this and deem it necessary to calculate the indicator height when a new dataset/set of contents are loaded during Panning.
+ * Furthermore, this function is called only when panning is enabled and there is a dateline defs element is present.
  * @private
  * @param {object} config - config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
