@@ -1,8 +1,6 @@
-<div align="center">
-  <a href="https://engineering.cerner.com/carbon-graphs/">
+<p align="center">
     <img width="128" height="128" alt="Click for demo" src="https://github.com/cerner/carbon-graphs/raw/master/build/assets/icons/Carbon_256.png">
-  </a>
-</div>
+</p>
 
 <h1 align="center">
   Carbon (carbon-graphs)
@@ -41,7 +39,8 @@ npm i @cerner/carbon-graphs --save-dev
 
 ## Getting Started
 
-Please follow this [getting started](./docs/getting-started/GettingStarted.md) guide.
+-   [Getting Started](./docs/getting-started/GettingStarted.md)
+-   [API Reference](docs/README.md)
 
 ## Dependencies
 
@@ -85,12 +84,12 @@ Please follow this [getting started](./docs/getting-started/GettingStarted.md) g
 -   Criticality indicators for data point
 -   Locale support for axes ticks
 -   Y and Y2 Axes label along with respective shapes
+-   Graph Panning
 
 ## Resources
 
 -   [Demo](https://engineering.cerner.com/carbon-graphs/)
 -   [Contributing to Carbon](docs/contributing/README.md)
--   [API Reference](docs/README.md)
 -   [Release Notes](https://github.com/cerner/carbon-graphs/releases)
 
 ## Browser support
@@ -106,16 +105,15 @@ Please follow this [getting started](./docs/getting-started/GettingStarted.md) g
 ## Potential features
 
 -   [ ] Upgrade to latest D3 version
--   [ ] Separate graph types to plugin based
--   [ ] a11y
--   [ ] Support additional themes
 -   [ ] Scatter-plot graph
 -   [ ] Area graphs
 -   [ ] Area spline graphs
+-   [ ] Support additional themes
+-   [ ] a11y
+-   [ ] Separate graph types to plugin based
 -   [ ] DST
 -   [ ] Tick counts
 -   [ ] Show/hide ticks
--   [ ] Pan
 
 ## LICENSE
 
