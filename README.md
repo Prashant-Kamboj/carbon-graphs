@@ -104,16 +104,15 @@ npm i @cerner/carbon-graphs --save-dev
 
 ## Potential features
 
--   [ ] Upgrade to latest D3 version
 -   [ ] Scatter-plot graph
--   [ ] Area graphs
--   [ ] Area spline graphs
+-   [ ] Bubble graph
+-   [ ] Upgrade to latest D3 version
 -   [ ] Support additional themes
 -   [ ] a11y
+-   [ ] Area graph
+-   [ ] Area spline graph
 -   [ ] Separate graph types to plugin based
 -   [ ] DST
--   [ ] Tick counts
--   [ ] Show/hide ticks
 
 ## LICENSE
 
