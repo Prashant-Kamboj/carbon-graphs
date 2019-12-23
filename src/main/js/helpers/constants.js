@@ -149,7 +149,7 @@ export const AXES_ORIENTATION = {
 export default {
     PADDING: {
         top: 10,
-        bottom: 2.5,
+        bottom: 5,
         left: 30,
         right: 50,
         trackLabel: 100
@@ -191,7 +191,7 @@ export default {
     DEFAULT_GANTT_TASK_CHUNK_WIDTH: 5,
     DEFAULT_GANTT_ACTIVITY_CHUNK_WIDTH: 5,
     DEFAULT_GANTT_TASK_SELECTION_PADDING: 25,
-    DEFAULT_GANTT_ACTIVITY_OPACITY: 0.3,
+    DEFAULT_GANTT_ACTIVITY_OPACITY: 0.5,
     DEFAULT_GANTT_ACTIVITY_HEIGHT: 31,
     DEFAULT_GANTT_ACTIVITY_PADDING: {
         top: 5,
