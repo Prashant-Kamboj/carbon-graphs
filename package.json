@@ -1,7 +1,7 @@
 {
   "name": "@cerner/carbon-graphs",
   "description": "A graphing library built using d3 based on Cerner design standards",
-  "version": "1.16.2",
+  "version": "1.17.0",
   "author": "Cerner Corporation",
   "browserslist": [
     "Android >= 4",
@@ -61,7 +61,7 @@
     "@semantic-release/git": "^7.0.18",
     "autoprefixer": "^9.7.3",
     "babel-loader": "^8.0.4",
-    "babel-plugin-istanbul": "^5.2.0",
+    "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-minify-replace": "^0.5.0",
     "babel-preset-minify": "^0.5.1",
     "conventional-changelog-eslint": "^3.0.4",
@@ -73,7 +73,7 @@
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-jsdoc": "^18.4.3",
-    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "html-webpack-plugin": "^3.2.0",
@@ -127,6 +127,14 @@
       "devDependencyUpdate": "Upgrade: Update ${dependency} to version ${version}",
       "dependencyPin": "Fix: Pin ${dependency} to ${oldVersion}",
       "devDependencyPin": "Fix: Pin ${dependency} to ${oldVersion}"
+    },
+    "prTitles": {
+      "initialPR": "Upgrade: Update dependencies to enable Greenkeeper [skip ci]",
+      "initialPrBadge": "Chore: Add badge to enable Greenkeeper [skip ci]",
+      "initialPrBadgeOnly": "Chore: Add Greenkeeper badge [skip ci]",
+      "initialSubgroupPR": "Upgrade: Update dependencies for ${group} [skip ci]",
+      "basicPR": "Upgrade: Update ${dependency} to the latest [skip ci]",
+      "groupPR": "Upgrade: Update ${dependency} in group ${group} to the latest [skip ci]"
     }
   },
   "homepage": "https://engineering.cerner.com/carbon-graphs/",
