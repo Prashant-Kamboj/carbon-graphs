@@ -362,6 +362,7 @@ export const renderGanttActivities = (id) => {
     loadTracks(ganttDefault, tasks, activities, [], [], 4);
     return ganttDefault;
 };
+
 export const renderGanttEventline = (id) => {
     const data = utils.deepClone(getDemoData(`#${id}`, "GANTT"));
     data.eventline = [
@@ -385,6 +386,7 @@ export const renderGanttEventline = (id) => {
     loadTracks(ganttDefault, tasks, [], [], [], 4);
     return ganttDefault;
 };
+
 export const renderGanttPercentage = (id) => {
     const data = utils.deepClone(getDemoData(`#${id}`, "GANTT"));
     data.showActionLegend = false;

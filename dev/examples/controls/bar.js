@@ -234,6 +234,7 @@ export const renderBarTimeSeriesWithDateline = (id) => {
     );
     return barTimeDateline;
 };
+
 export const renderBarTimeSeriesWithEventline = (id) => {
     const axisData = utils.deepClone(getDemoData(`#${id}`, "BAR_TIMESERIES"));
     axisData.axis.x.ticks = {

@@ -116,6 +116,7 @@ export const renderPairedResultTimeseriesDateline = (id) => {
     );
     return pairedTime;
 };
+
 export const renderPairedResultTimeseriesEventline = (id) => {
     const pairedTimeDateline = utils.deepClone(
         getDemoData(`#${id}`, "PAIRED_TIMESERIES")
@@ -148,6 +149,7 @@ export const renderPairedResultTimeseriesEventline = (id) => {
     );
     return pairedTime;
 };
+
 export const renderPairedResultY2Axis = (id) => {
     const axisData = utils.deepClone(
         getDemoData(`#${id}`, "PAIRED_TIMESERIES")

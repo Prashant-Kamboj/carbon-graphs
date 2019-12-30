@@ -37,6 +37,7 @@ export const renderScatterWithDateline = (id) => {
     );
     return scatterTime;
 };
+
 export const renderScatterWithEventline = (id) => {
     const data = utils.deepClone(getDemoData(`#${id}`, "LINE_TIMESERIES"));
     data.eventline = [
@@ -63,6 +64,7 @@ export const renderScatterWithEventline = (id) => {
     );
     return scatterTime;
 };
+
 export const renderScatterXHidden = (id) => {
     const axisData = utils.deepClone(getDemoData(`#${id}`, "LINE_DEFAULT"));
     axisData.axis.x.show = false;

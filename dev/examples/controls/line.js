@@ -72,6 +72,7 @@ export const renderLineWithDateline = (id) => {
     );
     return lineTime;
 };
+
 export const renderLineWithEventline = (id) => {
     const data = utils.deepClone(getDemoData(`#${id}`, "LINE_TIMESERIES"));
     data.eventline = [
@@ -98,6 +99,7 @@ export const renderLineWithEventline = (id) => {
     );
     return lineTime;
 };
+
 export const renderLineXStaticTicks = (id) => {
     const axisData = utils.deepClone(getDemoData(`#${id}`, "LINE_TIMESERIES"));
     axisData.axis.x.ticks = {
