@@ -1,5 +1,9 @@
 # Eventline
 
+Eventline is a doted line which can be used to show so some event occuring at a specific time.
+
+Eventline is different from dateline as it has a style property to change the style of the line to make it a doted line.
+
 If Eventline is provided then the `value` property is mandatory.
 
 When using Eventline with graph then `x axis type` must be **timeseries** it is mandatory.
@@ -21,9 +25,9 @@ When using Eventline with graph then `x axis type` must be **timeseries** it is 
 
 ### Optional
 
-| Property Name | Expected | Default   | Description                                       |
-| ------------- | -------- | --------- | ------------------------------------------------- |
-| style         | object   | undefined | Any strokeDashArray value to add dash to the line |
+| Property Name | Expected | Default                    | Description                                       |
+| ------------- | -------- | -------------------------- | ------------------------------------------------- |
+| style         | object   | `{strokeDashArray: "2,2"}` | Any strokeDashArray value to add dash to the line |
 
 ## Structure
 

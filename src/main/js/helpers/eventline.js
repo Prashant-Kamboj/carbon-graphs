@@ -83,7 +83,7 @@ const createEventline = (scale, config, canvasSVG) => {
                         d.style !== undefined &&
                         d.style.strokeDashArray !== undefined
                             ? d.style.strokeDashArray
-                            : 0
+                            : "2,2"
                     }`
             )
             .attr("pointer-events", "auto")

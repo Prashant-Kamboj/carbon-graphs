@@ -42,14 +42,14 @@ export const renderScatterWithEventline = (id) => {
     const data = utils.deepClone(getDemoData(`#${id}`, "LINE_TIMESERIES"));
     data.eventline = [
         {
-            color: "grey",
+            color: Carbon.helpers.COLORS.GREY,
             style: {
                 strokeDashArray: "4,4"
             },
             value: new Date(2016, 0, 1, 8).toISOString()
         },
         {
-            color: "black",
+            color: Carbon.helpers.COLORS.BLACK,
             style: {
                 strokeDashArray: "2,2"
             },

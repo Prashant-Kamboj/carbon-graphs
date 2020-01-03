@@ -243,14 +243,14 @@ export const renderBarTimeSeriesWithEventline = (id) => {
     };
     (axisData.eventline = [
         {
-            color: "black",
+            color: Carbon.helpers.COLORS.GREY,
             style: {
                 strokeDashArray: "4,4"
             },
             value: new Date(2017, 12, 2).toISOString()
         },
         {
-            color: "black",
+            color: Carbon.helpers.COLORS.BLACK,
             style: {
                 strokeDashArray: "2,2"
             },

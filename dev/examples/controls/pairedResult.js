@@ -123,14 +123,14 @@ export const renderPairedResultTimeseriesEventline = (id) => {
     );
     pairedTimeDateline.eventline = [
         {
-            color: "grey",
+            color: Carbon.helpers.COLORS.GREY,
             style: {
                 strokeDashArray: "4,4"
             },
             value: new Date(2016, 8, 1, 8).toISOString()
         },
         {
-            color: "black",
+            color: Carbon.helpers.COLORS.BLACK,
             style: {
                 strokeDashArray: "2,2"
             },
