@@ -22,8 +22,6 @@ import {
     axisJSON,
     datelineAlt,
     datelineJSON,
-    eventlineAlt,
-    eventlineJSON,
     fetchElementByClass,
     getAxes,
     getData,

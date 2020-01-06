@@ -20,8 +20,8 @@ import {
     getAxes
 } from "./helpers";
 
-describe("Eventline", () => {
-    let gantt;
+fdescribe("Eventline", () => {
+    let gantt = null;
     let ganttChartContainer;
     let axisObj;
 
