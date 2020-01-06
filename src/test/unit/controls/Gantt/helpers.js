@@ -112,7 +112,7 @@ export const datelineJSON = [
 
 export const eventlineJSON = [
     {
-        color: "grey",
+        color: Carbon.helpers.COLORS.GREY,
         style: {
             strokeDashArray: "4,4"
         },
@@ -121,7 +121,7 @@ export const eventlineJSON = [
 ];
 
 export const eventlineAlt = {
-    color: "grey",
+    color: Carbon.helpers.COLORS.GREY,
     style: {
         strokeDashArray: "4,4"
     },

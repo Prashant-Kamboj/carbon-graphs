@@ -1,8 +1,7 @@
 # Eventline
 
-Eventline is a doted line which can be used to show so some event occuring at a specific time.
-
-Eventline is different from dateline as it has a style property to change the style of the line to make it a doted line.
+`Eventline` is a dotted line (by default) used to show an event occurring at a specific time.
+Unlike `Dateline`, `Eventline` does not have an indicator and therefore is not interactable. Consumers is expected to define the use-case accordingly.
 
 If Eventline is provided then the `value` property is mandatory.
 
@@ -12,6 +11,10 @@ When using Eventline with graph then `x axis type` must be **timeseries** it is 
     -   [JSON Properties](#json-properties)
         -   [Required](#required)
         -   [Optional](#optional)
+-   [Pass Through](#pass-through)
+    -   [JSON Properties](#json-properties-1)
+        -   [Optional](#optional-1)
+        -   [Click Pass Throughs](#click-pass-throughs)
     -   [Structure](#structure)
 
 ## JSON Properties
@@ -29,6 +32,25 @@ When using Eventline with graph then `x axis type` must be **timeseries** it is 
 | ------------- | -------- | -------------------------- | ------------------------------------------------- |
 | style         | object   | `{strokeDashArray: "2,2"}` | Any strokeDashArray value to add dash to the line |
 
+# Pass Through
+
+## JSON Properties
+
+#### Optional
+
+| Property Name    | Expected | Default | Description                                       |
+| ---------------- | -------- | ------- | ------------------------------------------------- |
+| clickPassThrough | object   | null    | Refer [Click Pass Throughs](#click-Pass-Throughs) |
+
+#### Click Pass Throughs
+
+Here is a truth table on how `clickPassThrough`s work in conjunction with `onClick`s -
+
+-   If `clickPassThrough` is set to `true` and `onClick` function is provided, we honor the onClick functionality and show cursor-pointer on top of the element.
+-   If `clickPassThrough` is set to `true` and `onClick` function is not provided, we would be able to click the element beneath it. We also show cursor-pointer here, if bottom element is selectable.
+-   If `clickPassThrough` is set to `false` and `onClick` function is provided, we honor the onClick functionality and show cursor-pointer on top of the element.
+-   If `clickPassThrough` is set to `false` and `onClick` function is not-provided, the element doesn't interact upon mouse events.
+
 ## Structure
 
 ```javascript
@@ -40,5 +62,8 @@ When using Eventline with graph then `x axis type` must be **timeseries** it is 
             },
             value: new Date(2016, 5, 1).toISOString()
         }
-    ]
+    ],
+"clickPassThrough": {
+    eventlines: false
+}
 ```

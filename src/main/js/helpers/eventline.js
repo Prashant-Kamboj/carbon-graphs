@@ -73,6 +73,12 @@ const createEventline = (scale, config, canvasSVG) => {
             .attr("style", (val) => `fill: ${val.color}; stroke: ${val.color};`)
             .attr("aria-selected", false);
 
+        const graphConfigClickPassThrough = utils.isDefined(
+            config.clickPassThrough
+        )
+            ? config.clickPassThrough.eventlines
+            : false;
+
         eventlineGroup
             .append("line")
             .classed(styles.eventline, true)
@@ -86,7 +92,10 @@ const createEventline = (scale, config, canvasSVG) => {
                             : "2,2"
                     }`
             )
-            .attr("pointer-events", "auto")
+            .attr(
+                "pointer-events",
+                graphConfigClickPassThrough ? "none" : "auto"
+            )
             .attr("aria-hidden", false);
     });
     translateEventline(scale, config, canvasSVG, getYAxisYPosition);

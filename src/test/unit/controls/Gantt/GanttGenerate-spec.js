@@ -1141,18 +1141,18 @@ describe("Gantt - Generate", () => {
                 done();
             });
         });
-        it("creates multiple datelines correctly", () => {
+        it("creates multiple eventlines correctly", () => {
             axisObj.eventline = utils.deepClone(eventlineJSON);
             axisObj.eventline = [
                 {
-                    color: "grey",
+                    color: COLORS.GREY,
                     style: {
                         strokeDashArray: "4,4"
                     },
                     value: new Date(2018, 5, 1).toISOString()
                 },
                 {
-                    color: "orange",
+                    color: COLORS.ORANGE,
                     style: {
                         strokeDashArray: "2,2"
                     },
@@ -1166,6 +1166,55 @@ describe("Gantt - Generate", () => {
             expect(eventlines.length).toBe(2);
             expect(eventlines[0].getAttribute("pointer-events")).toBe("auto");
             expect(eventlines[1].getAttribute("pointer-events")).toBe("auto");
+        });
+        describe("Pass Through's", () => {
+            describe("clickPassThrough - undefined", () => {
+                beforeEach(() => {
+                    axisObj = getAxes(axisJSON);
+                    axisObj.eventline = utils.deepClone(eventlineJSON);
+                    gantt = new Gantt(axisObj);
+                });
+                it("set pointer-events correctly", () => {
+                    const eventline = fetchElementByClass(styles.eventline);
+                    expect(eventline.getAttribute("pointer-events")).toBe(
+                        "auto"
+                    );
+                });
+            });
+            describe("clickPassThrough - true", () => {
+                beforeEach(() => {
+                    axisObj = Object.assign(getAxes(axisJSON), {
+                        clickPassThrough: {
+                            eventlines: true
+                        }
+                    });
+                    axisObj.eventline = utils.deepClone(eventlineJSON);
+                    gantt = new Gantt(axisObj);
+                });
+                it("set pointer-events correctly", () => {
+                    const eventline = fetchElementByClass(styles.eventline);
+                    expect(eventline.getAttribute("pointer-events")).toBe(
+                        "none"
+                    );
+                });
+            });
+            describe("clickPassThrough - false", () => {
+                beforeEach(() => {
+                    axisObj = Object.assign(getAxes(axisJSON), {
+                        clickPassThrough: {
+                            eventlines: false
+                        }
+                    });
+                    axisObj.eventline = utils.deepClone(eventlineJSON);
+                    gantt = new Gantt(axisObj);
+                });
+                it("set pointer-events correctly", () => {
+                    const eventline = fetchElementByClass(styles.eventline);
+                    expect(eventline.getAttribute("pointer-events")).toBe(
+                        "auto"
+                    );
+                });
+            });
         });
     });
     it("Attaches event handlers", () => {

@@ -23,6 +23,7 @@ import {
     eventlineJSON,
     axisTimeSeriesWithAxisTop
 } from "./helpers";
+import { COLORS } from "../../../../main/js/helpers/constants";
 
 describe("Graph - Eventline", () => {
     let graph = null;
@@ -127,14 +128,14 @@ describe("Graph - Eventline", () => {
         const input = utils.deepClone(getAxes(axisTimeSeries));
         input.eventline = [
             {
-                color: "grey",
+                color: COLORS.GREY,
                 style: {
                     strokeDashArray: "4,4"
                 },
                 value: new Date(2016, 5, 1).toISOString()
             },
             {
-                color: "black",
+                color: COLORS.BLACK,
                 style: {
                     strokeDashArray: "2,2"
                 },
@@ -147,7 +148,38 @@ describe("Graph - Eventline", () => {
         expect(eventlines[0].getAttribute("pointer-events")).toBe("auto");
         expect(eventlines[1].getAttribute("pointer-events")).toBe("auto");
     });
-
+    describe("When eventline clickPassThrough is provided", () => {
+        describe("When clickPassThrough property is provided - true", () => {
+            beforeEach(() => {
+                const input = Object.assign(getAxes(axisTimeSeries), {
+                    clickPassThrough: {
+                        eventlines: true
+                    }
+                });
+                input.eventline = utils.deepClone(eventlineJSON);
+                graph = new Graph(input);
+            });
+            it("Set pointer-events correctly", () => {
+                const eventline = fetchElementByClass(styles.eventline);
+                expect(eventline.getAttribute("pointer-events")).toBe("none");
+            });
+        });
+        describe("When clickPassThrough property is provided - false", () => {
+            beforeEach(() => {
+                const input = Object.assign(getAxes(axisTimeSeries), {
+                    clickPassThrough: {
+                        eventlines: false
+                    }
+                });
+                input.eventline = utils.deepClone(eventlineJSON);
+                graph = new Graph(input);
+            });
+            it("Set pointer-events correctly", () => {
+                const eventline = fetchElementByClass(styles.eventline);
+                expect(eventline.getAttribute("pointer-events")).toBe("auto");
+            });
+        });
+    });
     describe("Check the translation of Eventline correctly", () => {
         beforeEach(() => {
             const input = utils.deepClone(getAxes(axisTimeSeries));

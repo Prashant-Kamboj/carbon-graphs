@@ -43,7 +43,7 @@ export const datelineJSON = [
 ];
 export const eventlineJSON = [
     {
-        color: "grey",
+        color: COLORS.GREY,
         style: {
             strokeDashArray: "4,4"
         },
