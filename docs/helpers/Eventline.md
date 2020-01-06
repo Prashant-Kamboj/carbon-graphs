@@ -14,7 +14,7 @@ When using Eventline with graph then `x axis type` must be **timeseries** it is 
 -   [Pass Through](#pass-through)
     -   [JSON Properties](#json-properties-1)
         -   [Optional](#optional-1)
-        -   [Click Pass Throughs](#click-pass-throughs)
+        -   [Click Pass Throughs](#click-Pass-Throughs)
     -   [Structure](#structure)
 
 ## JSON Properties
@@ -44,12 +44,10 @@ When using Eventline with graph then `x axis type` must be **timeseries** it is 
 
 #### Click Pass Throughs
 
-Here is a truth table on how `clickPassThrough`s work in conjunction with `onClick`s -
+Here is a truth table on how `clickPassThrough`s work-
 
--   If `clickPassThrough` is set to `true` and `onClick` function is provided, we honor the onClick functionality and show cursor-pointer on top of the element.
--   If `clickPassThrough` is set to `true` and `onClick` function is not provided, we would be able to click the element beneath it. We also show cursor-pointer here, if bottom element is selectable.
--   If `clickPassThrough` is set to `false` and `onClick` function is provided, we honor the onClick functionality and show cursor-pointer on top of the element.
--   If `clickPassThrough` is set to `false` and `onClick` function is not-provided, the element doesn't interact upon mouse events.
+-   If `clickPassThrough` is set to `true` we would be able to click the element beneath it. We also show cursor-pointer here, if bottom element is selectable.
+-   If `clickPassThrough` is set to `false` the element doesn't interact upon mouse events.
 
 ## Structure
 
