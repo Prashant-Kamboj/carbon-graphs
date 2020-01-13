@@ -273,10 +273,7 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
     const renderDataPoint = (path, value, index) => {
         path.append("g")
             .classed(styles.point, true)
-            .attr(
-                "aria-disabled",
-                utils.isDefined(value.onClick) ? false : true
-            )
+            .attr("aria-disabled", utils.isDefined(value.onClick))
             .attr("transform", transformPoint(scale)(value))
             .attr("aria-hidden", (value) =>
                 shouldHideDataPoints(config.shownTargets, value)
