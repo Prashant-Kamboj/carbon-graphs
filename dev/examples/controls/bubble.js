@@ -133,7 +133,6 @@ const data2 = {
     weight: {
         min: 40,
         max: 450
-        // maxRadius: 40
     },
     hue: {
         lowerShade: "yellow",
