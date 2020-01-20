@@ -376,12 +376,11 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
  * @param {object} dataTarget - data for the bubble graph
  * @returns {boolean} - returns true if weight is defined and inside weight min and max is also defined else false.
  */
-const areWeightDefined = (dataTarget) => {
-    return utils.isDefined(dataTarget.weight)
+const areWeightDefined = (dataTarget) =>
+    utils.isDefined(dataTarget.weight)
         ? utils.isDefined(dataTarget.weight.min) &&
-              utils.isDefined(dataTarget.weight.max)
+          utils.isDefined(dataTarget.weight.max)
         : false;
-};
 
 /**
  * Checks if hue is defined in the input JSON to get color gradient.
