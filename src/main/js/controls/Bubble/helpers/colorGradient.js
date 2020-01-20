@@ -21,19 +21,10 @@ export const generateColor = (lowerShade, upperShade, dataTarget, useYAxis) => {
             radiusData.push(bubbleScale(element.weight));
         });
     }
-
     const huePaletteList = d3.scale
         .linear()
-        .domain([0, dataTarget.values.length - 1])
+        .domain(d3.extent(radiusData))
         .range([lowerShade, upperShade]);
 
-    const disarr = new Set(radiusData);
-    const newarr = [...disarr];
-    const sortedArray = newarr.sort((a, b) => a - b);
-
-    const colorMap = new Map();
-    sortedArray.forEach((ele, index) => {
-        colorMap.set(ele, huePaletteList(index));
-    });
-    return colorMap;
+    return huePaletteList;
 };

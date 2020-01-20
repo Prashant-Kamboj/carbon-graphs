@@ -369,22 +369,22 @@ renderSiteApp(
                     title: "Simple"
                 },
                 {
-                    pathname: "/bubble/weight Based",
+                    pathname: "/bubble/weight-based",
                     content: renderWeightBasedBubbleGraph,
                     title: "Weight Based"
                 },
                 {
-                    pathname: "/bubble/color Based",
+                    pathname: "/bubble/color-based",
                     content: renderColorBasedBubbleGraph,
                     title: "Color Based"
                 },
                 {
-                    pathname: "/bubble/weight & color combination",
+                    pathname: "/bubble/weight-color-combination",
                     content: renderWeightColorCombination,
                     title: "Weight and Color Combination"
                 },
                 {
-                    pathname: "/bubble/custom bubble size",
+                    pathname: "/bubble/custom-bubble-size",
                     content: renderCustomBubbleSize,
                     title: "Custom Bubble size"
                 }

@@ -11,24 +11,10 @@ const simpleAxisData = (id) => ({
             upperLimit: new Date(2016, 0, 1, 23, 59).toISOString()
         },
         y: {
-            label: "bubble",
+            label: "Bubble",
             lowerLimit: 10,
             upperLimit: 200
         }
-    },
-    dateline: [
-        {
-            showDatelineIndicator: true,
-            label: {
-                display: "Release A"
-            },
-            color: Carbon.helpers.COLORS.LIGHT_YELLOW,
-            shape: Carbon.helpers.SHAPES.SQUARE,
-            value: new Date(2016, 0, 1, 19, 30).toISOString()
-        }
-    ],
-    clickPassThrough: {
-        datelines: true
     }
 });
 
@@ -42,24 +28,10 @@ const axisData = (id) => ({
             upperLimit: new Date(2016, 0, 1, 23, 59).toISOString()
         },
         y: {
-            label: "year",
+            label: "Year",
             lowerLimit: 2010,
             upperLimit: 2020
         }
-    },
-    dateline: [
-        {
-            showDatelineIndicator: true,
-            label: {
-                display: "Release A"
-            },
-            color: Carbon.helpers.COLORS.LIGHT_YELLOW,
-            shape: Carbon.helpers.SHAPES.SQUARE,
-            value: new Date(2016, 0, 1, 19, 30).toISOString()
-        }
-    ],
-    clickPassThrough: {
-        datelines: true
     }
 });
 
@@ -77,20 +49,6 @@ const temperatureAxisData = (id) => ({
             lowerLimit: 50,
             upperLimit: 280
         }
-    },
-    dateline: [
-        {
-            showDatelineIndicator: true,
-            label: {
-                display: "Release A"
-            },
-            color: Carbon.helpers.COLORS.LIGHT_YELLOW,
-            shape: Carbon.helpers.SHAPES.SQUARE,
-            value: new Date(2016, 0, 1, 19, 30).toISOString()
-        }
-    ],
-    clickPassThrough: {
-        datelines: true
     }
 });
 
@@ -124,9 +82,9 @@ const data = {
 };
 
 const data2 = {
-    key: "uid_14",
+    key: "uid_2",
     label: {
-        display: "amount"
+        display: "Amount"
     },
     color: Carbon.helpers.COLORS.ORANGE,
     onClick: loadBubblePopup,
@@ -164,7 +122,7 @@ const data2 = {
 };
 
 const data3 = {
-    key: "uid_13",
+    key: "uid_3",
     label: {
         display: "Temperature"
     },
@@ -173,8 +131,8 @@ const data3 = {
     hue: {
         // 1-to-1 mapping of range with data values. If not provided, data.color is used
         // If lowerShade and upperShade is provided, Carbon will map the colors to each data value.
-        lowerShade: "yellow",
-        upperShade: "red"
+        lowerShade: "#ffff00", // yellow
+        upperShade: "#ff0000" // red
     },
     values: [
         {
@@ -206,9 +164,9 @@ const data3 = {
 };
 
 const data4 = {
-    key: "uid_14",
+    key: "uid_4",
     label: {
-        display: "population"
+        display: "Population"
     },
     color: Carbon.helpers.COLORS.BLUE,
     onClick: loadBubblePopup,
@@ -242,7 +200,7 @@ const data4 = {
 };
 
 const data5 = {
-    key: "uid15",
+    key: "uid_5",
     label: {
         display: "Bubble set B"
     },
@@ -272,8 +230,6 @@ const data5 = {
     ],
     yAxis: "y"
 };
-
-//
 
 export const renderSimpleBubble = (id) => {
     const bubbleGraph = Carbon.api.graph(simpleAxisData(`#${id}`));

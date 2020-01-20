@@ -6,12 +6,13 @@ import {
     getXAxisXPosition,
     isValidAxisType
 } from "../../../helpers/axis";
-import constants, { SHAPES } from "../../../helpers/constants";
+import constants from "../../../helpers/constants";
 import errors from "../../../helpers/errors";
 import {
     legendClickHandler,
     legendHoverHandler,
-    loadLegendItem
+    loadLegendItem,
+    isSelected
 } from "../../../helpers/legend";
 import {
     processRegions,
@@ -180,7 +181,7 @@ weight: {
 
     const bubblePoint = BubbleSVG.select(`.${styles.currentPointsGroup}`)
         .selectAll(`.${styles.point}`)
-        .data(getDataPointValues); // array
+        .data(getDataPointValues);
     drawBubbles(scale, config, bubblePoint.enter(), dataTarget);
     bubblePoint
         .exit()
@@ -206,18 +207,15 @@ const processDataPoints = (graphConfig, dataTarget) => {
         return parseTypedValue(x, type);
     };
 
-    // shownTarget is a array
-    // internalValuesSubset is a array with all the data for intensity graph
     graphConfig.shownTargets.push(dataTarget.key);
     dataTarget.internalValuesSubset = dataTarget.values.map((value) => ({
         onClick: dataTarget.onClick,
         isCritical: value.isCritical || false,
         x: getXDataValues(value.x),
         y: value.y,
-        z: value.weight,
+        weight: value.weight,
         color: dataTarget.color || constants.DEFAULT_COLOR,
         label: dataTarget.label || {},
-        shape: dataTarget.shape || SHAPES.CIRCLE,
         yAxis: dataTarget.yAxis || constants.Y_AXIS,
         key: dataTarget.key
     }));
@@ -260,7 +258,7 @@ const shouldHideDataPoints = (shownTargets, value) =>
 const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
     // Add a scale for bubble size
     let bubbleScale;
-    if (!utils.isUndefined(dataTarget.weight)) {
+    if (utils.isDefined(dataTarget.weight)) {
         bubbleScale = d3.scale
             .linear()
             .domain([dataTarget.weight.min, dataTarget.weight.max])
@@ -275,31 +273,22 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
             .classed(styles.point, true)
             .attr("aria-disabled", !utils.isDefined(value.onClick))
             .attr("transform", transformPoint(scale)(value))
+            .attr("aria-describedby", `${value.key}`)
             .attr("aria-hidden", (value) =>
                 shouldHideDataPoints(config.shownTargets, value)
             )
-            .on("click", () =>
-                dataPointActionHandler(
-                    value,
-                    index,
-                    d3
-                        .select(`g[aria-describedby="${value.key}"`)
-                        .selectAll(`.${styles.point}`)[0][index]
-                )
-            )
+            .on("click", function() {
+                dataPointActionHandler(value, index, d3.select(this).node());
+            })
             .append("circle")
             .attr("aria-describedby", value.key)
             .attr("r", (d) => {
-                const weightAreDefined = utils.isDefined(dataTarget.weight)
-                    ? utils.isDefined(dataTarget.weight.min) &&
-                      utils.isDefined(dataTarget.weight.max)
-                    : false;
                 if (
-                    weightAreDefined &&
-                    d.z !== undefined &&
+                    areWeightDefined(dataTarget) &&
+                    d.weight !== undefined &&
                     !utils.isDefined(dataTarget.weight.maxRadius)
                 ) {
-                    return bubbleScale(d.z);
+                    return bubbleScale(d.weight);
                 }
                 if (utils.isUndefined(dataTarget.weight)) {
                     return constants.DEFAULT_BUBBLE_RADIUS_MAX;
@@ -307,69 +296,67 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
                 return dataTarget.weight.maxRadius;
             })
             .style("fill", (d) => {
-                const hueIsDefined = utils.isDefined(dataTarget.hue);
-                const weightAreDefined = utils.isDefined(dataTarget.weight)
-                    ? utils.isDefined(dataTarget.weight.min) &&
-                      utils.isDefined(dataTarget.weight.max)
-                    : false;
-                const useYAxisData = !utils.isDefined(d.z);
-
                 if (
-                    hueIsDefined &&
-                    weightAreDefined &&
-                    useYAxisData === false
+                    isHueDefined(dataTarget.hue) &&
+                    areWeightDefined(dataTarget) &&
+                    useYAxisData(d.weight) === false
                 ) {
                     const colorHue = generateColor(
                         dataTarget.hue.lowerShade,
                         dataTarget.hue.upperShade,
                         dataTarget,
-                        useYAxisData
+                        useYAxisData(d.weight)
                     );
-                    return colorHue.get(bubbleScale(d.z));
+                    return colorHue(bubbleScale(d.weight));
                 }
                 if (
-                    hueIsDefined &&
-                    weightAreDefined === false &&
-                    useYAxisData
+                    isHueDefined(dataTarget.hue) &&
+                    areWeightDefined(dataTarget) === false &&
+                    useYAxisData(d.weight)
                 ) {
                     const colorHue = generateColor(
                         dataTarget.hue.lowerShade,
                         dataTarget.hue.upperShade,
                         dataTarget,
-                        useYAxisData
+                        useYAxisData(d.weight)
                     );
-                    return colorHue.get(d.y);
+                    return colorHue(d.y);
                 }
                 return dataTarget.color;
             })
-            .style("opacity", "0.8")
-            .attr("stroke", "#d8d8c2");
+            .style("opacity", constants.DEFAULT_BUBBLE_OPACITY)
+            .attr("stroke", constants.DEFAULT_BUBBLE_STROKE);
     };
 
     const renderSelectionPath = (path, value, index) => {
         path.append("g")
             .classed(styles.dataPointSelection, true)
             .attr("transform", transformPoint(scale)(value))
-            .attr("aria-disabled", false)
+            .attr("aria-disabled", utils.isDefined(value.onClick))
             .attr("aria-hidden", true)
             .attr("aria-describedby", value.key)
             .append("circle")
             .attr("r", (d) => {
-                const weightAreDefined = utils.isDefined(dataTarget.weight)
-                    ? utils.isDefined(dataTarget.weight.min) &&
-                      utils.isDefined(dataTarget.weight.max)
-                    : false;
                 if (
-                    weightAreDefined &&
-                    d.z !== undefined &&
+                    areWeightDefined(dataTarget) &&
+                    d.weight !== undefined &&
                     !utils.isDefined(dataTarget.weight.maxRadius)
                 ) {
-                    return bubbleScale(d.z) + 4;
+                    return (
+                        bubbleScale(d.weight) +
+                        constants.DEFAULT_BUBBLE_SELECTOR_RADIUS
+                    );
                 }
                 if (utils.isUndefined(dataTarget.weight)) {
-                    return constants.DEFAULT_BUBBLE_RADIUS_MAX + 4;
+                    return (
+                        constants.DEFAULT_BUBBLE_RADIUS_MAX +
+                        constants.DEFAULT_BUBBLE_SELECTOR_RADIUS
+                    );
                 }
-                return dataTarget.weight.maxRadius + 4;
+                return (
+                    dataTarget.weight.maxRadius +
+                    constants.DEFAULT_BUBBLE_SELECTOR_RADIUS
+                );
             });
     };
     pointGroupPath
@@ -383,20 +370,48 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
 };
 
 /**
+ * Checks if the weight object is defined with min and max values.
+ *
+ * @private
+ * @param {object} dataTarget - data for the bubble graph
+ * @returns {boolean} - returns true if weight is defined and inside weight min and max is also defined else false.
+ */
+const areWeightDefined = (dataTarget) => {
+    return utils.isDefined(dataTarget.weight)
+        ? utils.isDefined(dataTarget.weight.min) &&
+              utils.isDefined(dataTarget.weight.max)
+        : false;
+};
+
+/**
+ * Checks if hue is defined in the input JSON to get color gradient.
+ *
+ * @private
+ * @param {object} hue - hue is object defining the color range.
+ * @returns {boolean} - returns true if hue is defined else false.
+ */
+const isHueDefined = (hue) => utils.isDefined(hue);
+
+/**
+ * Checks if we have to use y-axis to getColor for data points or not.
+ *
+ * @private
+ * @param {number} weight - weight is a numeric value which should be between the weight range defined in weight: {min, max}
+ * @returns {boolean} - returns true if weight for each data point is defined else false.
+ */
+const useYAxisData = (weight) => !utils.isDefined(weight);
+/**
  * Handler for Request animation frame, executes on resize.
  *  * Order of execution
  *      * Redraws the content
  *      * Shows/hides the regions
  *
  * @private
- * @param {object} graphContext - Graph instance
- * @param {Bubble} control - Bubble instance
  * @param {object} config - Graph config object derived from input JSON
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg
  * @returns {function()} callback function handler for RAF
  */
-const onAnimationHandler = (graphContext, control, config, canvasSVG) => () => {
-    control.redraw(graphContext);
+const onAnimationHandler = (config, canvasSVG) => () => {
     processRegions(config, canvasSVG);
 };
 /**
@@ -422,13 +437,17 @@ const clickHandler = (graphContext, control, config, canvasSVG) => (
         }
     };
     legendClickHandler(element);
+    const isLegendSelected = isSelected(d3.select(element));
     updateShownTarget(config.shownTargets, item);
     canvasSVG
-        .selectAll(`.${styles.point}[aria-describedby="${item.key}"]`)
+        .selectAll(
+            `.${styles.dataPointSelection}[aria-describedby="${item.key}"]`
+        )
         .attr("aria-hidden", true);
-    window.requestAnimationFrame(
-        onAnimationHandler(graphContext, control, config, canvasSVG)
-    );
+    canvasSVG
+        .selectAll(`.${styles.point}[aria-describedby="${item.key}"]`)
+        .attr("aria-hidden", isLegendSelected);
+    window.requestAnimationFrame(onAnimationHandler(config, canvasSVG));
 };
 /**
  * Hover handler for legend item. Highlights current line and blurs the rest of the targets in Graph

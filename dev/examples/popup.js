@@ -126,8 +126,8 @@ export const loadBubblePopup = (onCloseCB, key, index, value) => {
         );
         createItem(pair, `year`, value.y);
     }
-    if (value.z) {
-        createItem(pair, `${value.label.display}`, `${value.z}`);
+    if (value.weight) {
+        createItem(pair, `${value.label.display}`, `${value.weight}`);
     }
 };
 export const loadBarPopup = (onCloseCB, key, index, values) => {
