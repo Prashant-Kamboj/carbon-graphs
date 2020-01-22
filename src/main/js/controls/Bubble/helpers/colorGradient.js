@@ -8,24 +8,23 @@ import utils from "../../../helpers/utils";
  *
  * @private
  * @param {object} dataTarget - data for the bubble graph
- * @returns {function} - returns a function to get bubble radius
+ * @returns {d3.scale} - returns a function to get bubble radius
  */
-export const bubbleScale = (dataTarget) => {
-    return d3.scale
+export const bubbleScale = (dataTarget) =>
+    d3.scale
         .linear()
         .domain([dataTarget.weight.min, dataTarget.weight.max])
         .range([
             constants.DEFAULT_BUBBLE_RADIUS_MIN,
             constants.DEFAULT_BUBBLE_RADIUS_MAX
         ]);
-};
 
 /**
  * Generates color range for the given color lowerShade and upperShade
  *
  * @private
  * @param {object} dataTarget - data for the bubble graph
- * @returns {function} - returns function to get color for specific bubble
+ * @returns {d3.scale} - returns function to get color for specific bubble
  */
 export const generateColor = (dataTarget) => {
     const lowerShade = dataTarget.hue.lowerShade;
