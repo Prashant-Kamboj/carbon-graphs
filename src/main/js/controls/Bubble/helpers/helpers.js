@@ -21,7 +21,7 @@ import {
 import styles from "../../../helpers/styles";
 import utils from "../../../helpers/utils";
 import { d3RemoveElement } from "../../Graph/helpers/helpers";
-import { generateColor } from "./colorGradient";
+import { generateColor, bubbleScale } from "./colorGradient";
 
 /**
  * @typedef Bubble
@@ -143,16 +143,6 @@ const translateBubbleGraph = (scale, canvasSVG, config) => {
  * @returns {undefined} - returns nothing
  */
 const draw = (scale, config, canvasSVG, dataTarget) => {
-    /*
-Based on the weight, we can take the calculate individual weights using d3.
-To change the min and max radius, we can also introduce the properties to update the radii.
-weight: {
-    min: 0,
-    max: 250,
-    maxRadius: 40
-}
-*/
-
     const BubbleSVG = canvasSVG
         .append("g")
         .classed(styles.bubbleGraphContent, true)
@@ -256,18 +246,6 @@ const shouldHideDataPoints = (shownTargets, value) =>
  * @returns {undefined} - returns nothing
  */
 const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
-    // Add a scale for bubble size
-    let bubbleScale;
-    if (utils.isDefined(dataTarget.weight)) {
-        bubbleScale = d3.scale
-            .linear()
-            .domain([dataTarget.weight.min, dataTarget.weight.max])
-            .range([
-                constants.DEFAULT_BUBBLE_RADIUS_MIN,
-                constants.DEFAULT_BUBBLE_RADIUS_MAX
-            ]);
-    }
-
     const renderDataPoint = (path, value, index) => {
         path.append("g")
             .classed(styles.point, true)
@@ -282,50 +260,10 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
             })
             .append("circle")
             .attr("aria-describedby", value.key)
-            .attr("r", (d) => {
-                if (
-                    areWeightDefined(dataTarget) &&
-                    d.weight !== undefined &&
-                    !utils.isDefined(dataTarget.weight.maxRadius)
-                ) {
-                    return bubbleScale(d.weight);
-                }
-                if (utils.isUndefined(dataTarget.weight)) {
-                    return constants.DEFAULT_BUBBLE_RADIUS_MAX;
-                }
-                return dataTarget.weight.maxRadius;
-            })
-            .style("fill", (d) => {
-                if (
-                    isHueDefined(dataTarget.hue) &&
-                    areWeightDefined(dataTarget) &&
-                    useYAxisData(d.weight) === false
-                ) {
-                    const colorHue = generateColor(
-                        dataTarget.hue.lowerShade,
-                        dataTarget.hue.upperShade,
-                        dataTarget,
-                        useYAxisData(d.weight)
-                    );
-                    return colorHue(bubbleScale(d.weight));
-                }
-                if (
-                    isHueDefined(dataTarget.hue) &&
-                    areWeightDefined(dataTarget) === false &&
-                    useYAxisData(d.weight)
-                ) {
-                    const colorHue = generateColor(
-                        dataTarget.hue.lowerShade,
-                        dataTarget.hue.upperShade,
-                        dataTarget,
-                        useYAxisData(d.weight)
-                    );
-                    return colorHue(d.y);
-                }
-                return dataTarget.color;
-            })
-            .style("opacity", constants.DEFAULT_BUBBLE_OPACITY)
-            .attr("stroke", constants.DEFAULT_BUBBLE_STROKE);
+            .attr("r", (d) => decideRadius(dataTarget, d))
+            .style("fill", (d) => decideColor(dataTarget, d))
+            .attr("fill-opacity", constants.DEFAULT_BUBBLE_OPACITY)
+            .attr("stroke", (d) => decideColor(dataTarget, d));
     };
 
     const renderSelectionPath = (path, value, index) => {
@@ -336,28 +274,12 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
             .attr("aria-hidden", true)
             .attr("aria-describedby", value.key)
             .append("circle")
-            .attr("r", (d) => {
-                if (
-                    areWeightDefined(dataTarget) &&
-                    d.weight !== undefined &&
-                    !utils.isDefined(dataTarget.weight.maxRadius)
-                ) {
-                    return (
-                        bubbleScale(d.weight) +
-                        constants.DEFAULT_BUBBLE_SELECTOR_RADIUS
-                    );
-                }
-                if (utils.isUndefined(dataTarget.weight)) {
-                    return (
-                        constants.DEFAULT_BUBBLE_RADIUS_MAX +
-                        constants.DEFAULT_BUBBLE_SELECTOR_RADIUS
-                    );
-                }
-                return (
-                    dataTarget.weight.maxRadius +
+            .attr(
+                "r",
+                (d) =>
+                    decideRadius(dataTarget, d) +
                     constants.DEFAULT_BUBBLE_SELECTOR_RADIUS
-                );
-            });
+            );
     };
     pointGroupPath
         .append("g")
@@ -376,7 +298,7 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
  * @param {object} dataTarget - data for the bubble graph
  * @returns {boolean} - returns true if weight is defined and inside weight min and max is also defined else false.
  */
-const areWeightDefined = (dataTarget) =>
+const areWeightsDefined = (dataTarget) =>
     utils.isDefined(dataTarget.weight)
         ? utils.isDefined(dataTarget.weight.min) &&
           utils.isDefined(dataTarget.weight.max)
@@ -392,13 +314,46 @@ const areWeightDefined = (dataTarget) =>
 const isHueDefined = (hue) => utils.isDefined(hue);
 
 /**
- * Checks if we have to use y-axis to getColor for data points or not.
+ * Decides the radius for each bubble
  *
  * @private
- * @param {number} weight - weight is a numeric value which should be between the weight range defined in weight: {min, max}
- * @returns {boolean} - returns true if weight for each data point is defined else false.
+ * @param {object} dataTarget - data for the bubble graph
+ * @param {number} value - data point whose radius has to be decided
+ * @returns {number} - returns the radius of the bubble
  */
-const useYAxisData = (weight) => !utils.isDefined(weight);
+const decideRadius = (dataTarget, value) => {
+    if (
+        areWeightsDefined(dataTarget) &&
+        utils.isUndefined(dataTarget.weight.maxRadius)
+    ) {
+        return bubbleScale(dataTarget)(value.weight);
+    } else if (utils.isUndefined(dataTarget.weight)) {
+        return constants.DEFAULT_BUBBLE_RADIUS_MAX;
+    } else {
+        return dataTarget.weight.maxRadius;
+    }
+};
+
+/**
+ * Decides the color for each bubble
+ *
+ * @private
+ * @param {object} dataTarget - data for the bubble graph
+ * @param {number} value - data point whose color has to be decided
+ * @returns {string} - returns color string for each bubble
+ */
+const decideColor = (dataTarget, value) => {
+    if (isHueDefined(dataTarget.hue) && areWeightsDefined(dataTarget)) {
+        return generateColor(dataTarget)(bubbleScale(dataTarget)(value.weight));
+    } else if (
+        isHueDefined(dataTarget.hue) &&
+        areWeightsDefined(dataTarget) === false
+    ) {
+        return generateColor(dataTarget)(value.y);
+    } else {
+        return dataTarget.color;
+    }
+};
 /**
  * Handler for Request animation frame, executes on resize.
  *  * Order of execution
@@ -466,7 +421,7 @@ const hoverHandler = (graphTargets, canvasSVG) => (item, state) => {
         k
     ) => {
         canvasSVG
-            .selectAll(`.${styles.bubbleGraphContent}[aria-describedby="${k}"]`)
+            .selectAll(`.${styles.point}[aria-describedby="${k}"]`)
             .classed(styles.blur, state === constants.HOVER_EVENT.MOUSE_ENTER);
     };
     legendHoverHandler(graphTargets, canvasSVG, item.key, state, [
