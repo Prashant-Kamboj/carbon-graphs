@@ -273,6 +273,9 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
             .attr("aria-disabled", utils.isDefined(value.onClick))
             .attr("aria-hidden", true)
             .attr("aria-describedby", value.key)
+            .on("click", function() {
+                dataPointActionHandler(value, index, d3.select(this).node());
+            })
             .append("circle")
             .attr(
                 "r",
@@ -427,6 +430,9 @@ const hoverHandler = (graphTargets, canvasSVG) => (item, state) => {
     legendHoverHandler(graphTargets, canvasSVG, item.key, state, [
         additionalHoverHandler
     ]);
+    canvasSVG
+        .selectAll(`.${styles.point}[aria-describedby="${item.key}"]`)
+        .classed(styles.highlight, state === constants.HOVER_EVENT.MOUSE_ENTER);
     // Highlight region(s) of the item hovered on, only if the content is currently displayed
     regionLegendHoverHandler(graphTargets, canvasSVG, item.key, state);
 };
