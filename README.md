@@ -67,6 +67,7 @@ npm i @cerner/carbon-graphs --save-dev
 -   [Pie](./docs/controls/Pie.md#usage)
 -   [Gantt](./docs/controls/Gantt.md#usage)
 -   [Scatter](./docs/controls/Scatter.md#usage)
+-   [Bubble](./docs/controls/Bubble.md#usage)
 
 ### Graph Settings/Toggles
 

@@ -170,8 +170,8 @@ export const fetchElementByTag = (id, tagName) =>
  * @returns {string} - returns hex code for the color.
  */
 export const componentToHex = (rgbValue) => {
-    var hex = rgbValue.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
+    const hex = rgbValue.toString(16);
+    return hex.length === 1 ? `0${hex}` : hex;
 };
 
 /**
@@ -183,10 +183,7 @@ export const componentToHex = (rgbValue) => {
 
 export const rgbToHex = (rgbString) => {
     const colorRGBArr = rgbString.split(",");
-    return (
-        "#" +
-        componentToHex(parseInt(colorRGBArr[0], 10)) +
-        componentToHex(parseInt(colorRGBArr[1], 10)) +
-        componentToHex(parseInt(colorRGBArr[2], 10))
-    );
+    return `#${componentToHex(parseInt(colorRGBArr[0], 10))}${componentToHex(
+        parseInt(colorRGBArr[1], 10)
+    )}${componentToHex(parseInt(colorRGBArr[2], 10))}`;
 };
