@@ -24,6 +24,7 @@ export default {
     gridUpperStep: "carbon-upper-step-grid",
     highlight: "carbon-highlight",
     blur: "carbon-blur",
+    bubbleBlur: "carbon-bubble-blur",
     svgIcon: "carbon-svgIcon",
     axisLabelX: "carbon-x-axis-label",
     axisLabelY: "carbon-y-axis-label",

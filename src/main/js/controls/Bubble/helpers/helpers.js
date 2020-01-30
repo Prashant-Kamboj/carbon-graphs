@@ -77,8 +77,25 @@ const toggleDataPointSelection = (target) => {
         "aria-hidden",
         !(selectedPointNode.attr("aria-hidden") === "true")
     );
+    const allCircleNodes = getAllCircleNodes();
+    enforceBubbleBlur(allCircleNodes);
+    enforceBubbleSelection(allCircleNodes);
     return selectedPointNode;
 };
+
+/**
+ * Removes the selection from the bubble and sets aria-selected for all circles as false
+ *
+ * @private
+ * @param {Array} nodes - List of d3.selection objects that are circles in bubble charts
+ * @returns {undefined} returns nothing
+ */
+const removeCircleSelection = (nodes) =>
+    nodes.forEach((ele) => {
+        const node = d3.select(ele);
+        node.attr("aria-selected", false);
+    });
+
 /**
  * Handler for the data point on click. If the content property is present for the data point
  * then the callback is executed other wise it is NOP.
@@ -102,7 +119,11 @@ const dataPointActionHandler = (value, index, target) => {
     }
     toggleDataPointSelection(target).call((selectedTarget) =>
         value.onClick(
-            () => selectedTarget.attr("aria-hidden", true),
+            () => {
+                selectedTarget.attr("aria-hidden", true);
+                removeBubbleBlur(getAllCircleNodes());
+                removeCircleSelection(getAllCircleNodes());
+            },
             value.key,
             index,
             value,
@@ -234,6 +255,91 @@ const shouldHideDataPoints = (shownTargets, value) =>
     shownTargets.indexOf(value.key) < 0 || value.y === null;
 
 /**
+ * Gets all the circles given in the bubble graph.
+ *
+ * @private
+ * @returns {Array} List of circle nodes in bubble chart
+ */
+const getAllCircleNodes = () => {
+    const circleNodes = [];
+    const bubbleGroup = d3.selectAll(`.${styles.bubbleGraphContent}`);
+    bubbleGroup.each(function() {
+        const node = d3.select(this);
+        const bubbleNode = node.selectAll(`.${styles.point} circle`);
+        bubbleNode.each(function() {
+            const circle = d3.select(this);
+            circleNodes.push(...circle[0]);
+        });
+    });
+    return circleNodes;
+};
+
+/**
+ * Enforces blur state for all the bubbles that is not the one hovered on.
+ * This is provided regardless of whether onClick is present or not.
+ *
+ * @private
+ * @param {Array} nodes - List of d3.selection objects that are circles form bubble graph
+ * @returns {undefined} - returns nothing
+ */
+const enforceBubbleBlur = (nodes) =>
+    nodes.forEach((ele) => {
+        const node = d3.select(ele);
+        if (node.attr("aria-selected") === "false") {
+            node.classed(styles.bubbleBlur, true);
+        }
+    });
+
+/**
+ * Removes the carbon-bubbleBlur style from all the bubbles to unblur all the bubbles in the bubble graph.
+ *
+ * @private
+ * @param {Array} nodes - List of d3.selection objects that are circles in the bubbles graph.
+ * @returns {undefined} - returns nothing
+ */
+const removeBubbleBlur = (nodes) =>
+    nodes.forEach((ele) => {
+        const node = d3.select(ele);
+        if (node.attr("aria-selected") === "false") {
+            node.classed(styles.bubbleBlur, false);
+        } else {
+            node.attr("aria-selected", false);
+        }
+    });
+
+/**
+ * Handler for the bubble that is hovered on. It blurs all other bubble in the bubble graph except one which is selected.
+ *
+ * @private
+ * @param {HTMLElement} target - Target element bubble hovered on
+ * @param {string} hoverState - Mouse over or Mouse out
+ * @returns {undefined} - returns nothing
+ */
+const hoverActionHandler = (target, hoverState) => {
+    d3.select(target).attr("aria-selected", true);
+    const allCircleNodes = getAllCircleNodes();
+    if (hoverState === constants.HOVER_EVENT.MOUSE_ENTER) {
+        enforceBubbleBlur(allCircleNodes);
+    } else {
+        removeBubbleBlur(allCircleNodes);
+    }
+};
+
+/**
+ * Enforce selected state for a bubble when clicked on.
+ * This is only available when onClick function is provided.
+ *
+ * @private
+ * @param {Array} nodes - List of d3.selection objects of circle nodes form bubble graph.
+ * @returns {undefined} returns nothing
+ */
+const enforceBubbleSelection = (nodes) =>
+    nodes.forEach((ele) => {
+        const actualNode = d3.select(ele);
+        actualNode.attr("aria-selected", true);
+    });
+
+/**
  * Draws the points with options opted in the input JSON by the consumer for each data set.
  *  Render the point with appropriate color, x and y co-ordinates, label etc.
  *  On click content callback function is called.
@@ -256,14 +362,21 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
                 shouldHideDataPoints(config.shownTargets, value)
             )
             .on("click", function() {
-                dataPointActionHandler(value, index, d3.select(this).node());
+                dataPointActionHandler(value, index, this);
             })
             .append("circle")
             .attr("aria-describedby", value.key)
             .attr("r", (d) => decideRadius(dataTarget, d))
+            .attr("aria-selected", false)
             .style("fill", (d) => decideColor(dataTarget, d))
             .attr("fill-opacity", constants.DEFAULT_BUBBLE_OPACITY)
-            .attr("stroke", (d) => decideColor(dataTarget, d));
+            .attr("stroke", (d) => decideColor(dataTarget, d))
+            .on("mouseenter", function() {
+                hoverActionHandler(this, constants.HOVER_EVENT.MOUSE_ENTER);
+            })
+            .on("mouseleave", function() {
+                hoverActionHandler(this, constants.HOVER_EVENT.MOUSE_EXIT);
+            });
     };
 
     const renderSelectionPath = (path, value, index) => {
@@ -274,7 +387,7 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
             .attr("aria-hidden", true)
             .attr("aria-describedby", value.key)
             .on("click", function() {
-                dataPointActionHandler(value, index, d3.select(this).node());
+                dataPointActionHandler(value, index, this);
             })
             .append("circle")
             .attr(
@@ -372,7 +485,7 @@ const onAnimationHandler = (config, canvasSVG) => () => {
     processRegions(config, canvasSVG);
 };
 /**
- * Click handler for legend item. Removes the line from graph when clicked and calls redraw
+ * Click handler for legend item. Removes the bubble from the graph
  *
  * @private
  * @param {object} graphContext - Graph instance
