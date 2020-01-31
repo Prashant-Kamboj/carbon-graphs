@@ -1120,22 +1120,24 @@ describe("Bubble - Load", () => {
             expect(svgPath.getAttribute("aria-describedby")).toBe("uid_4");
         });
     });
-    describe("On hover", () => {
+    describe("On Blubble Click", () => {
         let graph;
         beforeEach(() => {
             graph = new Graph(getAxes(axisDefault));
             const input = getInput(valuesDefault, false, false);
             graph.loadContent(new Bubble(input));
         });
-        describe("On mouseenter", () => {
-            it("Highlights respective bubble", (done) => {
+        describe("On click", () => {
+            it("Highlight respective bubble", (done) => {
                 const bubblePoint = fetchElementByClass(
                     bubbleGraphContainer,
                     styles.point
                 );
                 const bubbleCircle = fetchElementByTag(bubblePoint, "circle");
-                triggerEvent(bubbleCircle, "mouseenter", () => {
-                    expect(bubbleCircle.classList.length).toEqual(0);
+                triggerEvent(bubbleCircle, "click", () => {
+                    expect(bubbleCircle.classList.length.toString()).toEqual(
+                        "0"
+                    );
                     done();
                 });
             });
@@ -1146,7 +1148,7 @@ describe("Bubble - Load", () => {
                 );
                 const bubbleCircle = fetchElementByTag(bubblePoint, "circle");
 
-                triggerEvent(bubbleCircle, "mouseenter", () => {
+                triggerEvent(bubbleCircle, "click", () => {
                     const circleNodes = document.querySelectorAll(
                         `.${styles.point} circle`
                     );
@@ -1154,32 +1156,10 @@ describe("Bubble - Load", () => {
                         if (node.getAttribute("aria-selected") === "false") {
                             expect(
                                 node.classList.contains(styles.bubbleBlur)
-                            ).toBeTruthy();
+                            ).toEqual(true);
                         }
                     });
                     done();
-                });
-            });
-        });
-        describe("On mouseleave", () => {
-            it("un-blur all the bubbles", (done) => {
-                const bubblePoint = fetchElementByClass(
-                    bubbleGraphContainer,
-                    styles.point
-                );
-                const bubbleCircle = fetchElementByTag(bubblePoint, "circle");
-                triggerEvent(bubbleCircle, "mouseenter", () => {
-                    triggerEvent(bubbleCircle, "mouseleave", () => {
-                        const circleNodes = document.querySelectorAll(
-                            `.${styles.point} circle`
-                        );
-                        circleNodes.forEach((node) => {
-                            expect(node.getAttribute("aria-selected")).toEqual(
-                                "false"
-                            );
-                        });
-                        done();
-                    });
                 });
             });
         });

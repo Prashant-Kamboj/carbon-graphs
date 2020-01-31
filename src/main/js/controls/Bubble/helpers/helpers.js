@@ -70,6 +70,7 @@ const translatePoints = (scale, canvasSVG, cls, config) =>
  * @returns {Array} d3 html element of the selected point
  */
 const toggleDataPointSelection = (target) => {
+    blurActionHandler(target, constants.HOVER_EVENT.MOUSE_ENTER);
     const selectedPointNode = d3
         .select(target.parentNode)
         .select(`.${styles.dataPointSelection}`);
@@ -77,24 +78,8 @@ const toggleDataPointSelection = (target) => {
         "aria-hidden",
         !(selectedPointNode.attr("aria-hidden") === "true")
     );
-    const allCircleNodes = getAllCircleNodes();
-    enforceBubbleBlur(allCircleNodes);
-    enforceBubbleSelection(allCircleNodes);
     return selectedPointNode;
 };
-
-/**
- * Removes the selection from the bubble and sets aria-selected for all circles as false
- *
- * @private
- * @param {Array} nodes - List of d3.selection objects that are circles in bubble charts
- * @returns {undefined} returns nothing
- */
-const removeCircleSelection = (nodes) =>
-    nodes.forEach((ele) => {
-        const node = d3.select(ele);
-        node.attr("aria-selected", false);
-    });
 
 /**
  * Handler for the data point on click. If the content property is present for the data point
@@ -122,7 +107,6 @@ const dataPointActionHandler = (value, index, target) => {
             () => {
                 selectedTarget.attr("aria-hidden", true);
                 removeBubbleBlur(getAllCircleNodes());
-                removeCircleSelection(getAllCircleNodes());
             },
             value.key,
             index,
@@ -315,29 +299,13 @@ const removeBubbleBlur = (nodes) =>
  * @param {string} hoverState - Mouse over or Mouse out
  * @returns {undefined} - returns nothing
  */
-const hoverActionHandler = (target, hoverState) => {
-    d3.select(target).attr("aria-selected", true);
+const blurActionHandler = (target, hoverState) => {
+    d3.select(target.firstChild).attr("aria-selected", true);
     const allCircleNodes = getAllCircleNodes();
     if (hoverState === constants.HOVER_EVENT.MOUSE_ENTER) {
         enforceBubbleBlur(allCircleNodes);
-    } else {
-        removeBubbleBlur(allCircleNodes);
     }
 };
-
-/**
- * Enforce selected state for a bubble when clicked on.
- * This is only available when onClick function is provided.
- *
- * @private
- * @param {Array} nodes - List of d3.selection objects of circle nodes form bubble graph.
- * @returns {undefined} returns nothing
- */
-const enforceBubbleSelection = (nodes) =>
-    nodes.forEach((ele) => {
-        const actualNode = d3.select(ele);
-        actualNode.attr("aria-selected", true);
-    });
 
 /**
  * Draws the points with options opted in the input JSON by the consumer for each data set.
@@ -370,13 +338,7 @@ const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
             .attr("aria-selected", false)
             .style("fill", (d) => decideColor(dataTarget, d))
             .attr("fill-opacity", constants.DEFAULT_BUBBLE_OPACITY)
-            .attr("stroke", (d) => decideColor(dataTarget, d))
-            .on("mouseenter", function() {
-                hoverActionHandler(this, constants.HOVER_EVENT.MOUSE_ENTER);
-            })
-            .on("mouseleave", function() {
-                hoverActionHandler(this, constants.HOVER_EVENT.MOUSE_EXIT);
-            });
+            .attr("stroke", (d) => decideColor(dataTarget, d));
     };
 
     const renderSelectionPath = (path, value, index) => {
