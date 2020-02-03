@@ -15,12 +15,11 @@ A native bubble graph using D3 based on standard design patterns.
             -   [Required](#required)
             -   [Optional](#optional)
         -   [Values](#values)
-            -   [Required](#required-1)
-            -   [Optional](#optional-1)
-                -   [Style](#style)
-        -   [Regions](#regions)
             -   [Required](#required-2)
             -   [Optional](#optional-2)
+        -   [Regions](#regions)
+            -   [Required](#required-3)
+            -   [Optional](#optional-3)
         -   [Constraints](#constraints)
 
 ## Usage
@@ -290,7 +289,7 @@ Refer [Graph](../core/Graph.md) `Root` for more details.
 | color         | string   | COLORS.BLACK | Color for the bubbles                                                                     |
 | onClick       | Function | undefined    | Any action that can be performed when clicking on the data point                          |
 
-##### Weight
+### Weight
 
 For weight based bubble provide weight with `min` and `max`, each bubble can have a weight object in [Values](#values) level.
 
@@ -302,7 +301,7 @@ weight: {
 }
 ```
 
-###### Optional
+#### Optional
 
 | Property Name | Expected | Default   | Description                              |
 | ------------- | -------- | --------- | ---------------------------------------- |
@@ -310,7 +309,7 @@ weight: {
 | max           | number   | undefined | Max value for the weight based bubble    |
 | maxRadius     | number   | 30        | For custom size bubble provide maxRadius |
 
-##### Hue
+### Hue
 
 For color based bubble provide `lowerShade` and `upperShade` inside hue it's necessary.
 
@@ -321,7 +320,7 @@ hue: {
 }
 ```
 
-###### Required
+#### Required
 
 | Property Name | Expected | Default   | Description                        |
 | ------------- | -------- | --------- | ---------------------------------- |
