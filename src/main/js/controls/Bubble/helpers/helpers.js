@@ -242,7 +242,7 @@ const shouldHideDataPoints = (shownTargets, value) =>
  * This is provided regardless of whether onClick is present or not.
  *
  * @private
- * @param {Array} nodes - List of d3.selection objects that are circles form bubble graph
+ * @param {object} target - target node of bubble which is clicked
  * @returns {undefined} - returns nothing
  */
 const enforceBubbleBlur = (target) => {
@@ -261,7 +261,6 @@ const enforceBubbleBlur = (target) => {
  * Removes the carbon-bubbleBlur style from all the bubbles to unblur all the bubbles in the bubble graph.
  *
  * @private
- * @param {Array} nodes - List of d3.selection objects that are circles in the bubbles graph.
  * @returns {undefined} - returns nothing
  */
 const removeBubbleBlur = () =>
