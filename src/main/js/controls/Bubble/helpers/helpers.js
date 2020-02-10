@@ -238,7 +238,7 @@ const shouldHideDataPoints = (shownTargets, value) =>
     shownTargets.indexOf(value.key) < 0 || value.y === null;
 
 /**
- * Enforces blur state for all the bubbles that is not the one hovered on.
+ * Enforces blur state for all the bubbles that is not the one clicked on.
  * This is provided regardless of whether onClick is present or not.
  *
  * @private
@@ -261,7 +261,7 @@ const enforceBubbleBlur = (target) => {
  * Removes the carbon-bubbleBlur style from all the bubbles to unblur all the bubbles in the bubble graph.
  *
  * @private
- * @returns {undefined} - returns nothing
+ * @returns {object} - d3 Selection object
  */
 const removeBubbleBlur = () =>
     d3
@@ -272,10 +272,10 @@ const removeBubbleBlur = () =>
         .attr("stroke-opacity", constants.DEFAULT_BUBBLE_STROKE_OPACITY);
 
 /**
- * Handler for the bubble that is hovered on. It blurs all other bubble in the bubble graph except one which is selected.
+ * Handler for the bubble that is clicked on. It blurs all other bubble in the bubble graph except one which is selected.
  *
  * @private
- * @param {HTMLElement} target - Target element bubble hovered on
+ * @param {HTMLElement} target - Target element bubble clicked on
  * @returns {undefined} - returns nothing
  */
 const blurActionHandler = (target) => {

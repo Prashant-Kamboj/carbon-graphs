@@ -223,9 +223,6 @@ export default {
         MOUSE_ENTER: "enter",
         MOUSE_EXIT: "exit"
     },
-    MOUSE_EVENT: {
-        MOUSE_ENTER: "enter"
-    },
     VIEW_BOX_SIZE: "0 0 48 48",
     DEFAULT_COLOR: COLORS.BLACK,
     DEFAULT_PIE_COLOR: COLORS.BLUE,
