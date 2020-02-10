@@ -50,30 +50,7 @@ var root = {
             lowerLimit: 0,
             upperLimit: 250
         }
-    },
-    dateline: [
-        {
-            showDatelineIndicator: true,
-            label: {
-                display: "Release A"
-            },
-            color: Carbon.helpers.COLORS.GREEN,
-            shape: Carbon.helpers.SHAPES.DARK.TRIANGLE,
-            onClick: (onCloseCB, payload) => {
-                // onCloseCB needs to called by the consumer after popup is closed;
-                // Payload is the dateline input object
-            },
-            value: new Date(2016, 5, 1).toISOString()
-        }
-    ],
-    clickPassThrough: {
-        datelines: false
-    },
-    showLabel: true,
-    showLegend: true,
-    showShapes: true,
-    showVGrid: true,
-    showHGrid: true
+    }
 };
 
 var data = {
@@ -81,19 +58,7 @@ var data = {
     label: {
         display: "Data Label 1"
     },
-    regions: [
-        {
-            axis: "y",
-            start: 2,
-            end: 10,
-            color: "#f4f4f4"
-        }
-    ],
     color: Carbon.helpers.COLORS.BLUE,
-    onClick: (onCloseCB, key, index, value) => {
-        //onCloseCB needs to called by the consumer after popup is closed;
-        //This is so that graphing api can remove the selected indicator from data point
-    },
     values: [
         {
             x: "2016-02-03T12:00:00Z",
@@ -129,11 +94,6 @@ var dataWeightBased = {
         max: 50
     }
     color: Carbon.helpers.COLORS.BLUE,
-    onClick: (onCloseCB, key, index, value) => {
-        //onCloseCB needs to called by the consumer after popup is closed;
-        //This is so that graphing api can remove the selected indicator from data point
-    },
-    // weight passed in values should be in the range of min and max given in the weight range above.
     values: [
         {
             x: "2016-02-03T12:00:00Z",
@@ -167,8 +127,8 @@ var colorBasedData = {
         display: "Data Label 2"
     },
     hue: {
-        lowerShade: "#ffff00", // yellow
-        upperShade: "#ff0000" // red
+        lowerShade: "#ffff00",
+        upperShade: "#ff0000"
     }
     values: [
         {
@@ -204,10 +164,9 @@ var weightColorBasedData = {
         max: 50
     }
     hue: {
-        lowerShade: "#ffff00", // yellow
-        upperShade: "#ff0000" // red
+        lowerShade: "#ffff00",
+        upperShade: "#ff0000"
     }
-    // make sure the value of weight is in the range of weight min and max
     values: [
         {
             x: "2016-03-01T12:00:00Z",
@@ -338,9 +297,9 @@ hue: {
 
 #### Optional
 
-| Property Name | Expected | Default   | Description                                                                                     |
-| ------------- | -------- | --------- | ----------------------------------------------------------------------------------------------- |
-| weight        | number   | undefined | Make bubble based on the weight provided in the weight inside values, based on the weight range |
+| Property Name | Expected | Default   | Description                                                                                                       |
+| ------------- | -------- | --------- | ----------------------------------------------------------------------------------------------------------------- |
+| weight        | number   | undefined | Make bubble based on the weight provided in the weight inside values, based on the weight range [Weight](#weight) |
 
 ### Regions
 

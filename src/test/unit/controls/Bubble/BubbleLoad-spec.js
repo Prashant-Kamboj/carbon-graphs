@@ -20,8 +20,7 @@ import {
     valuesDefault,
     valuesDefaultWeightBased,
     valuesTimeSeries,
-    fetchElementByTag,
-    rgbToHex
+    fetchElementByTag
 } from "./helpers";
 import { generateColor } from "../../../../main/js/controls/Bubble/helpers/colorGradient";
 
@@ -229,9 +228,7 @@ describe("Bubble - Load", () => {
             );
             const points = fetchElementByClass(pointsGroup, styles.point);
             const bubbleCircle = fetchElementByTag(points, "circle");
-            expect(bubbleCircle.attributes.getNamedItem("style").value).toBe(
-                "fill: rgb(0, 124, 195);"
-            );
+            expect(bubbleCircle.attributes.fill.value).toEqual("#007cc3");
         });
         it("points have correct unique key assigned", () => {
             const pointsGroup = fetchElementByClass(
@@ -354,15 +351,10 @@ describe("Bubble - Load", () => {
                         point.firstChild.attributes.getNamedItem("r").value,
                         10
                     );
-                    const colorEachBubble = point.firstChild.attributes.getNamedItem(
-                        "style"
-                    ).value;
-                    const rgbColor = colorEachBubble.substring(
-                        10,
-                        colorEachBubble.length - 2
-                    );
+                    const colorEachBubble =
+                        point.firstChild.attributes.fill.value;
                     expect(generateColor(input)(radiusValue)).toEqual(
-                        rgbToHex(rgbColor)
+                        colorEachBubble
                     );
                 });
             });
@@ -382,15 +374,10 @@ describe("Bubble - Load", () => {
                 );
                 bubblePoint.forEach((points) => {
                     const yValue = points.__data__.y;
-                    const colorEachBubble = points.firstChild.attributes.getNamedItem(
-                        "style"
-                    ).value;
-                    const rgbColor = colorEachBubble.substring(
-                        10,
-                        colorEachBubble.length - 2
-                    );
+                    const colorEachBubble =
+                        points.firstChild.attributes.fill.value;
                     expect(generateColor(input)(yValue)).toEqual(
-                        rgbToHex(rgbColor)
+                        colorEachBubble
                     );
                 });
             });
@@ -400,14 +387,13 @@ describe("Bubble - Load", () => {
                 graphDefault.destroy();
                 graphDefault = new Graph(getAxes(axisDefault));
                 input = getNoOnClickInput(valuesDefault, false, false);
-                input.onClick = null;
                 graphDefault.loadContent(new Bubble(input));
                 const point = fetchElementByClass(
                     bubbleGraphContainer,
                     styles.point
                 );
                 triggerEvent(point, "click", () => {
-                    expect(point.getAttribute("aria-disabled")).toBe("false");
+                    expect(point.getAttribute("aria-disabled")).toBe("true");
                     done();
                 });
             });

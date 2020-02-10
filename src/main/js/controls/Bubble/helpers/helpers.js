@@ -28,7 +28,7 @@ import { generateColor, bubbleScale } from "./colorGradient";
  */
 
 /**
- * Transforms the point in the Line graph on resize
+ * Transforms the point in the bubble graph on resize
  *
  * @private
  * @param {object} scale - d3 scale for Graph
@@ -40,7 +40,7 @@ const transformPoint = (scale) => (value) => {
     return `translate(${getX(value)},${getY(value)})`;
 };
 /**
- * Transforms points for a data point set in the Line graph on resize
+ * Transforms points for a data point set in the bubble graph on resize
  *
  * @private
  * @param {object} scale - d3 scale for Graph
@@ -118,7 +118,6 @@ const dataPointActionHandler = (value, index, target) => {
 /**
  * Called on resize, translates the data point values.
  * This includes:
- *  Lines
  *  Points
  *  Selected point indicators
  *
@@ -138,7 +137,7 @@ const translateBubbleGraph = (scale, canvasSVG, config) => {
  *  Axes
  *  Legend
  *  Labels
- * Once these items are rendered, we will parse through the data points and render the lines and points
+ * Once these items are rendered, we will parse through the data points and render the bubbles
  *
  * @private
  * @param {object} scale - d3 scale taking into account the input parameters
@@ -249,7 +248,7 @@ const getAllCircleNodes = () => {
     const bubbleGroup = d3.selectAll(`.${styles.bubbleGraphContent}`);
     bubbleGroup.each(function() {
         const node = d3.select(this);
-        const bubbleNode = node.selectAll(`.${styles.point} circle`);
+        const bubbleNode = node.selectAll(`.${styles.point}`);
         bubbleNode.each(function() {
             const circle = d3.select(this);
             circleNodes.push(...circle[0]);
@@ -266,13 +265,13 @@ const getAllCircleNodes = () => {
  * @param {Array} nodes - List of d3.selection objects that are circles form bubble graph
  * @returns {undefined} - returns nothing
  */
-const enforceBubbleBlur = (nodes) =>
-    nodes.forEach((ele) => {
-        const node = d3.select(ele);
-        if (node.attr("aria-selected") === "false") {
-            node.classed(styles.bubbleBlur, true);
-        }
+const enforceBubbleBlur = (nodes) => {
+    nodes.forEach((bubbleNode) => {
+        d3.select(bubbleNode.firstChild)
+            .attr("fill-opacity", "0.1")
+            .attr("stroke-opacity", "0.3");
     });
+};
 
 /**
  * Removes the carbon-bubbleBlur style from all the bubbles to unblur all the bubbles in the bubble graph.
@@ -282,13 +281,12 @@ const enforceBubbleBlur = (nodes) =>
  * @returns {undefined} - returns nothing
  */
 const removeBubbleBlur = (nodes) =>
-    nodes.forEach((ele) => {
-        const node = d3.select(ele);
-        if (node.attr("aria-selected") === "false") {
-            node.classed(styles.bubbleBlur, false);
-        } else {
-            node.attr("aria-selected", false);
-        }
+    nodes.forEach((bubbleNode) => {
+        d3.select(bubbleNode.firstChild)
+            .attr("fill-opacity", "0.4")
+            .attr("stroke-opacity", "1");
+
+        d3.select(bubbleNode).attr("aria-selected", false);
     });
 
 /**
@@ -300,7 +298,7 @@ const removeBubbleBlur = (nodes) =>
  * @returns {undefined} - returns nothing
  */
 const blurActionHandler = (target, hoverState) => {
-    d3.select(target.firstChild).attr("aria-selected", true);
+    d3.select(target).attr("aria-selected", true);
     const allCircleNodes = getAllCircleNodes();
     if (hoverState === constants.HOVER_EVENT.MOUSE_ENTER) {
         enforceBubbleBlur(allCircleNodes);
@@ -321,22 +319,25 @@ const blurActionHandler = (target, hoverState) => {
  */
 const drawBubbles = (scale, config, pointGroupPath, dataTarget) => {
     const renderDataPoint = (path, value, index) => {
-        path.append("g")
+        const bubblePoint = path
+            .append("g")
             .classed(styles.point, true)
-            .attr("aria-disabled", !utils.isDefined(value.onClick))
+            .attr("aria-disabled", !utils.isFunction(value.onClick))
             .attr("transform", transformPoint(scale)(value))
             .attr("aria-describedby", `${value.key}`)
+            .attr("aria-selected", false)
             .attr("aria-hidden", (value) =>
                 shouldHideDataPoints(config.shownTargets, value)
             )
             .on("click", function() {
                 dataPointActionHandler(value, index, this);
-            })
+            });
+
+        bubblePoint
             .append("circle")
             .attr("aria-describedby", value.key)
             .attr("r", (d) => decideRadius(dataTarget, d))
-            .attr("aria-selected", false)
-            .style("fill", (d) => decideColor(dataTarget, d))
+            .attr("fill", (d) => decideColor(dataTarget, d))
             .attr("fill-opacity", constants.DEFAULT_BUBBLE_OPACITY)
             .attr("stroke", (d) => decideColor(dataTarget, d));
     };
@@ -433,10 +434,7 @@ const decideColor = (dataTarget, value) => {
     }
 };
 /**
- * Handler for Request animation frame, executes on resize.
- *  * Order of execution
- *      * Redraws the content
- *      * Shows/hides the regions
+ * Handler for Request animation frame, executes on resize shows/hides the regions.
  *
  * @private
  * @param {object} config - Graph config object derived from input JSON
@@ -476,13 +474,22 @@ const clickHandler = (graphContext, control, config, canvasSVG) => (
             `.${styles.dataPointSelection}[aria-describedby="${item.key}"]`
         )
         .attr("aria-hidden", true);
-    canvasSVG
-        .selectAll(`.${styles.point}[aria-describedby="${item.key}"]`)
-        .attr("aria-hidden", isSelected);
+
+    const getAllBubblePoint = canvasSVG.selectAll(
+        `.${styles.point}[aria-describedby="${item.key}"]`
+    );
+
+    getAllBubblePoint.each(function(bubbleNode) {
+        if (bubbleNode.y !== null) {
+            d3.select(this).attr("aria-hidden", isSelected);
+        } else {
+            d3.select(this).attr("aria-hidden", true);
+        }
+    });
     window.requestAnimationFrame(onAnimationHandler(config, canvasSVG));
 };
 /**
- * Hover handler for legend item. Highlights current line and blurs the rest of the targets in Graph
+ * Hover handler for legend item. Highlights current bubble and blurs the rest of the targets in Graph
  * if present.
  *
  * @private
@@ -535,7 +542,7 @@ const prepareLegendItems = (config, eventHandlers, dataTarget, legendSVG) => {
     }
 };
 /**
- * CLear the graph data points and lines currently rendered
+ * Clear the graph data points currently rendered
  *
  * @private
  * @param {d3.selection} canvasSVG - d3 selection node of canvas svg

@@ -162,28 +162,3 @@ export const fetchElementByClass = (id, cls) => id.querySelector(`.${cls}`);
  */
 export const fetchElementByTag = (id, tagName) =>
     id.querySelector(`${tagName}`);
-
-/**
- *
- * @private
- * @param {number} rgbValue - rgb value to be converted to hex code
- * @returns {string} - returns hex code for the color.
- */
-export const componentToHex = (rgbValue) => {
-    const hex = rgbValue.toString(16);
-    return hex.length === 1 ? `0${hex}` : hex;
-};
-
-/**
- *
- * @private
- * @param {string} rgbSrting - rgb string to be converted to hex code
- * @returns {string} - returns hex code for the rgb value.
- */
-
-export const rgbToHex = (rgbString) => {
-    const colorRGBArr = rgbString.split(",");
-    return `#${componentToHex(parseInt(colorRGBArr[0], 10))}${componentToHex(
-        parseInt(colorRGBArr[1], 10)
-    )}${componentToHex(parseInt(colorRGBArr[2], 10))}`;
-};
