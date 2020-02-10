@@ -106,7 +106,7 @@ const dataPointActionHandler = (value, index, target) => {
         value.onClick(
             () => {
                 selectedTarget.attr("aria-hidden", true);
-                removeBubbleBlur(getAllCircleNodes());
+                removeBubbleBlur();
             },
             value.key,
             index,
@@ -238,26 +238,6 @@ const shouldHideDataPoints = (shownTargets, value) =>
     shownTargets.indexOf(value.key) < 0 || value.y === null;
 
 /**
- * Gets all the circles given in the bubble graph.
- *
- * @private
- * @returns {Array} List of circle nodes in bubble chart
- */
-const getAllCircleNodes = () => {
-    const circleNodes = [];
-    const bubbleGroup = d3.selectAll(`.${styles.bubbleGraphContent}`);
-    bubbleGroup.each(function() {
-        const node = d3.select(this);
-        const bubbleNode = node.selectAll(`.${styles.point}`);
-        bubbleNode.each(function() {
-            const circle = d3.select(this);
-            circleNodes.push(...circle[0]);
-        });
-    });
-    return circleNodes;
-};
-
-/**
  * Enforces blur state for all the bubbles that is not the one hovered on.
  * This is provided regardless of whether onClick is present or not.
  *
@@ -265,12 +245,16 @@ const getAllCircleNodes = () => {
  * @param {Array} nodes - List of d3.selection objects that are circles form bubble graph
  * @returns {undefined} - returns nothing
  */
-const enforceBubbleBlur = (nodes) => {
-    nodes.forEach((bubbleNode) => {
-        d3.select(bubbleNode.firstChild)
-            .attr("fill-opacity", "0.1")
-            .attr("stroke-opacity", "0.3");
-    });
+const enforceBubbleBlur = (target) => {
+    d3.selectAll(`.${styles.point}`)
+        .select("circle")
+        .attr("fill-opacity", constants.DEFAULT_BUBBLE_BLUR_OPACITY)
+        .attr("stroke-opacity", constants.DEFAULT_BUBBLE_BLUR_STROKE_OPACITY);
+
+    d3.select(target)
+        .select("circle")
+        .attr("fill-opacity", constants.DEFAULT_BUBBLE_OPACITY)
+        .attr("stroke-opacity", constants.DEFAULT_BUBBLE_STROKE_OPACITY);
 };
 
 /**
@@ -280,14 +264,13 @@ const enforceBubbleBlur = (nodes) => {
  * @param {Array} nodes - List of d3.selection objects that are circles in the bubbles graph.
  * @returns {undefined} - returns nothing
  */
-const removeBubbleBlur = (nodes) =>
-    nodes.forEach((bubbleNode) => {
-        d3.select(bubbleNode.firstChild)
-            .attr("fill-opacity", "0.4")
-            .attr("stroke-opacity", "1");
-
-        d3.select(bubbleNode).attr("aria-selected", false);
-    });
+const removeBubbleBlur = () =>
+    d3
+        .selectAll(`.${styles.point}`)
+        .attr("aria-selected", false)
+        .select("circle")
+        .attr("fill-opacity", constants.DEFAULT_BUBBLE_OPACITY)
+        .attr("stroke-opacity", constants.DEFAULT_BUBBLE_STROKE_OPACITY);
 
 /**
  * Handler for the bubble that is hovered on. It blurs all other bubble in the bubble graph except one which is selected.
@@ -299,9 +282,8 @@ const removeBubbleBlur = (nodes) =>
  */
 const blurActionHandler = (target, hoverState) => {
     d3.select(target).attr("aria-selected", true);
-    const allCircleNodes = getAllCircleNodes();
-    if (hoverState === constants.HOVER_EVENT.MOUSE_ENTER) {
-        enforceBubbleBlur(allCircleNodes);
+    if (hoverState === constants.MOUSE_EVENT.MOUSE_ENTER) {
+        enforceBubbleBlur(target);
     }
 };
 
