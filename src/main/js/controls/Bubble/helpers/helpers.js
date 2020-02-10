@@ -70,7 +70,7 @@ const translatePoints = (scale, canvasSVG, cls, config) =>
  * @returns {Array} d3 html element of the selected point
  */
 const toggleDataPointSelection = (target) => {
-    blurActionHandler(target, constants.HOVER_EVENT.MOUSE_ENTER);
+    blurActionHandler(target);
     const selectedPointNode = d3
         .select(target.parentNode)
         .select(`.${styles.dataPointSelection}`);
@@ -276,14 +276,11 @@ const removeBubbleBlur = () =>
  *
  * @private
  * @param {HTMLElement} target - Target element bubble hovered on
- * @param {string} hoverState - Mouse over or Mouse out
  * @returns {undefined} - returns nothing
  */
-const blurActionHandler = (target, hoverState) => {
+const blurActionHandler = (target) => {
     d3.select(target).attr("aria-selected", true);
-    if (hoverState === constants.MOUSE_EVENT.MOUSE_ENTER) {
-        enforceBubbleBlur(target);
-    }
+    enforceBubbleBlur(target);
 };
 
 /**
