@@ -809,7 +809,7 @@ describe("Bubble - Load", () => {
             ).and.callThrough();
             const input = getInput(valuesDefault, false, false);
             const bubble = new Bubble(input);
-            const graph = graphDefault.loadContent(bubble);
+            graphDefault.loadContent(bubble);
             triggerEvent(
                 fetchElementByClass(bubbleGraphContainer, styles.legendItem),
                 "click",
